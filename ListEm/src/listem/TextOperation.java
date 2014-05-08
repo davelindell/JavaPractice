@@ -25,7 +25,7 @@ public class TextOperation {
 		if(!recursive) {
 			File[] new_files = directory.listFiles();
 			for (int i = 0; i < new_files.length; i++) {
-				str_matcher = str_pattern.matcher(new_files[i].getPath());
+				str_matcher = str_pattern.matcher(new_files[i].getName());
 				if (str_matcher.matches() && new_files[i].isFile()) {
 					files.add(new_files[i]);
 				}
@@ -48,7 +48,7 @@ public class TextOperation {
 	
 	public ArrayList<File> recursiveListFiles(File directory, Pattern str_pattern, ArrayList<File> files) {
 		if (directory.isFile()) {
-			Matcher str_matcher = str_pattern.matcher(directory.getPath());
+			Matcher str_matcher = str_pattern.matcher(directory.getName());
 			if (str_matcher.matches()) {
 				files.add(directory);
 				//System.out.println(directory.getPath());
