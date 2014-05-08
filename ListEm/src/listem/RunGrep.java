@@ -1,14 +1,21 @@
 package listem;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple main class for running grep. This class is not used by the 
  * passoff program.
  */
-public class RunGrep {
+public class RunGrep extends TextOperation implements Grep {
 	
 	/**
 	 * If the first argument is -r, the search should be recursive.
@@ -37,10 +44,8 @@ public class RunGrep {
 			return;
 		}
 		
-		/**
-		 * Create an instance of your Grep here
-		 */
-		Grep grep = null;
+
+		Grep grep = new RunGrep();
 		
 		Map<File, List<String>> result = grep.grep(new File(dirName), filePattern, searchPattern, recursive);
 		
@@ -69,5 +74,45 @@ public class RunGrep {
 		
 		System.out.println("TOTAL MATCHES: " + totalMatches);
 	}
+
+	@Override
+	public Map<File, List<String>> grep(File directory,
+			String fileSelectionPattern, String substringSelectionPattern,
+			boolean recursive) {
+		
+		Map<File, List<String>> file_map = new HashMap<File, List<String>>();
+		ArrayList<File> files = listFiles(directory, fileSelectionPattern, recursive);
+		Iterator<File> iter = files.iterator();
+		
+		while(iter.hasNext()){
+			List<String> this_list = new ArrayList<String>();
+			File this_file = iter.next();
+			Pattern p = Pattern.compile(substringSelectionPattern); 
+			Scanner scanner;
+			try {
+				scanner = new Scanner(this_file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+			while(scanner.hasNextLine()){
+				String this_line = scanner.nextLine();
+				Matcher m = p.matcher(this_line);
+				if(m.find()) {
+					this_list.add(this_line);
+				}
+			}
+			if (this_list.size() > 0)
+				file_map.put(this_file, this_list);
+			scanner.close();
+		}
+		
+		return file_map;
+	}
+	
+
+	
+	
 
 }

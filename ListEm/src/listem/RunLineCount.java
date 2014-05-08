@@ -1,14 +1,22 @@
 package listem;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple main class for running line count. This class is not used by the 
  * passoff program.
  */
-public class RunLineCount {
-
+public class RunLineCount extends TextOperation implements LineCounter {
+	
 	/**
 	 * If the first argument is -r, the search should be recursive.
 	 * 
@@ -32,10 +40,8 @@ public class RunLineCount {
 			return;
 		}
 
-		/**
-		 * Create an instance of your Grep here
-		 */
-		LineCounter counter = null;
+		
+		LineCounter counter = new RunLineCount();
 		Map<File, Integer> lineCountResult = counter.countLines(new File(dirName), filePattern, recursive);
 		
 		RunLineCount.outputLineCountResult(lineCountResult);
@@ -57,4 +63,36 @@ public class RunLineCount {
 		
 		System.out.println("TOTAL: " + totalLines);
 	}
+
+	@Override
+	public Map<File, Integer> countLines(File directory,
+			String fileSelectionPattern, boolean recursive) {
+
+		Map<File, Integer> int_map = new HashMap<File,Integer>();
+		ArrayList<File> files = listFiles(directory, fileSelectionPattern, recursive);
+		Iterator<File> iter = files.iterator();
+		
+		while(iter.hasNext()){
+			int line_count = 0;
+			File this_file = iter.next();
+			Scanner scanner;
+			try {
+				scanner = new Scanner(this_file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+			while(scanner.hasNextLine()){
+				scanner.nextLine();
+				line_count++;
+			}
+	
+			int_map.put(this_file, line_count);
+			scanner.close();
+		}
+		
+		return int_map;
+	}
+
 }
