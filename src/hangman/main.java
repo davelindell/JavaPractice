@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class main {
 
@@ -28,7 +29,7 @@ public class main {
 		File dictionary = new File(args[0]);
 		int wordLength = Integer.parseInt(args[1]);
 		int guesses = Integer.parseInt(args[2]);
-		ArrayList<String> guessed_chars = new ArrayList<String>();
+		Set<String> guessed_chars = new TreeSet<String>();
 		Set<String> evil_words = new HashSet<String>();
 		
 		hangman.startGame(dictionary, wordLength);
@@ -55,21 +56,26 @@ public class main {
 			System.out.print("Enter guess: ");
 			String input = scanner.next();
 			
-			while (!input.matches("([a-z]|[A-Z])")) {
-				System.out.println("Invalid input");
-				System.out.print("Enter guess: ");
-				input = scanner.next();
+			boolean double_guess = true;
+			while (double_guess) {
+				while (!input.matches("([a-z]|[A-Z])")) {
+					System.out.println("Invalid input");
+					System.out.print("Enter guess: ");
+					input = scanner.next();
+				}
+				
+				input = input.toLowerCase();
+				
+				try {
+					evil_words = hangman.makeGuess(input.charAt(0));
+					double_guess = false;
+				} catch (GuessAlreadyMadeException e) {
+					System.out.println("You already made that guess!");
+					System.out.print("Enter guess: ");
+					input = scanner.next();
+				}
 			}
-			
-			input = input.toLowerCase();
-			
-			try {
-				evil_words = hangman.makeGuess(input.charAt(0));
-			} catch (GuessAlreadyMadeException e) {
-				System.out.println("You already made that guess!");
-				scanner.close();
-				return;
-			}
+			guessed_chars.add(input);
 			Iterator<String> evil_iter = evil_words.iterator();
 			String sample_word = evil_iter.next();
 			int num_guessed = 0;
