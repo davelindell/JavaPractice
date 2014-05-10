@@ -61,6 +61,8 @@ public class main {
 				input = scanner.next();
 			}
 			
+			input = input.toLowerCase();
+			
 			try {
 				evil_words = hangman.makeGuess(input.charAt(0));
 			} catch (GuessAlreadyMadeException e) {

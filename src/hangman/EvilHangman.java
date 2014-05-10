@@ -37,7 +37,7 @@ public class EvilHangman implements EvilHangmanGame {
 				j++;
 				String cur_word = scanner.next();
 				if (cur_word.length() == wordLength)
-					words.add(cur_word);
+					words.add(cur_word.toLowerCase());
 			}
 		} 
 		catch (FileNotFoundException e) {
@@ -52,6 +52,7 @@ public class EvilHangman implements EvilHangmanGame {
 	
 	@Override
 	public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException {
+		guess = Character.toLowerCase(guess);
 		if (guessed_chars.contains(guess)) {
 			GuessAlreadyMadeException exception = new GuessAlreadyMadeException();
 			throw exception;
