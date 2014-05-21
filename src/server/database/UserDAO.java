@@ -3,7 +3,12 @@ package server.database;
 import java.util.List;
 
 import shared.models.User;
-
+/**
+ * The user database access object contains methods for interacting with the 
+ * data stored in the users database table.
+ * @author lindell
+ *
+ */
 public class UserDAO {
 	private Database db;
 	

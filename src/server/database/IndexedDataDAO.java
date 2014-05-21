@@ -3,7 +3,13 @@ package server.database;
 import java.util.List;
 
 import shared.models.IndexedData;
-
+/**
+ * Indexed Data database access object. This class contains methods for interacting
+ * with the data that the client has submitted while indexing. This data is stored in 
+ * the indexed_data table.
+ * @author lindell
+ *
+ */
 public class IndexedDataDAO {
 	private Database db;
 	

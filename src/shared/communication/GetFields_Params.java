@@ -17,7 +17,6 @@ public class GetFields_Params extends Communicator_Params {
 	 * Alternate constructor sets project_id to 0 if project_id is not specified.
 	 * @param username
 	 * @param password
-	 * @param project_id
 	 */
 	public GetFields_Params(String username, String password) {
 		super(username, password);

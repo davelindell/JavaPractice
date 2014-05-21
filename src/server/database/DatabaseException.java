@@ -1,6 +1,12 @@
 package server.database;
 
 @SuppressWarnings("serial")
+/**
+ * A database exception class for exceptions when 
+ * managing the database.
+ * @author lindell
+ *
+ */
 public class DatabaseException extends Exception {
 
 	public DatabaseException() {

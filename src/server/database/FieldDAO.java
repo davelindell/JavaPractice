@@ -3,7 +3,12 @@ package server.database;
 import java.util.List;
 
 import shared.models.Field;
-
+/**
+ * The Field database access object. Contains methods for interacting
+ * with the field table in the database.
+ * @author lindell
+ *
+ */
 public class FieldDAO {
 	private Database db;
 	

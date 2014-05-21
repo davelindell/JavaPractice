@@ -3,7 +3,12 @@ package server.database;
 import java.util.List;
 
 import shared.models.Project;
-
+/**
+ * The project database access object contains methods for interacting with the data
+ * stored in the project database table.
+ * @author lindell
+ *
+ */
 public class ProjectDAO {
 	private Database db;
 	

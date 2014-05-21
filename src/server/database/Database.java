@@ -3,7 +3,13 @@ package server.database;
 import java.util.logging.Logger;
 import java.sql.*;
 
-
+/**
+ * The database class contains methods to initialize the database 
+ * and to begin and end transactions. It also contains database access
+ * objects for all the model classes.
+ * @author lindell
+ *
+ */
 public class Database {
 	private BatchDAO batchDAO;
 	private FieldDAO fieldDAO;
