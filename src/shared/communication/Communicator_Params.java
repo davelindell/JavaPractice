@@ -1,5 +1,11 @@
 package shared.communication;
 
+/**
+ * Super class for the _Params methods that share 
+ * the username and password data members.
+ * @author lindell
+ *
+ */
 public class Communicator_Params {
 	private String username;
 	private String password;
