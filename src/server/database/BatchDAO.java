@@ -1,7 +1,7 @@
 package server.database;
 
 import java.util.List;
-
+import java.sql.*;
 import shared.models.Batch;
 
 /**
@@ -18,9 +18,10 @@ public class BatchDAO {
 	}
 	
 	public List<Batch> getAll() throws DatabaseException {
-		
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
 	
-		// TODO: Use db's connection to query all batches from the database and return them	
+		
 		
 		
 		return null;	

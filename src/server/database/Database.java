@@ -1,6 +1,7 @@
 package server.database;
 
 import java.util.logging.Logger;
+import java.io.File;
 import java.sql.*;
 
 /**
@@ -17,16 +18,7 @@ public class Database {
 	private ProjectDAO projectDAO;
 	private UserDAO userDAO;
 	private Connection connection;
-	
-	/**
-	 * Initialize the database
-	 * @throws DatabaseException
-	 */
-	public static void initialize() throws DatabaseException {
-		
-		// TODO: Load the SQLite database driver
-		
-	}
+	private boolean dbError;
 	
 	public Database() {
 		batchDAO = new BatchDAO(this);
@@ -35,6 +27,20 @@ public class Database {
 		projectDAO = new ProjectDAO(this);
 		userDAO = new UserDAO(this);
 		connection = null;
+		dbError = false;
+	}
+	
+	/**
+	 * Initialize the database
+	 * @throws DatabaseException
+	 */
+	public static void initialize() throws DatabaseException {
+		final String driver = "org.sqlite.JDBC";
+		try {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
+			// ERROR! Could not load database driver
+		}
 	}
 	
 	public BatchDAO getBatchDAO() {
@@ -90,10 +96,21 @@ public class Database {
 	 * @throws DatabaseException
 	 */
 	public void startTransaction() throws DatabaseException {
-	
+		String dbName = "database" + File.separator + "database.sqlite";
+		String connectionURL = "jdbc:sqlite:" + dbName;
 		
-		// TODO: Open a connection to the database and start a transaction
+		Connection connection = null;
 		
+		try {
+		    // Open a database connection
+		    connection = DriverManager.getConnection(connectionURL);
+		    
+		    // Start a transaction
+		    connection.setAutoCommit(false);
+		}
+		catch (SQLException e) {
+		    // ERROR
+		}
 	}
 	
 	/**
@@ -101,11 +118,25 @@ public class Database {
 	 * @param commit
 	 */
 	public void endTransaction(boolean commit) {
-		
-		
-		// TODO: Commit or rollback the transaction and close the connection
-		
+		try {
+		    if (!dbError) {
+		        connection.commit();
+		    }
+		    else {
+		        connection.rollback();
+		    }
+		}
+		catch (SQLException e) {
+		    // ERROR
+		}
+		finally {
+		    try {
+				connection.close();
+			} catch (SQLException e) {
+				// ERROR
+			}
+		}	
+		// close the connection
+		connection = null;
 	}
-
-	
 }
