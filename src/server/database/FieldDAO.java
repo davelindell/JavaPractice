@@ -52,16 +52,15 @@ public class FieldDAO {
 	public void add(Field field) throws DatabaseException {
 		PreparedStatement stmt = null;
 		try {
-			String sql = "INSERT INTO fields (project_id, field_id, field_title, help_url," +
-					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?,?)";
+			String sql = "INSERT INTO fields (project_id, field_title, help_url," +
+					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?)";
 			stmt = db.getConnection().prepareStatement(sql);
 			stmt.setInt(1, field.getProject_id());
-			stmt.setInt(2, field.getField_id());
-			stmt.setString(3, field.getField_title());
-			stmt.setString(4, field.getHelp_url());
-			stmt.setInt(5, field.getX_coord());
+			stmt.setString(2, field.getField_title());
+			stmt.setString(3, field.getHelp_url());
+			stmt.setInt(4, field.getX_coord());
 			stmt.setInt(5, field.getPixel_width());
-			stmt.setString(7, field.getKnown_values_url());
+			stmt.setString(6, field.getKnown_values_url());
 			
 			if (stmt.executeUpdate() == 1) {
 				// OK
@@ -131,7 +130,7 @@ public class FieldDAO {
 	public void delete(Field field) throws DatabaseException {
 		PreparedStatement stmt = null;
 		try {
-		    String sql = "DELETE FROM fields WHERE id = ?";
+		    String sql = "DELETE FROM fields WHERE field_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setInt(1, field.getField_id());
 		    
@@ -140,7 +139,7 @@ public class FieldDAO {
 		    }
 		      
 		    else {
-		    	// ERROR
+		    	throw new DatabaseException();
 		    }
 		        
 		}

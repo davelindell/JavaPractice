@@ -100,7 +100,7 @@ public class Database {
 		String dbName = "database" + File.separator + "database.sqlite";
 		String connectionURL = "jdbc:sqlite:" + dbName;
 		
-		Connection connection = null;
+		connection = null;
 		
 		try {
 		    // Open a database connection
@@ -110,7 +110,7 @@ public class Database {
 		    connection.setAutoCommit(false);
 		}
 		catch (SQLException e) {
-		    // ERROR
+			throw new DatabaseException();
 		}
 	}
 	
@@ -121,7 +121,7 @@ public class Database {
 	 */
 	public void endTransaction(boolean commit) throws DatabaseException {
 		try {
-		    if (!dbError) {
+		    if (commit) {
 		        connection.commit();
 		    }
 		    else {

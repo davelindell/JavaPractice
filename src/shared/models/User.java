@@ -14,8 +14,8 @@ public class User {
 	private String password;
 	private int num_records;
 	
-	public User(int user_id, String user_first_name, String user_last_name,String username, String password, int num_records) {
-		this.user_id = user_id;
+	public User(String user_first_name, String user_last_name,String username, String password, int num_records) {
+		this.user_id = 0; //auto-increment will give id
 		this.user_first_name = user_first_name;
 		this.user_last_name = user_last_name;
 		this.username = username;

@@ -8,8 +8,8 @@ public class Project {
 	private int project_id;
 	private String project_title;
 	
-	Project(int project_id, String project_title) {
-		this.project_id = project_id;
+	Project(String project_title) {
+		project_id = 0; // autoincrement will give project id
 		this.project_title = project_title;
 	}
 

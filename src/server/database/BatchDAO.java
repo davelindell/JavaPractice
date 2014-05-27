@@ -127,7 +127,7 @@ public class BatchDAO {
 	public void delete(Batch batch) throws DatabaseException {
 		PreparedStatement stmt = null;
 		try {
-		    String sql = "DELETE FROM batches WHERE id = ?";
+		    String sql = "DELETE FROM batches WHERE batch_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setInt(1, batch.getBatch_id());
 		    
@@ -136,7 +136,7 @@ public class BatchDAO {
 		    }
 		      
 		    else {
-		    	// ERROR
+		    	throw new DatabaseException();
 		    }
 		        
 		}
