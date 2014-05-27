@@ -40,6 +40,7 @@ public class Database {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
 			// ERROR! Could not load database driver
+			throw new DatabaseException();
 		}
 	}
 	
@@ -116,8 +117,9 @@ public class Database {
 	/**
 	 * End a database transaction
 	 * @param commit
+	 * @throws DatabaseException 
 	 */
-	public void endTransaction(boolean commit) {
+	public void endTransaction(boolean commit) throws DatabaseException {
 		try {
 		    if (!dbError) {
 		        connection.commit();
@@ -127,13 +129,13 @@ public class Database {
 		    }
 		}
 		catch (SQLException e) {
-		    // ERROR
+			throw new DatabaseException();
 		}
 		finally {
 		    try {
 				connection.close();
 			} catch (SQLException e) {
-				// ERROR
+				throw new DatabaseException();
 			}
 		}	
 		// close the connection

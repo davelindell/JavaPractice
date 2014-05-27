@@ -41,7 +41,7 @@ public class BatchDAO {
 			}
 		}
 		catch (SQLException e) {
-			// ERROR
+			throw new DatabaseException();
 		}
 		return batches;	
 	}
@@ -69,7 +69,7 @@ public class BatchDAO {
 		} 
 		
 		catch (SQLException e) {
-			// ERROR
+			throw new DatabaseException();
 		}
 		
 		finally {
@@ -78,7 +78,7 @@ public class BatchDAO {
 					stmt.close();
 				} 
 				catch (SQLException e) {
-					// ERROR
+					throw new DatabaseException();
 				}
 			}	
 		}
@@ -105,12 +105,12 @@ public class BatchDAO {
 		    }
 		      
 		    else {
-		    	// ERROR
+		    	throw new DatabaseException();
 		    }
 		        
 		}
 		catch (SQLException e) {
-		    // ERROR
+			throw new DatabaseException();
 		}
 		finally {
 		    if (stmt != null) {
@@ -118,7 +118,7 @@ public class BatchDAO {
 					stmt.close();
 				} 
 		    	catch (SQLException e) {
-					// ERROR
+		    		throw new DatabaseException();
 				}
 		    }
 		}	
@@ -141,7 +141,7 @@ public class BatchDAO {
 		        
 		}
 		catch (SQLException e) {
-		    // ERROR
+		    throw new DatabaseException();
 		}
 		finally {
 		    if (stmt != null) {
@@ -149,7 +149,7 @@ public class BatchDAO {
 					stmt.close();
 				} 
 		    	catch (SQLException e) {
-					// ERROR
+		    		throw new DatabaseException();
 				}
 		    }
 		}	

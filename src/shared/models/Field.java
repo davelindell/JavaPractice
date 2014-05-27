@@ -13,7 +13,7 @@ public class Field {
 	private int pixel_width;
 	private String known_values_url;
 	
-	Field() {
+	public Field() {
 		project_id = 0;
 		field_id = 0;
 		field_title = null;
