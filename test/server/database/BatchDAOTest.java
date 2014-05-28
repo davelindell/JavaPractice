@@ -60,7 +60,7 @@ public class BatchDAOTest {
 				found_batch2 = areEqual(batch, batch2);
 			}
 		}
-		assert(found_batch1 && found_batch2);
+		assertTrue(found_batch1 && found_batch2);
 	}
 	
 
@@ -107,7 +107,7 @@ public class BatchDAOTest {
 			}
 		}
 		
-		assert(updated_batch1 && updated_batch2);
+		assertTrue(updated_batch1 && updated_batch2);
 		
 	}
 
@@ -123,18 +123,17 @@ public class BatchDAOTest {
 		batch1.setBatch_id(batch_list.get(0).getBatch_id());
 		batch2.setBatch_id(batch_list.get(1).getBatch_id());
 		
-		assert(batch_list.size() == 2);
+		assertTrue(batch_list.size() == 2);
 		
 		batchDAO.delete(batch1);
 		batchDAO.delete(batch2);
 		
 		batch_list = batchDAO.getAll();
-		assert(batch_list.size() == 0);
+		assertTrue(batch_list.size() == 0);
 	}
 
 	private boolean areEqual(Batch batch1, Batch batch2) {
-		return 	batch1.getBatch_id() == batch2.getBatch_id() && 
-				batch1.getFirst_y_coord() == batch2.getFirst_y_coord() &&
+		return 	batch1.getFirst_y_coord() == batch2.getFirst_y_coord() &&
 				batch1.getImage_url().equals(batch2.getImage_url()) &&
 				batch1.getNum_fields() == batch2.getNum_fields() &&
 				batch1.getNum_records() == batch2.getNum_records() && 

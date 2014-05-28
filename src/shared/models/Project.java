@@ -13,6 +13,11 @@ public class Project {
 		this.project_title = project_title;
 	}
 
+	public Project() {
+		project_id = 0;
+		project_title = null;
+	}
+
 	public int getProject_id() {
 		return project_id;
 	}

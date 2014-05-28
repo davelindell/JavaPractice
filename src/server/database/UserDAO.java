@@ -27,8 +27,8 @@ public class UserDAO {
 		try {
 			String sql = "select * from users";
 			stmt = db.getConnection().prepareStatement(sql);
-			
 			rs = stmt.executeQuery();
+			
 			while(rs.next()) {
 				User user = new User();
 				user.setUser_id(rs.getInt(1));
@@ -97,6 +97,7 @@ public class UserDAO {
 		    stmt.setString(3, user.getUsername());
 		    stmt.setString(4, user.getPassword());
 		    stmt.setInt(5, user.getNum_records());
+		    stmt.setInt(6, user.getUser_id());
 
 		    if (stmt.executeUpdate() == 1) {
 		    	  // OK

@@ -17,7 +17,7 @@ public class Database {
 	private ProjectDAO projectDAO;
 	private UserDAO userDAO;
 	private Connection connection;
-	private boolean dbError;
+	// private boolean dbError;
 	
 	public Database() {
 		batchDAO = new BatchDAO(this);
@@ -26,7 +26,7 @@ public class Database {
 		projectDAO = new ProjectDAO(this);
 		userDAO = new UserDAO(this);
 		connection = null;
-		dbError = false;
+		// dbError = false;
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class Database {
 	 * @throws DatabaseException
 	 */
 	public void startTransaction() throws DatabaseException {
-		String dbName = "database" + File.separator + "database.sqlite";
+		String dbName = "database" + File.separator + "record_indexer.sqlite";
 		String connectionURL = "jdbc:sqlite:" + dbName;
 		
 		connection = null;

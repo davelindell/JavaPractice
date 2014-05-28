@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import shared.models.Batch;
 import shared.models.Field;
 
 public class FieldDAOTest {
@@ -61,7 +60,7 @@ public class FieldDAOTest {
 				found_field2 = areEqual(field, field2);
 			}
 		}
-		assert(found_field1 && found_field2);
+		assertTrue(found_field1 && found_field2);
 	}
 
 	@Test
@@ -118,22 +117,21 @@ public class FieldDAOTest {
 		fieldDAO.add(field1);
 		fieldDAO.add(field2);
 		
-		List<Batch> batch_list = batchDAO.getAll();
-		batch1.setBatch_id(batch_list.get(0).getBatch_id());
-		batch2.setBatch_id(batch_list.get(1).getBatch_id());
+		List<Field> field_list = fieldDAO.getAll();
+		field1.setField_id(field_list.get(0).getField_id());
+		field2.setField_id(field_list.get(1).getField_id());
 		
-		assert(batch_list.size() == 2);
+		assert(field_list.size() == 2);
 		
-		batchDAO.delete(batch1);
-		batchDAO.delete(batch2);
+		fieldDAO.delete(field1);
+		fieldDAO.delete(field2);
 		
-		batch_list = batchDAO.getAll();
-		assert(batch_list.size() == 0);
+		field_list = fieldDAO.getAll();
+		assert(field_list.size() == 0);
 	}
 	
 	private boolean areEqual(Field field1, Field field2) {
-		return 	field1.getField_id() == field2.getField_id() &&
-				field1.getProject_id() == field2.getProject_id() &&
+		return 	field1.getProject_id() == field2.getProject_id() &&
 				field1.getField_title().equals(field2.getField_title()) &&
 				field1.getHelp_url().equals(field2.getHelp_url()) &&
 				field1.getX_coord() == field2.getX_coord() &&

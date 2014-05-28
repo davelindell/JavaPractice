@@ -27,10 +27,12 @@ public class ProjectDAO {
 		try {
 			String sql = "select * from projects";
 			stmt = db.getConnection().prepareStatement(sql);
-			
 			rs = stmt.executeQuery();
+			
 			while(rs.next()) {
-				Project project = new Project(rs.getString(1));
+				Project project = new Project();
+				project.setProject_id(rs.getInt(1));
+				project.setProject_title(rs.getString(2));
 				projects.add(project);
 			}
 		}
@@ -73,6 +75,7 @@ public class ProjectDAO {
 	}
 	
 	public void update(Project project) throws DatabaseException {
+
 		PreparedStatement stmt = null;
 		try {
 		    String sql = "UPDATE projects " + 
@@ -80,7 +83,8 @@ public class ProjectDAO {
 		                 "where project_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setString(1,project.getProject_title());
-
+		    stmt.setInt(2, project.getProject_id());
+		    
 		    if (stmt.executeUpdate() == 1) {
 		    	  // OK
 		    }
