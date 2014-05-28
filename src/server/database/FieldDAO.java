@@ -16,7 +16,7 @@ import shared.models.Field;
 public class FieldDAO {
 	private Database db;
 	
-	FieldDAO(Database db) {
+	public FieldDAO(Database db) {
 		this.db = db;
 	}
 	

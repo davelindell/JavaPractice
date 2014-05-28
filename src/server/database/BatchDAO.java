@@ -15,7 +15,7 @@ public class BatchDAO {
 
 	private Database db;
 	
-	BatchDAO(Database db) {
+	public BatchDAO(Database db) {
 		this.db = db;
 	}
 	

@@ -16,7 +16,7 @@ import shared.models.Project;
 public class ProjectDAO {
 	private Database db;
 	
-	ProjectDAO(Database db) {
+	public ProjectDAO(Database db) {
 		this.db = db;
 	}
 	

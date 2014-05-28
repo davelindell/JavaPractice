@@ -81,13 +81,14 @@ public class UserDAOTest {
 		user1.setUsername("richfrank");
 		user1.setPassword("hotdog");
 		user1.setNum_records(325);
+		user1.setEmail("this@this.com");
 		
 		user2.setUser_first_name("Shaniqua");
 		user2.setUser_last_name("Lataetae");
 		user2.setUsername("bonquiqui");
 		user2.setPassword("password");
 		user2.setNum_records(211);
-		
+		user1.setEmail("this2@this.com");
 		userDAO.update(user1);
 		userDAO.update(user2);
 		
@@ -134,7 +135,8 @@ public class UserDAOTest {
 				user1.getUser_last_name().equals(user2.getUser_last_name()) &&
 				user1.getUsername().equals(user2.getUsername()) &&
 				user1.getPassword().equals(user2.getPassword()) &&
-				user1.getNum_records() == user2.getNum_records();
+				user1.getNum_records() == user2.getNum_records() &&
+				user1.getEmail().equals(user2.getEmail());
 	}
 	
 	private List<User> initUsers() {
@@ -146,6 +148,7 @@ public class UserDAOTest {
 		user1.setUsername("dlindell");
 		user1.setPassword("ilikegrapes");
 		user1.setNum_records(5);
+		user1.setEmail("gmail@gmail.com");
 		
 		User user2 = new User();
 		user2.setUser_first_name("Amie");
@@ -153,6 +156,7 @@ public class UserDAOTest {
 		user2.setUsername("asaratoga");
 		user2.setPassword("h1pst3r4lyfe");
 		user2.setNum_records(21);
+		user2.setEmail("hotmail@hotmail.com");
 		
 		users.add(user1);
 		users.add(user2);

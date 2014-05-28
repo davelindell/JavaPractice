@@ -17,7 +17,7 @@ import shared.models.IndexedData;
 public class IndexedDataDAO {
 	private Database db;
 	
-	IndexedDataDAO(Database db) {
+	public IndexedDataDAO(Database db) {
 		this.db = db;
 	}
 	

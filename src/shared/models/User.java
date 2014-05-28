@@ -13,14 +13,16 @@ public class User {
 	private String username;
 	private String password;
 	private int num_records;
+	private String email;
 	
-	public User(String user_first_name, String user_last_name,String username, String password, int num_records) {
+	public User(String user_first_name, String user_last_name,String username, String password, int num_records, String email) {
 		this.user_id = 0; // sql auto-increment will give id
 		this.user_first_name = user_first_name;
 		this.user_last_name = user_last_name;
 		this.username = username;
 		this.password = password;
 		this.num_records = num_records;
+		this.email = email;
 	}
 
 	public User() {
@@ -30,6 +32,7 @@ public class User {
 		username = null;
 		password = null;
 		num_records = 0;
+		email = null;
 	}
 
 	public int getUser_id() {
@@ -78,6 +81,14 @@ public class User {
 
 	public void setNum_records(int num_records) {
 		this.num_records = num_records;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }

@@ -16,7 +16,7 @@ import shared.models.User;
 public class UserDAO {
 	private Database db;
 	
-	UserDAO(Database db) {
+	public UserDAO(Database db) {
 		this.db = db;
 	}
 	
@@ -37,6 +37,7 @@ public class UserDAO {
 				user.setUsername(rs.getString(4));
 				user.setPassword(rs.getString(5));
 				user.setNum_records(rs.getInt(6));
+				user.setEmail(rs.getString(7));
 				users.add(user);
 			}
 		}
@@ -50,13 +51,14 @@ public class UserDAO {
 		PreparedStatement stmt = null;
 		try {
 			String sql = "INSERT INTO users (user_first_name, user_last_name, username,"
-					 + " password, num_records) VALUES (?,?,?,?,?)";
+					 + " password, num_records, email) VALUES (?,?,?,?,?,?)";
 			stmt = db.getConnection().prepareStatement(sql);
 			stmt.setString(1, user.getUser_first_name());
 			stmt.setString(2, user.getUser_last_name());
 			stmt.setString(3, user.getUsername());
 			stmt.setString(4, user.getPassword());
 			stmt.setInt(5, user.getNum_records());
+			stmt.setString(6, user.getEmail());
 			
 			if (stmt.executeUpdate() == 1) {
 				// OK
@@ -89,7 +91,7 @@ public class UserDAO {
 		try {
 		    String sql = "UPDATE users " + 
 		                 "set user_first_name = ?, user_last_name = ?, username = ?, " +
-		                 "password = ?, num_records = ? " + 
+		                 "password = ?, num_records = ?, email = ? " + 
 		                 "where user_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setString(1, user.getUser_first_name());
@@ -97,8 +99,9 @@ public class UserDAO {
 		    stmt.setString(3, user.getUsername());
 		    stmt.setString(4, user.getPassword());
 		    stmt.setInt(5, user.getNum_records());
-		    stmt.setInt(6, user.getUser_id());
-
+		    stmt.setString(6, user.getEmail());
+		    stmt.setInt(7, user.getUser_id());
+		    
 		    if (stmt.executeUpdate() == 1) {
 		    	  // OK
 		    }
