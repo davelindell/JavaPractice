@@ -46,12 +46,13 @@ public class BatchDAO {
 		return batches;	
 	}
 	
-	public void add(Batch batch) throws DatabaseException {
+	public int add(Batch batch) throws DatabaseException {
+		int primary_key = 0;
 		PreparedStatement stmt = null;
 		try {
 			String sql = "INSERT INTO batches (project_id, image_url, first_y_coord,"
 					 + " record_height, num_records, num_fields) VALUES (?,?,?,?,?,?)";
-			stmt = db.getConnection().prepareStatement(sql);
+			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setInt(1, batch.getProject_id());
 			stmt.setString(2, batch.getImage_url());
 			stmt.setInt(3, batch.getFirst_y_coord());
@@ -60,7 +61,8 @@ public class BatchDAO {
 			stmt.setInt(6, batch.getNum_fields());
 			
 			if (stmt.executeUpdate() == 1) {
-				// OK
+				ResultSet key_set = stmt.getGeneratedKeys();
+				primary_key = key_set.getInt(1);
 			}
 			else {
 				throw new DatabaseException();
@@ -82,6 +84,7 @@ public class BatchDAO {
 				}
 			}	
 		}
+		return primary_key;
 	}
 	
 	public void update(Batch batch) throws DatabaseException {

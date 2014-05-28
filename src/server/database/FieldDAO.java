@@ -3,6 +3,7 @@ package server.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,21 +49,21 @@ public class FieldDAO {
 	
 	}
 	
-	public void add(Field field) throws DatabaseException {
+	public int add(Field field) throws DatabaseException {
+		int primary_key = 0;
 		PreparedStatement stmt = null;
 		try {
 			String sql = "INSERT INTO fields (project_id, field_title, help_url," +
 					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?)";
-			stmt = db.getConnection().prepareStatement(sql);
-			stmt.setInt(1, field.getProject_id());
-			stmt.setString(2, field.getField_title());
+			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(3, field.getHelp_url());
 			stmt.setInt(4, field.getX_coord());
 			stmt.setInt(5, field.getPixel_width());
 			stmt.setString(6, field.getKnown_values_url());
 			
 			if (stmt.executeUpdate() == 1) {
-				// OK
+				ResultSet key_set = stmt.getGeneratedKeys();
+				primary_key = key_set.getInt(1);
 			}
 			else {
 				throw new DatabaseException();
@@ -84,6 +85,7 @@ public class FieldDAO {
 				}
 			}	
 		}
+		return primary_key;
 	}
 	
 	public void update(Field field) throws DatabaseException {

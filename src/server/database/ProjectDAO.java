@@ -3,6 +3,7 @@ package server.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,15 +43,17 @@ public class ProjectDAO {
 		return projects;	
 	}
 	
-	public void add(Project project) throws DatabaseException {
+	public int add(Project project) throws DatabaseException {
 		PreparedStatement stmt = null;
+		int primary_key = 0;
 		try {
 			String sql = "INSERT INTO projects (project_title) VALUES (?)";
-			stmt = db.getConnection().prepareStatement(sql);
+			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, project.getProject_title());
 			
 			if (stmt.executeUpdate() == 1) {
-				// OK
+				ResultSet key_set = stmt.getGeneratedKeys();
+				primary_key = key_set.getInt(1);
 			}
 			else {
 				throw new DatabaseException();
@@ -72,6 +75,7 @@ public class ProjectDAO {
 				}
 			}	
 		}
+		return primary_key;
 	}
 	
 	public void update(Project project) throws DatabaseException {
