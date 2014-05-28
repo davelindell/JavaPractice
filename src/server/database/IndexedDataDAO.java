@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.models.Field;
 import shared.models.IndexedData;
 /**
  * Indexed Data database access object. This class contains methods for interacting

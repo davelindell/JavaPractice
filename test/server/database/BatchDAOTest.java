@@ -14,12 +14,15 @@ import shared.models.Batch;
 public class BatchDAOTest {
 	private BatchDAO batchDAO;
 	private Database db;
+	private List<Batch> batches;
+	
 	@Before
 	public void setUp() throws Exception {
 		Database.initialize();
 		db  = new Database();
 		batchDAO = new BatchDAO(db);
 		db.startTransaction();
+		batches = initBatches();
 	}
 
 	@After
@@ -30,28 +33,15 @@ public class BatchDAOTest {
 
 	@Test
 	public void testGetAll() throws DatabaseException {
-		List<Batch> batches = new ArrayList<Batch>();
-
-		assertEquals(0, batchDAO.getAll().size());
+		batchDAO.add(batches.get(0));
+		batchDAO.add(batches.get(1));
+		assertEquals(2, batchDAO.getAll().size());
 	}
 
 	@Test
 	public void testAdd() throws DatabaseException {
-		Batch batch1 = new Batch();
-		batch1.setFirst_y_coord(4);
-		batch1.setImage_url("example/img.png");
-		batch1.setNum_fields(6);
-		batch1.setNum_records(18);
-		batch1.setProject_id(3);
-		batch1.setRecord_height(14);
-		
-		Batch batch2 = new Batch();
-		batch2.setFirst_y_coord(4);
-		batch2.setImage_url("example/img.png");
-		batch2.setNum_fields(6);
-		batch2.setNum_records(18);
-		batch2.setProject_id(3);
-		batch2.setRecord_height(14);
+		Batch batch1 = batches.get(0);
+		Batch batch2 = batches.get(1);
 		
 		batchDAO.add(batch1);
 		batchDAO.add(batch2);
@@ -76,21 +66,8 @@ public class BatchDAOTest {
 
 	@Test
 	public void testUpdate() throws DatabaseException {
-		Batch batch1 = new Batch();
-		batch1.setFirst_y_coord(4);
-		batch1.setImage_url("example/img.png");
-		batch1.setNum_fields(6);
-		batch1.setNum_records(18);
-		batch1.setProject_id(3);
-		batch1.setRecord_height(14);
-		
-		Batch batch2 = new Batch();
-		batch2.setFirst_y_coord(4);
-		batch2.setImage_url("example/img.png");
-		batch2.setNum_fields(6);
-		batch2.setNum_records(18);
-		batch2.setProject_id(3);
-		batch2.setRecord_height(14);
+		Batch batch1 = batches.get(0);
+		Batch batch2 = batches.get(1);
 		
 		batchDAO.add(batch1);
 		batchDAO.add(batch2);
@@ -136,21 +113,8 @@ public class BatchDAOTest {
 
 	@Test
 	public void testDelete() throws DatabaseException {
-		Batch batch1 = new Batch();
-		batch1.setFirst_y_coord(4);
-		batch1.setImage_url("example/img.png");
-		batch1.setNum_fields(6);
-		batch1.setNum_records(18);
-		batch1.setProject_id(3);
-		batch1.setRecord_height(14);
-		
-		Batch batch2 = new Batch();
-		batch2.setFirst_y_coord(4);
-		batch2.setImage_url("example/img.png");
-		batch2.setNum_fields(6);
-		batch2.setNum_records(18);
-		batch2.setProject_id(3);
-		batch2.setRecord_height(14);
+		Batch batch1 = batches.get(0);
+		Batch batch2 = batches.get(1);
 		
 		batchDAO.add(batch1);
 		batchDAO.add(batch2);
@@ -169,12 +133,37 @@ public class BatchDAOTest {
 	}
 
 	private boolean areEqual(Batch batch1, Batch batch2) {
-		return 	batch1.getFirst_y_coord() == batch2.getFirst_y_coord() &&
+		return 	batch1.getBatch_id() == batch2.getBatch_id() && 
+				batch1.getFirst_y_coord() == batch2.getFirst_y_coord() &&
 				batch1.getImage_url().equals(batch2.getImage_url()) &&
 				batch1.getNum_fields() == batch2.getNum_fields() &&
 				batch1.getNum_records() == batch2.getNum_records() && 
 				batch1.getProject_id() == batch2.getProject_id() &&
 				batch1.getRecord_height() == batch2.getRecord_height();
+	}
+	
+	private List<Batch> initBatches() {
+		List<Batch> batches = new ArrayList<Batch>();
+		
+		Batch batch1 = new Batch();
+		batch1.setFirst_y_coord(4);
+		batch1.setImage_url("example/img.png");
+		batch1.setNum_fields(6);
+		batch1.setNum_records(18);
+		batch1.setProject_id(3);
+		batch1.setRecord_height(14);
+		
+		Batch batch2 = new Batch();
+		batch2.setFirst_y_coord(4);
+		batch2.setImage_url("example/img.png");
+		batch2.setNum_fields(6);
+		batch2.setNum_records(18);
+		batch2.setProject_id(3);
+		batch2.setRecord_height(14);
+		
+		batches.add(batch1);
+		batches.add(batch2);
+		return batches;
 	}
 	
 }

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.models.Batch;
 import shared.models.Field;
 /**
  * The Field database access object. Contains methods for interacting

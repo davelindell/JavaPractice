@@ -1,5 +1,9 @@
 package server.database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import shared.models.Project;
@@ -17,32 +21,120 @@ public class ProjectDAO {
 	}
 	
 	public List<Project> getAll() throws DatabaseException {
-		
-	
-		// TODO: Use db's connection to query all projects from the database and return them	
-		
-		
-		return null;	
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Project> projects = new ArrayList<Project>();
+		try {
+			String sql = "select * from projects";
+			stmt = db.getConnection().prepareStatement(sql);
+			
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Project project = new Project(rs.getString(1));
+				projects.add(project);
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		return projects;	
 	}
 	
 	public void add(Project project) throws DatabaseException {
-
-	
-		// TODO: Use db's connection to add a new project to the database
+		PreparedStatement stmt = null;
+		try {
+			String sql = "INSERT INTO projects (project_title) VALUES (?)";
+			stmt = db.getConnection().prepareStatement(sql);
+			stmt.setString(1, project.getProject_title());
+			
+			if (stmt.executeUpdate() == 1) {
+				// OK
+			}
+			else {
+				throw new DatabaseException();
+			}
+			
+		} 
 		
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		
+		finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} 
+				catch (SQLException e) {
+					throw new DatabaseException();
+				}
+			}	
+		}
 	}
 	
 	public void update(Project project) throws DatabaseException {
+		PreparedStatement stmt = null;
+		try {
+		    String sql = "UPDATE projects " + 
+		                 "set project_title = ? " + 
+		                 "where project_id = ?";
+		    stmt = db.getConnection().prepareStatement(sql);
+		    stmt.setString(1,project.getProject_title());
 
-	
-		// TODO: Use db's connection to update project in the database
+		    if (stmt.executeUpdate() == 1) {
+		    	  // OK
+		    }
+		      
+		    else {
+		    	throw new DatabaseException();
+		    }
+		        
+		}
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		finally {
+		    if (stmt != null) {
+		    	try {
+					stmt.close();
+				} 
+		    	catch (SQLException e) {
+		    		throw new DatabaseException();
+				}
+		    }
+		}	
 		
 	}
 	
 	public void delete(Project project) throws DatabaseException {
-
-	
-		// TODO: Use db's connection to delete project from the database
-		
+		PreparedStatement stmt = null;
+		try {
+		    String sql = "DELETE FROM projects WHERE project_id = ?";
+		    stmt = db.getConnection().prepareStatement(sql);
+		    stmt.setInt(1, project.getProject_id());
+		    
+		    if (stmt.executeUpdate() == 1) {
+		    	  // OK
+		    }
+		      
+		    else {
+		    	throw new DatabaseException();
+		    }
+		        
+		}
+		catch (SQLException e) {
+		    throw new DatabaseException();
+		}
+		finally {
+		    if (stmt != null) {
+		    	try {
+					stmt.close();
+				} 
+		    	catch (SQLException e) {
+		    		throw new DatabaseException();
+				}
+		    }
+		}	
 	}
+		
 }

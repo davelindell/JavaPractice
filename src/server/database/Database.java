@@ -1,6 +1,5 @@
 package server.database;
 
-import java.util.logging.Logger;
 import java.io.File;
 import java.sql.*;
 
