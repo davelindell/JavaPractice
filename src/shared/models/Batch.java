@@ -12,6 +12,7 @@ public class Batch {
 	private int record_height;
 	private int num_records;
 	private int num_fields;
+	private String cur_username;
 	
 	/**
 	 * Batch constructor (initializes data to null values, use setters 
@@ -25,6 +26,7 @@ public class Batch {
 		record_height = 0;
 		num_records = 0;
 		num_fields = 0;
+		cur_username = null;
 	}
 
 	public int getBatch_id() {
@@ -83,5 +85,12 @@ public class Batch {
 		this.num_fields = num_fields;
 	}
 	
+	public String getCur_username() {
+		return cur_username;
+	}
+
+	public void setCur_username(String cur_username) {
+		this.cur_username = cur_username;
+	}
 	
 }

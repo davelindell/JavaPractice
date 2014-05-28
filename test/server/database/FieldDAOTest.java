@@ -2,6 +2,9 @@ package server.database;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,10 @@ public class FieldDAOTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		File src = new File("database/empty_record_indexer.sqlite");
+		File dst = new File("database/record_indexer.sqlite");
+		Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		
 		Database.initialize();
 		db  = new Database();
 		fieldDAO = new FieldDAO(db);
@@ -27,8 +34,11 @@ public class FieldDAOTest {
 
 	@After
 	public void tearDown() throws Exception {
-		db.endTransaction(false);
+		db.endTransaction(true);
 		fieldDAO = null;
+		File src = new File("database/empty_record_indexer.sqlite");
+		File dst = new File("database/record_indexer.sqlite");
+		Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	@Test

@@ -37,6 +37,7 @@ public class BatchDAO {
 				batch.setRecord_height(rs.getInt(5));
 				batch.setNum_records(rs.getInt(6));
 				batch.setNum_fields(rs.getInt(7));
+				batch.setCur_username(rs.getString(8));
 				batches.add(batch);
 			}
 		}
@@ -51,7 +52,7 @@ public class BatchDAO {
 		PreparedStatement stmt = null;
 		try {
 			String sql = "INSERT INTO batches (project_id, image_url, first_y_coord,"
-					 + " record_height, num_records, num_fields) VALUES (?,?,?,?,?,?)";
+					 + " record_height, num_records, num_fields, cur_username) VALUES (?,?,?,?,?,?,?)";
 			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setInt(1, batch.getProject_id());
 			stmt.setString(2, batch.getImage_url());
@@ -59,6 +60,7 @@ public class BatchDAO {
 			stmt.setInt(4, batch.getRecord_height());
 			stmt.setInt(5, batch.getNum_records());
 			stmt.setInt(6, batch.getNum_fields());
+			stmt.setString(7, batch.getCur_username());
 			
 			if (stmt.executeUpdate() == 1) {
 				ResultSet key_set = stmt.getGeneratedKeys();
@@ -92,7 +94,7 @@ public class BatchDAO {
 		try {
 		    String sql = "UPDATE batches " + 
 		                 "set project_id = ?, image_url = ?, first_y_coord = ?, " +
-		                 "record_height = ?, num_records = ?, num_fields = ? " + 
+		                 "record_height = ?, num_records = ?, num_fields = ?, cur_username = ?" + 
 		                 "where batch_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setInt(1, batch.getProject_id());
@@ -101,7 +103,8 @@ public class BatchDAO {
 		    stmt.setInt(4, batch.getRecord_height());
 		    stmt.setInt(5, batch.getNum_records());
 		    stmt.setInt(6, batch.getNum_fields());
-		    stmt.setInt(7, batch.getBatch_id());
+		    stmt.setString(7, batch.getCur_username());
+		    stmt.setInt(8, batch.getBatch_id());
 
 		    if (stmt.executeUpdate() == 1) {
 		    	  // OK
