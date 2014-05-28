@@ -1,6 +1,7 @@
 package importer;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.w3c.dom.*;
 
 import server.database.*;
 import shared.models.*;
-
+import org.apache.commons.io.*;
 
 public class DataImporter {
 	
@@ -36,15 +37,14 @@ public class DataImporter {
 		return;
 	}
 	
-	public void copyFiles(String xml_path_str) {
-		Path src_path = new File(xml_path_str).toPath();
-		src_path = src_path.getParent();
-		
-		Path dst_path = new File("").toPath();
-		
-		Files.copy(src_path, dst_path, StandardCopyOption.REPLACE_EXISTING);
-	
-		
+	public void copyFiles(String xml_path_str) throws IOException {
+		File src_file = new File(xml_path_str);
+		File dst_file = new File("records");
+
+		if(!src_file.getParentFile().getCanonicalPath().equals(dst_file.getCanonicalPath()))
+			FileUtils.deleteDirectory(dst_file);
+			
+		FileUtils.copyDirectory(src_file.getParentFile(), dst_file);
 	}
 	
 	public void parseProjectData(File xml_file) throws Exception {
