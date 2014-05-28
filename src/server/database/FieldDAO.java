@@ -56,6 +56,8 @@ public class FieldDAO {
 			String sql = "INSERT INTO fields (project_id, field_title, help_url," +
 					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?)";
 			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, field.getProject_id());
+			stmt.setString(2, field.getField_title());
 			stmt.setString(3, field.getHelp_url());
 			stmt.setInt(4, field.getX_coord());
 			stmt.setInt(5, field.getPixel_width());

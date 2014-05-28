@@ -1,17 +1,14 @@
 package importer;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import server.database.*;
 import shared.models.*;
@@ -34,13 +31,23 @@ public class DataImporter {
 		DataImporter importer = new DataImporter();
 		File xml_file = new File(args[0]);
 		importer.parseUsers(xml_file);
-		importer.parseProjects(xml_file);
-
-		
+		importer.parseProjectData(xml_file);
+		importer.copyFiles(args[0]);
 		return;
 	}
 	
-	public void parseProjects(File xml_file) throws Exception {
+	public void copyFiles(String xml_path_str) {
+		Path src_path = new File(xml_path_str).toPath();
+		src_path = src_path.getParent();
+		
+		Path dst_path = new File("").toPath();
+		
+		Files.copy(src_path, dst_path, StandardCopyOption.REPLACE_EXISTING);
+	
+		
+	}
+	
+	public void parseProjectData(File xml_file) throws Exception {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.parse(xml_file);
 		
@@ -83,7 +90,7 @@ public class DataImporter {
 		} 
 	}
 	
-	public void parseIndexedData(Element project_elem, int project_id, List<Integer> field_ids, List<Integer> batch_ids) {
+	public void parseIndexedData(Element project_elem, int project_id, List<Integer> field_ids, List<Integer> batch_ids) throws DatabaseException {
 		NodeList image_list = project_elem.getElementsByTagName("image");
 		for (int i = 0; i < image_list.getLength(); ++i) {		
 			Element image_elem = (Element)image_list.item(i);
@@ -93,12 +100,32 @@ public class DataImporter {
 				Element record_elem = (Element)record_list.item(j);
 				NodeList value_list = record_elem.getElementsByTagName("value");
 				
+				for (int k = 0; k < value_list.getLength(); ++k) {
+					Element value_elem = (Element)value_list.item(k);
+					
+					IndexedData record = new IndexedData();
+					
+					String record_value = value_elem.getTextContent();
+					int record_number = j + 1; // cannot have a 0 index for record_number
 				
-				
+					record.setBatch_id(batch_ids.get(i));
+					record.setField_id(field_ids.get(k));
+					record.setRecord_number(record_number);
+					record.setRecord_value(record_value);
+					
+					db.startTransaction();
+					try {
+						db.getIndexeddataDAO().add(record);
+						db.endTransaction(true);
+					}
+					catch (DatabaseException e) {
+						db.endTransaction(false);
+						throw new DatabaseException();
+					}
+				}
 			}
-			
-			
 		}
+		
 	}
 	
 	
@@ -140,13 +167,13 @@ public class DataImporter {
 			Element field_elem = (Element)field_list.item(j);
 			
 			Element field_title_elem = (Element)field_elem.getElementsByTagName("title").item(0);
-			Element x_coord_Elem = (Element)field_elem.getElementsByTagName("x_coord").item(0);
+			Element x_coord_elem = (Element)field_elem.getElementsByTagName("xcoord").item(0);
 			Element pixel_width_elem = (Element)field_elem.getElementsByTagName("width").item(0);
 			Element help_url_elem = (Element)field_elem.getElementsByTagName("helphtml").item(0);
 			Element known_values_url_elem = (Element)field_elem.getElementsByTagName("knowndata").item(0);
 			
 			String field_title = field_title_elem.getTextContent();
-			int x_coord = Integer.parseInt(x_coord_Elem.getTextContent());
+			int x_coord = Integer.parseInt(x_coord_elem.getTextContent());
 			int pixel_width = Integer.parseInt(pixel_width_elem.getTextContent());
 			String help_url = help_url_elem.getTextContent();
 			String known_values_url = null;
