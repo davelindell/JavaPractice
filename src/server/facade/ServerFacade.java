@@ -1,5 +1,6 @@
 package server.facade;
 
+import java.util.Iterator;
 import java.util.List;
 
 import server.database.Database;
@@ -109,7 +110,38 @@ public class ServerFacade {
 			return new GetSampleImage_Result(null);
 	}
 	
-	public DownloadBatch_Result downloadBatch(DownloadBatch_Params params) {
+	public DownloadBatch_Result downloadBatch(DownloadBatch_Params params) throws DatabaseException {
+		Database db = new Database();
+		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
+		String username = params.getUsername();
+		DownloadBatch_Result result = new DownloadBatch_Result();
+		if (validateUser(validate_user_params).isValid()) {
+			List<Batch> batches = db.getBatchDAO().getAll();
+			Iterator<Batch> iter = batches.iterator();
+			boolean found_open_batch = false;
+			
+			while (iter.hasNext() && !found_open_batch){
+				Batch batch = iter.next();
+				if (batch.getCur_username().equals(null)) {
+					found_open_batch = true;
+					batch.setCur_username(username);
+					db.getBatchDAO().update(batch);
+				
+					result.setBatch_id(batch.getBatch_id());
+					result.setFirst_y_coord(batch.getFirst_y_coord());
+					result.setImage_url(batch.getImage_url());
+					result.setNum_fields(batch.getNum_fields());
+					result.setNum_records(batch.getNum_records());
+					result.setProject_id(batch.getProject_id());
+					result.setRecord_height(batch.getRecord_height());
+			// set num fields.
+				}
+				
+			}
+		}
+		else {
+			return result;
+		}
 		
 		
 		
