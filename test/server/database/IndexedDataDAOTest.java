@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +40,15 @@ public class IndexedDataDAOTest {
 		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
 		FileUtils.copyFile(src, dst);	}
 
+	@Test
+	public void testGetByFieldAndValue() throws DatabaseException {
+		dataDAO.add(data.get(0));
+		dataDAO.add(data.get(1));
+		List<IndexedData> result = dataDAO.getByFieldAndValue(data.get(0).getField_id(), data.get(0).getRecord_value());
+		assertTrue(result.size() == 1);
+		assertTrue(areEqual(result.get(0), data.get(0)));
+	}
+	
 	@Test
 	public void testGetAll() throws DatabaseException {
 		dataDAO.add(data.get(0));

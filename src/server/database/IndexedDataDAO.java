@@ -21,6 +21,32 @@ public class IndexedDataDAO {
 		this.db = db;
 	}
 	
+	public List<IndexedData> getByFieldAndValue(int field_id, String value) throws DatabaseException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<IndexedData> data_list = new ArrayList<IndexedData>();
+		try {
+			String sql = "select * from indexed_data where field_id = ? and record_value = ?";
+			stmt = db.getConnection().prepareStatement(sql);
+			stmt.setInt(1, field_id);
+			stmt.setString(2, value);
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				IndexedData data = new IndexedData();
+				data.setData_id(rs.getInt(1));
+				data.setBatch_id(rs.getInt(2));
+				data.setRecord_number(rs.getInt(3));
+				data.setField_id(rs.getInt(4));
+				data.setRecord_value(rs.getString(5));
+				data_list.add(data);
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		return data_list;	
+	}
+	
 	public List<IndexedData> getAll() throws DatabaseException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -44,7 +70,6 @@ public class IndexedDataDAO {
 			throw new DatabaseException();
 		}
 		return data_list;	
-	
 	}
 	
 	public void add(IndexedData data) throws DatabaseException {

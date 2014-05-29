@@ -13,6 +13,7 @@ import org.w3c.dom.*;
 
 import server.database.*;
 import shared.models.*;
+
 import org.apache.commons.io.*;
 
 public class DataImporter {
@@ -24,17 +25,34 @@ public class DataImporter {
 		Database.initialize();
 	}
 	
-	public static void main(String[] args) throws Exception {		
+	public static void main(String[] args) {		
 		File src = new File("database/empty_record_indexer.sqlite");
 		File dst = new File("database/record_indexer.sqlite");
-		Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		try {
+			Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		DataImporter importer = new DataImporter();
-		File xml_file = new File(args[0]);
-		importer.parseUsers(xml_file);
-		importer.parseProjectData(xml_file);
-		importer.copyFiles(args[0]);
-		return;
+		DataImporter importer;
+		try {
+			importer = new DataImporter();
+	
+			File xml_file = new File(args[0]);
+			importer.parseUsers(xml_file);
+			importer.parseProjectData(xml_file);
+			importer.copyFiles(args[0]);
+		}
+		catch (DatabaseException e) {
+			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			return;
+		}
 	}
 	
 	public void copyFiles(String xml_path_str) throws IOException {

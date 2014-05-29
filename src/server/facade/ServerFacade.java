@@ -1,5 +1,11 @@
 package server.facade;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +21,7 @@ import shared.communication.GetProjects_Params;
 import shared.communication.GetProjects_Result;
 import shared.communication.GetSampleImage_Params;
 import shared.communication.GetSampleImage_Result;
+import shared.communication.SearchResultTuple;
 import shared.communication.Search_Params;
 import shared.communication.Search_Result;
 import shared.communication.SubmitBatch_Params;
@@ -25,12 +32,12 @@ import shared.models.*;
 
 public class ServerFacade {
 	
-	public static void initialize() throws DatabaseException {		
+	public static void initialize() throws ServerFacadeException {		
 		try {
 			Database.initialize();		
 		}
 		catch (DatabaseException e) {
-			throw new DatabaseException(e.getMessage(), e);
+			throw new ServerFacadeException(e.getMessage(), e);
 		}		
 	}
 	
@@ -115,13 +122,16 @@ public class ServerFacade {
 		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
 		String username = params.getUsername();
 		DownloadBatch_Result result = new DownloadBatch_Result();
+		
 		if (validateUser(validate_user_params).isValid()) {
+			
 			List<Batch> batches = db.getBatchDAO().getAll();
 			Iterator<Batch> iter = batches.iterator();
 			boolean found_open_batch = false;
 			
 			while (iter.hasNext() && !found_open_batch){
 				Batch batch = iter.next();
+				
 				if (batch.getCur_username().equals(null)) {
 					found_open_batch = true;
 					batch.setCur_username(username);
@@ -134,36 +144,88 @@ public class ServerFacade {
 					result.setNum_records(batch.getNum_records());
 					result.setProject_id(batch.getProject_id());
 					result.setRecord_height(batch.getRecord_height());
-			// set num fields.
+					result.setFields(db.getFieldDAO().getBatchFields(batch.getProject_id()));
 				}
-				
 			}
 		}
-		else {
-			return result;
+		return result;
+	}
+	
+	public SubmitBatch_Result submitBatch(SubmitBatch_Params params) throws DatabaseException {
+		Database db = new Database();
+		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
+		SubmitBatch_Result result = new SubmitBatch_Result(false);
+		
+		if (validateUser(validate_user_params).isValid()) {
+			List<IndexedData> data = params.getIndexed_data();
+			for (IndexedData datum : data) {
+				db.getIndexeddataDAO().add(datum);
+			}
+			if (!data.isEmpty()) {
+				// get batch id from one of the data records
+				int batch_id = data.get(0).getBatch_id();
+				
+				// retrieve the batch from the database and set the current user to null
+				Batch cur_batch = db.getBatchDAO().getBatch(batch_id);
+				cur_batch.setCur_username(null);
+				db.getBatchDAO().update(cur_batch);
+			}
+			result.setValid(true);
 		}
 		
-		
-		
-		
-		return null;
+		return result;
 	}
 	
-	public SubmitBatch_Result submitBatch(SubmitBatch_Params params) {
-		return null;
+	public GetFields_Result getFields(GetFields_Params params) throws DatabaseException {
+		Database db = new Database();
+		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
+		GetFields_Result result = new GetFields_Result(null);
+		
+		if (validateUser(validate_user_params).isValid()) {
+			List<Field> fields = null;
+			if (params.getProject_id() == 0)
+				fields = db.getFieldDAO().getAll();
+			else
+				fields = db.getFieldDAO().getBatchFields(params.getProject_id());
+			
+			result.setFields(fields);
+		}
+		
+		return result;
 	}
 	
-	public GetFields_Result getFields(GetFields_Params params) {
-		return null;
-	}
-	
-	public Search_Result search(Search_Params params) {
-		return null;
+	public Search_Result search(Search_Params params) throws DatabaseException {
+		Database db = new Database();
+		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
+		Search_Result result = new Search_Result();
+		List<SearchResultTuple> matches = new ArrayList<SearchResultTuple>();
+		
+		if (validateUser(validate_user_params).isValid()) {
+			String[] search_entries = params.getSearch_strings().split(",");
+			String[] field_ids = params.getField_ids().split(",");
+			List<IndexedData> record_results = new ArrayList<IndexedData>();
+			for (String entry : search_entries) {
+				for (String ids : field_ids) {
+					record_results.addAll(db.getIndexeddataDAO().getByFieldAndValue(Integer.parseInt(ids), entry));
+				}
+			}
+			
+			for (IndexedData record : record_results) {
+				SearchResultTuple search_result_tuple = new SearchResultTuple();
+				search_result_tuple.setBatch_id(record.getBatch_id());
+				search_result_tuple.setField_id(record.getField_id());
+				search_result_tuple.setRecord_number(record.getRecord_number());
+				search_result_tuple.setImage_url(db.getBatchDAO().getBatch(record.getBatch_id()).getImage_url());
+				matches.add(search_result_tuple);
+			}
+			result.setMatches(matches);
+		}
+		return result;
 	}
 
-	public DownloadFile_Result downloadFile(DownloadFile_Params params) {
-		return null;
+	public DownloadFile_Result downloadFile(DownloadFile_Params params) throws IOException {
+		Path path = Paths.get(params.getUrl());
+		byte[] data = Files.readAllBytes(path);
+		return new DownloadFile_Result(data);
 	}
-	
-	
 }

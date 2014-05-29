@@ -9,7 +9,7 @@ package shared.communication;
 public class SubmitBatch_Result {
 	private boolean valid;
 	
-	SubmitBatch_Result(boolean valid) {
+	public SubmitBatch_Result(boolean valid) {
 		this.valid = valid;
 	}
 

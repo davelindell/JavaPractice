@@ -3,8 +3,6 @@ package server.database;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import shared.models.Batch;
 import shared.models.Field;
 
 public class FieldDAOTest {
@@ -138,6 +137,28 @@ public class FieldDAOTest {
 		assert(field_list.size() == 0);
 	}
 	
+	@Test 
+	public void testGetBatchFields() throws DatabaseException {
+		Field field1 = fields.get(0);
+		Field field2 = fields.get(1);
+		
+		fieldDAO.add(field1);
+		fieldDAO.add(field2);
+		
+		List<Field> field_list = fieldDAO.getAll();
+		field1.setField_id(field_list.get(0).getField_id());
+		field2.setField_id(field_list.get(1).getField_id());
+		
+		assert(field_list.size() == 2);
+		
+		Batch batch = new Batch();
+		batch.setProject_id(1);
+		
+		List<Field> batch_fields = fieldDAO.getBatchFields(batch.getProject_id());
+		
+		assertTrue(batch_fields.size() == 1);
+	}
+	
 	private boolean areEqual(Field field1, Field field2) {
 		return 	field1.getProject_id() == field2.getProject_id() &&
 				field1.getField_title().equals(field2.getField_title()) &&
@@ -170,4 +191,7 @@ public class FieldDAOTest {
 		fields.add(field2);
 		return fields;
 	}
+	
+
+	
 }

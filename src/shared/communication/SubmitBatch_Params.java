@@ -11,12 +11,10 @@ import shared.models.IndexedData;
  *
  */
 public class SubmitBatch_Params extends Communicator_Params {
-	// private int batch_id; indexed_data contains the batch_id
 	private List<IndexedData> indexed_data;
 	
 	SubmitBatch_Params(String username, String password, int batch_id, List<IndexedData> indexed_data) {
 		super(username, password);
-		// this.batch_id = batch_id;
 		this.indexed_data = indexed_data;
 	}
 	

@@ -3,8 +3,6 @@ package server.database;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +37,16 @@ public class BatchDAOTest {
 		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
 		FileUtils.copyFile(src, dst);	}
 
+	@Test
+	public void testGetBatch() throws DatabaseException {
+		batchDAO.add(batches.get(0));
+		batchDAO.add(batches.get(1));
+		List<Batch> batch_list = batchDAO.getAll();
+		int batch_id = batch_list.get(0).getBatch_id();
+		
+		assertTrue(areEqual(batchDAO.getBatch(batch_id), batches.get(0)));
+	}
+	
 	@Test
 	public void testGetAll() throws DatabaseException {
 		batchDAO.add(batches.get(0));

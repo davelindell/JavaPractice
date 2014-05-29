@@ -6,12 +6,13 @@ package shared.communication;
  * @author lindell
  *
  */
-public class Search_Params {
+public class Search_Params extends Communicator_Params {
 	// These strings represent comma separated lists
 	private String field_ids;
 	private String search_strings;
 	
-	public Search_Params(String field_ids, String search_strings) {
+	public Search_Params(String username, String password, String field_ids, String search_strings) {
+		super(username, password);
 		this.field_ids = field_ids;
 		this.search_strings = search_strings;
 	}

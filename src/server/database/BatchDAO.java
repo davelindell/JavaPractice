@@ -19,6 +19,33 @@ public class BatchDAO {
 		this.db = db;
 	}
 	
+	public Batch getBatch(int batch_id) throws DatabaseException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Batch batch = new Batch();
+		try {
+			String sql = "select * from batches where batch_id = ?";
+			stmt = db.getConnection().prepareStatement(sql);
+			stmt.setInt(1, batch_id);
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				batch.setBatch_id(rs.getInt(1));
+				batch.setProject_id(rs.getInt(2));
+				batch.setImage_url(rs.getString(3));
+				batch.setFirst_y_coord(rs.getInt(4));
+				batch.setRecord_height(rs.getInt(5));
+				batch.setNum_records(rs.getInt(6));
+				batch.setNum_fields(rs.getInt(7));
+				batch.setCur_username(rs.getString(8));
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		return batch;	
+		
+	}
+	
 	public List<Batch> getAll() throws DatabaseException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;

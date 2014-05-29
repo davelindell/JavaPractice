@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.models.Batch;
 import shared.models.Field;
 /**
  * The Field database access object. Contains methods for interacting
@@ -159,6 +160,35 @@ public class FieldDAO {
 				}
 		    }
 		}	
+	}
+	
+	public List<Field> getBatchFields(int project_id) throws DatabaseException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Field> fields = new ArrayList<Field>();
+		try {
+			String sql = "select * from fields where project_id = ?";
+			stmt = db.getConnection().prepareStatement(sql);
+			stmt.setInt(1, project_id);
+				
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Field field = new Field();
+				field.setProject_id(rs.getInt(1));
+				field.setField_id(rs.getInt(2));
+				field.setField_title(rs.getString(3));
+				field.setHelp_url(rs.getString(4));
+				field.setX_coord(rs.getInt(5));
+				field.setPixel_width(rs.getInt(6));
+				field.setKnown_values_url(rs.getString(7));
+				fields.add(field);
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException();
+		}
+		return fields;	
+		
 	}
 		
 }
