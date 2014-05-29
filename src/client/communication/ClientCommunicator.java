@@ -1,5 +1,6 @@
 package client.communication;
 
+import client.ClientException;
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
 import shared.communication.DownloadFile_Params;
@@ -39,6 +40,7 @@ public class ClientCommunicator {
 	 */
 	
 	public ValidateUser_Result validateUser(ValidateUser_Params params) {
+		doPost("/UpdateContact", params);
 		return null;
 	}
 	
@@ -116,8 +118,16 @@ public class ClientCommunicator {
 		return null;
 	}
 	
+	private Object doGet(String urlPath) throws ClientException {
+		// Make HTTP GET request to the specified URL, 
+		// and return the object returned by the server
+		return null;
+	}
 	
-	
+	private void doPost(String urlPath, Object postData) throws ClientException {
+		// Make HTTP POST request to the specified URL, 
+		// passing in the specified postData object
+	}
 	
 }
 

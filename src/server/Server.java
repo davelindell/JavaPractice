@@ -82,20 +82,30 @@ public class Server {
 
 		server.setExecutor(null); // use the default executor
 		
-		server.createContext("/GetAllContacts", getAllContactsHandler);
-		server.createContext("/AddContact", addContactHandler);
-		server.createContext("/UpdateContact", updateContactHandler);
-		server.createContext("/DeleteContact", deleteContactHandler);
+		server.createContext("/ValidateUser", validateUserHandler);
+		server.createContext("/GetProjects", getProjectsHandler);
+		server.createContext("/GetSampleImage", getSampleImageHandler);
+		server.createContext("/DownloadBatch", downloadBatchHandler);
+		server.createContext("/SubmitBatch", submitBatchHandler);
+		server.createContext("/GetFields", getFieldsHandler);
+		server.createContext("/Search", searchHandler);
+		server.createContext("/DownloadFile", downloadFileHandler);
+
+		
 		
 		logger.info("Starting HTTP Server");
 
 		server.start();
 	}
 
-	private HttpHandler getAllContactsHandler = new GetAllContactsHandler();
-	private HttpHandler addContactHandler = new AddContactHandler();
-	private HttpHandler updateContactHandler = new UpdateContactHandler();
-	private HttpHandler deleteContactHandler = new DeleteContactHandler();
+	private HttpHandler validateUserHandler = new ValidateUserHandler();
+	private HttpHandler getProjectsHandler = new GetProjectsHandler();
+	private HttpHandler getSampleImageHandler = new GetSampleImageHandler();
+	private HttpHandler downloadBatchHandler = new DownloadBatchHandler();
+	private HttpHandler submitBatchHandler = new SubmitBatchHandler();
+	private HttpHandler getFieldsHandler = new GetFieldsHandler();
+	private HttpHandler searchHandler = new SearchHandler();
+	private HttpHandler downloadFileHandler = new DownloadFileHandler();
 	
 	public static void main(String[] args) {
 		new Server(Integer.parseInt(args[0])).run();

@@ -41,6 +41,10 @@ public class ServerFacade {
 		}		
 	}
 	
+	public ServerFacade() {
+		
+	}
+	
 	public ValidateUser_Result validateUser(ValidateUser_Params params) throws DatabaseException {
 		Database db = new Database();
 		
