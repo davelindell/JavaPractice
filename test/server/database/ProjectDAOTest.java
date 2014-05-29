@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,10 +22,9 @@ public class ProjectDAOTest {
 	
 	@Before
 	public void setUp() throws Exception {	
-		File src = new File("database/empty_record_indexer.sqlite");
-		File dst = new File("database/record_indexer.sqlite");
-		Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);
 		Database.initialize();
 		db  = new Database();
 		projectDAO = new ProjectDAO(db);
@@ -36,7 +36,9 @@ public class ProjectDAOTest {
 	public void tearDown() throws Exception {
 		db.endTransaction(true);
 		projectDAO = null;
-	}
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);	}
 
 	@Test
 	public void testGetAll() throws DatabaseException {

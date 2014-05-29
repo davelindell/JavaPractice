@@ -2,9 +2,14 @@ package server.database;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +22,11 @@ public class IndexedDataDAOTest {
 	private List<IndexedData> data;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws Exception {		
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);
+		
 		Database.initialize();
 		db  = new Database();
 		dataDAO = new IndexedDataDAO(db);
@@ -27,9 +36,11 @@ public class IndexedDataDAOTest {
 
 	@After
 	public void tearDown() throws Exception {
-		db.endTransaction(false);
+		db.endTransaction(true);
 		dataDAO = null;
-	}
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);	}
 
 	@Test
 	public void testGetAll() throws DatabaseException {
@@ -39,7 +50,7 @@ public class IndexedDataDAOTest {
 	}
 
 	@Test
-	public void testAdd() throws DatabaseException {
+	public void testAdd() throws DatabaseException, IOException {
 		IndexedData data1 = data.get(0);
 		IndexedData data2 = data.get(1);
 		

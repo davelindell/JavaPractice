@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +23,9 @@ public class DataImporterTest {
 		db  = new Database();
 		Database.initialize();
 		data_importer = new DataImporter();
-		File src = new File("database/empty_record_indexer.sqlite");
-		File dst = new File("database/record_indexer.sqlite");
-		Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	}
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);	}
 
 	@After
 	public void tearDown() throws Exception {
