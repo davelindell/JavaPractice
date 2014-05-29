@@ -18,5 +18,23 @@ public class GetFields_Result {
 	public void setFields(List<Field> fields) {
 		this.fields = fields;
 	}
+
+	@Override
+	public String toString() {
+		String result = null;
+		
+		if (fields == null)
+			result = "FAILED\n";
+		else {
+			for (Field field : fields) {
+				result += field.getProject_id() + "\n" + 
+						  field.getField_id() + "\n" + 
+						  field.getField_title() + "\n";
+				
+				
+			}
+		}
+		return result;
+	}
 	
 }

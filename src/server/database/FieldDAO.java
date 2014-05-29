@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import shared.models.Batch;
 import shared.models.Field;
 /**
  * The Field database access object. Contains methods for interacting
@@ -35,11 +33,12 @@ public class FieldDAO {
 				Field field = new Field();
 				field.setProject_id(rs.getInt(1));
 				field.setField_id(rs.getInt(2));
-				field.setField_title(rs.getString(3));
-				field.setHelp_url(rs.getString(4));
-				field.setX_coord(rs.getInt(5));
-				field.setPixel_width(rs.getInt(6));
-				field.setKnown_values_url(rs.getString(7));
+				field.setField_num(rs.getInt(3));
+				field.setField_title(rs.getString(4));
+				field.setHelp_url(rs.getString(5));
+				field.setX_coord(rs.getInt(6));
+				field.setPixel_width(rs.getInt(7));
+				field.setKnown_values_url(rs.getString(8));
 				fields.add(field);
 			}
 		}
@@ -54,15 +53,16 @@ public class FieldDAO {
 		int primary_key = 0;
 		PreparedStatement stmt = null;
 		try {
-			String sql = "INSERT INTO fields (project_id, field_title, help_url," +
-					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?)";
+			String sql = "INSERT INTO fields (project_id, field_num, field_title, help_url," +
+					  " x_coord, pixel_width, known_values_url) VALUES (?,?,?,?,?,?,?)";
 			stmt = db.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			stmt.setInt(1, field.getProject_id());
-			stmt.setString(2, field.getField_title());
-			stmt.setString(3, field.getHelp_url());
-			stmt.setInt(4, field.getX_coord());
-			stmt.setInt(5, field.getPixel_width());
-			stmt.setString(6, field.getKnown_values_url());
+			stmt.setInt(2, field.getField_num());
+			stmt.setString(3, field.getField_title());
+			stmt.setString(4, field.getHelp_url());
+			stmt.setInt(5, field.getX_coord());
+			stmt.setInt(6, field.getPixel_width());
+			stmt.setString(7, field.getKnown_values_url());
 			
 			if (stmt.executeUpdate() == 1) {
 				ResultSet key_set = stmt.getGeneratedKeys();
@@ -95,17 +95,18 @@ public class FieldDAO {
 		PreparedStatement stmt = null;
 		try {
 		    String sql = "UPDATE fields " + 
-		                 "set project_id = ?, field_title = ?, help_url = ?, " +
+		                 "set project_id = ?, field_num = ?, field_title = ?, help_url = ?, " +
 		                 "x_coord = ?, pixel_width = ?, known_values_url = ? " + 
 		                 "where field_id = ?";
 		    stmt = db.getConnection().prepareStatement(sql);
 		    stmt.setInt(1, field.getProject_id());
-		    stmt.setString(2, field.getField_title());
-		    stmt.setString(3, field.getHelp_url());
-		    stmt.setInt(4, field.getX_coord());
-		    stmt.setInt(5, field.getPixel_width());
-		    stmt.setString(6, field.getKnown_values_url());
-		    stmt.setInt(7, field.getField_id());
+		    stmt.setInt(2, field.getField_num());
+		    stmt.setString(3, field.getField_title());
+		    stmt.setString(4, field.getHelp_url());
+		    stmt.setInt(5, field.getX_coord());
+		    stmt.setInt(6, field.getPixel_width());
+		    stmt.setString(7, field.getKnown_values_url());
+		    stmt.setInt(8, field.getField_id());
 		    
 		    if (stmt.executeUpdate() == 1) {
 		    	  // OK
@@ -176,11 +177,12 @@ public class FieldDAO {
 				Field field = new Field();
 				field.setProject_id(rs.getInt(1));
 				field.setField_id(rs.getInt(2));
-				field.setField_title(rs.getString(3));
-				field.setHelp_url(rs.getString(4));
-				field.setX_coord(rs.getInt(5));
-				field.setPixel_width(rs.getInt(6));
-				field.setKnown_values_url(rs.getString(7));
+				field.setField_num(rs.getInt(3));
+				field.setField_title(rs.getString(4));
+				field.setHelp_url(rs.getString(5));
+				field.setX_coord(rs.getInt(6));
+				field.setPixel_width(rs.getInt(7));
+				field.setKnown_values_url(rs.getString(8));
 				fields.add(field);
 			}
 		}

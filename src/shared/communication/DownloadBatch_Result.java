@@ -94,5 +94,33 @@ public class DownloadBatch_Result {
 	public void setFields(List<Field> fields) {
 		this.fields = fields;
 	}
+
+	@Override
+	public String toString() {
+		String result = null;
+		if (batch_id == 0) {
+			result = "FAILED\n";
+		}
+		else {
+			result = Integer.toString(batch_id) + "\n" + 
+					 Integer.toString(project_id) + "\n" + 
+					 image_url + "\n" + 
+					 Integer.toString(first_y_coord) + "\n" + 
+					 Integer.toString(record_height) + "\n" + 
+					 Integer.toString(num_records) + "\n" + 
+					 Integer.toString(num_fields) + "\n";
+			for (Field field : fields) {
+				result += Integer.toString(field.getField_id()) + "\n" + 
+						  Integer.toString(field.getField_num()) + "\n" + 
+						  field.getField_title() + "\n" + 
+						  field.getHelp_url() + "\n" + 
+						  Integer.toString(field.getX_coord()) + "\n" + 
+						  Integer.toString(field.getPixel_width()) + "\n";
+				if (field.getKnown_values_url() != null)
+					result += field.getKnown_values_url() + "\n";
+			}
+		}
+		return result;
+	}
 	
 }

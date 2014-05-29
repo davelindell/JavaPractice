@@ -20,5 +20,16 @@ public class SubmitBatch_Result {
 	public void setValid(boolean valid) {
 		this.valid = valid;
 	}
+
+	@Override
+	public String toString() {
+		String result = null;
+		if (!valid) {
+			result = "FAILED\n";
+		}
+		else
+			result = "TRUE\n";
+		return result;
+	}
 	
 }

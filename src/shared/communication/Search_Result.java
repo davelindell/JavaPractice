@@ -22,6 +22,22 @@ public class Search_Result {
 	public void setMatches(List<SearchResultTuple> matches) {
 		this.matches = matches;
 	}
+
+	@Override
+	public String toString() {
+		String result = null;
+		if (matches == null) 
+			result = "FAILED\n";
+		else {
+			for (SearchResultTuple s : matches) {
+				result += 	s.getBatch_id() + "\n" +
+						 	s.getImage_url() + "\n" + 
+						 	s.getRecord_number() + "\n" +
+						 	s.getField_id() + "\n";
+			}
+		}
+		return result;
+	}
 	
 
 }

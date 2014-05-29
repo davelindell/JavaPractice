@@ -2,9 +2,11 @@ package server.database;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +20,10 @@ public class UserDAOTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
+		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
+		FileUtils.copyFile(src, dst);
+
 		Database.initialize();
 		db  = new Database();
 		userDAO = new UserDAO(db);

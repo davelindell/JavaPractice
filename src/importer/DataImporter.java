@@ -50,9 +50,8 @@ public class DataImporter {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			return;
-		}
+
+		return;
 	}
 	
 	public void copyFiles(String xml_path_str) throws IOException {
@@ -200,6 +199,7 @@ public class DataImporter {
 			
 			Field field = new Field();
 			field.setProject_id(project_id);
+			field.setField_num(j + 1);
 			field.setField_title(field_title);
 			field.setX_coord(x_coord);
 			field.setPixel_width(pixel_width);

@@ -7,6 +7,7 @@ package shared.models;
 public class Field {
 	private int project_id;
 	private int field_id;
+	private int field_num;
 	private String field_title;
 	private String help_url;
 	private int x_coord;
@@ -79,4 +80,11 @@ public class Field {
 		this.known_values_url = known_values_url;
 	}
 	
+	public int getField_num() {
+		return field_num;
+	}
+
+	public void setField_num(int field_num) {
+		this.field_num = field_num;
+	}
 }

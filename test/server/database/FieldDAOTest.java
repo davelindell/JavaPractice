@@ -165,6 +165,7 @@ public class FieldDAOTest {
 				field1.getHelp_url().equals(field2.getHelp_url()) &&
 				field1.getX_coord() == field2.getX_coord() &&
 				field1.getPixel_width() == field2.getPixel_width() &&
+				field1.getField_num() == field2.getField_num() &&
 				field1.getKnown_values_url().equals(field2.getKnown_values_url());
 	}
 	
@@ -173,6 +174,7 @@ public class FieldDAOTest {
 		
 		Field field1 = new Field();
 		field1.setProject_id(1);
+		field1.setField_num(1);
 		field1.setField_title("field1");
 		field1.setHelp_url("help/text.txt");
 		field1.setX_coord(5);
@@ -181,6 +183,7 @@ public class FieldDAOTest {
 		
 		Field field2 = new Field();		
 		field2.setProject_id(2);
+		field2.setField_num(2);
 		field2.setField_title("field2");
 		field2.setHelp_url("help/text2.txt");
 		field2.setX_coord(25);

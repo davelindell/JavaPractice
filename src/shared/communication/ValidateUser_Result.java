@@ -20,6 +20,16 @@ public class ValidateUser_Result {
 		this.valid = valid;
 	}
 
+	@Override
+	public String toString() {
+		if (valid) {
+			return "TRUE\n" + user.getUser_first_name() + "\n" + user.getUser_last_name() + 
+					"\n" + Integer.toString(user.getNum_records()) + "\n";
+		}
+		else
+			return "FALSE\n";
+	}
+
 	public User getUser() {
 		return user;
 	}

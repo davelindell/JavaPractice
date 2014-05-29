@@ -1,5 +1,13 @@
 package client.communication;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import com.thoughtworks.xstream.XStream;
+
 import client.ClientException;
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
@@ -27,9 +35,16 @@ import shared.communication.ValidateUser_Result;
  */
 
 public class ClientCommunicator {
+	private String host_url;
+	private String port;
+	
+	public ClientCommunicator(String url, String port) {
+		this.host_url = url;
+		this.port = port;
+	}
 	
 	/** 
-	 * ValidateUser_Result takes a wrapper class and returns a wrapper
+	 * ValidateUser takes a wrapper class and returns a wrapper
 	 * with a User object inside of it. The method queries the server to see 
 	 * if there is a valid user with the information provided in the parameter.
 	 * 
@@ -37,11 +52,11 @@ public class ClientCommunicator {
 	 * strings which describe the user.
 	 * @return ValidateUser_Result, a wrapper class for a User, which is not null
 	 * if the validation was successful.
+	 * @throws ClientException 
 	 */
 	
-	public ValidateUser_Result validateUser(ValidateUser_Params params) {
-		doPost("/UpdateContact", params);
-		return null;
+	public ValidateUser_Result validateUser(ValidateUser_Params params) throws ClientException {
+		return (ValidateUser_Result)doPost(host_url + ":" + port + "/UpdateContact", params);
 	}
 	
 	/**
@@ -52,9 +67,10 @@ public class ClientCommunicator {
 	 * the user's name and password.
 	 * @return GetProject_Result, a wrapper class that contains info on all current 
 	 * projects.
+	 * @throws ClientException 
 	 */
-	public GetProjects_Result getProjects(GetProjects_Params params) {
-		return null;
+	public GetProjects_Result getProjects(GetProjects_Params params) throws ClientException {
+		return (GetProjects_Result)doPost(host_url + ":" + port + "/GetProjects", params);
 	}
 	
 	/**
@@ -63,9 +79,11 @@ public class ClientCommunicator {
 	 * @param params a wrapper class of type GetSampleImage_params that contains
 	 * the username, password, and a project id.
 	 * @return GetSampleImage_Result, a wrapper class that contains a sample image url.
+	 * @throws ClientException 
 	 */
-	public GetSampleImage_Result getSampleImage(GetSampleImage_Params params) {
-		return null;
+	public GetSampleImage_Result getSampleImage(GetSampleImage_Params params) throws ClientException {
+		return (GetSampleImage_Result)doPost(host_url + ":" + port + "/GetSampleImage", params);
+
 	}
 	
 	/**
@@ -73,9 +91,10 @@ public class ClientCommunicator {
 	 * are contained in wrapper classes.
 	 * @param params wrapper class that contains the username, password and the project ID.
 	 * @return an object of type DownloadBatch_Result that contains all the information for the batch.
+	 * @throws ClientException 
 	 */
-	public DownloadBatch_Result downloadBatch(DownloadBatch_Params params) {
-		return null;
+	public DownloadBatch_Result downloadBatch(DownloadBatch_Params params) throws ClientException {
+		return (DownloadBatch_Result)doPost(host_url + ":" + port + "/DownloadBatch", params);
 	}
 	
 	/**
@@ -83,9 +102,10 @@ public class ClientCommunicator {
 	 * @param params wrapper class that contains all the parameters for this method.
 	 * @return wrapper class that contains a boolean value signifying the successful
 	 * or unsuccessful completion of the method call.
+	 * @throws ClientException 
 	 */
-	public SubmitBatch_Result submitBatch(SubmitBatch_Params params) {
-		return null;
+	public SubmitBatch_Result submitBatch(SubmitBatch_Params params) throws ClientException {
+		return (SubmitBatch_Result)doPost(host_url + ":" + port + "/SubmitBatch", params);
 	}
 	
 	/**
@@ -95,9 +115,10 @@ public class ClientCommunicator {
 	 * @param params Wrapper class for the input parameters. If the project_id is 
 	 * equal to 0, then it should return information about all the projects.
 	 * @return wrapper class that contains an array of fields.
+	 * @throws ClientException 
 	 */
-	public GetFields_Result getFields(GetFields_Params params) {
-		return null;
+	public GetFields_Result getFields(GetFields_Params params) throws ClientException {
+		return (GetFields_Result)doPost(host_url + ":" + port + "/GetFields", params);
 	}
 	
 	/**
@@ -105,28 +126,108 @@ public class ClientCommunicator {
 	 * @param params contains the specified string and the field ids to be searched
 	 * @return returns a wrapper containing a list of tuples with information about the 
 	 * results of the search.
+	 * @throws ClientException 
 	 */
-	public Search_Result search(Search_Params params) {
-		return null;
+	public Search_Result search(Search_Params params) throws ClientException {
+		return (Search_Result)doPost(host_url + ":" + port + "/Search", params);
 	}
 	/**
 	 * Downloads the file from the server. Uses HTTP GET requests to download the data.
 	 * @param params wrapper class containing the download url.
 	 * @return wrapper class containing a byte array representing the downloaded data.
+	 * @throws ClientException 
 	 */
-	public DownloadFile_Result downloadFile(DownloadFile_Params params) {
-		return null;
+	public DownloadFile_Result downloadFile(DownloadFile_Params params) throws ClientException {
+		return (DownloadFile_Result)doPost(host_url + ":" + port + "/DownloadFile", params);
 	}
 	
 	private Object doGet(String urlPath) throws ClientException {
 		// Make HTTP GET request to the specified URL, 
 		// and return the object returned by the server
-		return null;
+		XStream xml_stream = new XStream();
+		Object result_obj = null;
+		
+		try {
+			URL url = new URL(urlPath);
+			   
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			   
+			connection.setRequestMethod("GET");	   
+			   
+			// Set HTTP request headers, if necessary
+			// connection.addRequestProperty(”Accept”, ”text/html”);
+			   
+			connection.connect();
+			   
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				// Get HTTP response headers, if necessary
+				// Map<String, List<String>> headers = connection.getHeaderFields();
+		
+				InputStream responseBody = connection.getInputStream();
+				// Read response body from InputStream ...
+				
+				result_obj = xml_stream.fromXML(responseBody);
+			}
+			else {
+				// SERVER RETURNED AN HTTP ERROR
+				System.out.println("HTTP Error");
+				throw new ClientException();
+			}
+		}
+		catch (IOException e) {
+			// IO ERROR
+			System.out.println("IO Error");
+			throw new ClientException();
+		} 
+			
+		return result_obj;
 	}
 	
-	private void doPost(String urlPath, Object postData) throws ClientException {
+	private Object doPost(String urlPath, Object postData) throws ClientException {
 		// Make HTTP POST request to the specified URL, 
 		// passing in the specified postData object
+		XStream xml_stream = new XStream();
+		Object result_obj = null;
+		
+		try {
+			URL url = new URL(urlPath);
+			   
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			   
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+
+			// Set HTTP request headers, if necessary
+			// connection.addRequestProperty(”Accept”, ”text/html”);
+			   
+			connection.connect();
+			
+			OutputStream requestBody = connection.getOutputStream();
+			// Write request body to OutputStream ...
+			xml_stream.toXML(postData, requestBody);
+			
+			requestBody.close();
+			   
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				// Get HTTP response headers, if necessary
+				// Map<String, List<String>> headers = connection.getHeaderFields();
+
+				InputStream responseBody = connection.getInputStream();
+				// Read response body from InputStream ...
+				result_obj = xml_stream.fromXML(responseBody);
+			}
+			else {
+				// SERVER RETURNED AN HTTP ERROR
+				System.out.println("HTTP Error");
+				throw new ClientException();
+			}
+		}
+		catch (IOException e) {
+			// IO ERROR
+			System.out.println("IO Error");
+			throw new ClientException();
+		} 
+		return result_obj;
 	}
 	
 }

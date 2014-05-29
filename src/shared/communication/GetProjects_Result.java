@@ -18,5 +18,18 @@ public class GetProjects_Result {
 	public void setProject_info(List<Project> project_info) {
 		this.project_info = project_info;
 	}
+
+	@Override
+	public String toString() {
+		if (project_info == null)
+			return "FALSE";
+		else {
+			String result = "";
+			for (Project proj : project_info) {
+				result += Integer.toString(proj.getProject_id()) + "\n" + proj.getProject_title() + "\n";
+			}
+			return result;
+		}
+	}
 	
 }

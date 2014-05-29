@@ -2,7 +2,11 @@ package servertester.controllers;
 
 import java.util.*;
 
+import client.ClientException;
+import client.communication.ClientCommunicator;
 import servertester.views.*;
+import shared.communication.ValidateUser_Params;
+import shared.communication.ValidateUser_Result;
 
 public class Controller implements IController {
 
@@ -99,6 +103,19 @@ public class Controller implements IController {
 	}
 	
 	private void validateUser() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		ValidateUser_Params params = new ValidateUser_Params(param_values[0], param_values[1]);
+		
+		try {
+			ValidateUser_Result result = cc.validateUser(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
+		
 	}
 	
 	private void getProjects() {

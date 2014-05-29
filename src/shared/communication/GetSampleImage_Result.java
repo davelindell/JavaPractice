@@ -19,5 +19,16 @@ public class GetSampleImage_Result {
 	public void setImage_url(String image_url) {
 		this.image_url = image_url;
 	}
-	
+
+	@Override
+	public String toString() {
+		String result = null;
+		if (image_url == null) {
+			result = "FAILED\n";
+		}
+		else {
+			result = image_url + "\n";
+		}
+		return result;
+	}
 }

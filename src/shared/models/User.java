@@ -34,7 +34,7 @@ public class User {
 		num_records = 0;
 		email = null;
 	}
-
+	
 	public int getUser_id() {
 		return user_id;
 	}
