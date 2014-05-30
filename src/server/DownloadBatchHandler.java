@@ -31,9 +31,10 @@ public class DownloadBatchHandler implements HttpHandler {
 		Object result = null;
 		
 		try {
+			logger.fine("at server1");
 			result = (Object)facade.downloadBatch(params);
 			exchange.sendResponseHeaders(200, 0);
-
+			logger.fine("at server2");
 			OutputStream os = exchange.getResponseBody();
 
 			xml_stream.toXML(result, os);		

@@ -25,8 +25,8 @@ public class Search_Result {
 
 	@Override
 	public String toString() {
-		String result = null;
-		if (matches == null) 
+		String result = "";
+		if (matches.size() == 0) 
 			result = "FAILED\n";
 		else {
 			for (SearchResultTuple s : matches) {

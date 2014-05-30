@@ -26,7 +26,7 @@ public class Batch {
 		record_height = 0;
 		num_records = 0;
 		num_fields = 0;
-		cur_username = null;
+		cur_username = "";
 	}
 
 	public int getBatch_id() {

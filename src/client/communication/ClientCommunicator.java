@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.thoughtworks.xstream.XStream;
@@ -27,6 +28,7 @@ import shared.communication.SubmitBatch_Params;
 import shared.communication.SubmitBatch_Result;
 import shared.communication.ValidateUser_Params;
 import shared.communication.ValidateUser_Result;
+import shared.models.IndexedData;
 
 /** 
  * The Client Communicator class acts as a proxy communicator for the client
@@ -200,15 +202,14 @@ public class ClientCommunicator {
 			connection.setRequestMethod("POST");
 			connection.setDoOutput(true);
 
-			// Set HTTP request headers, if necessary
-			// connection.addRequestProperty(”Accept”, ”text/html”);			
 			connection.connect();
 			OutputStream requestBody = connection.getOutputStream();
+			
 			// Write request body to OutputStream ...
 			xml_stream.toXML(postData, requestBody);
 			
 			requestBody.close();
-			logger.fine(Integer.toString(connection.getResponseCode()));
+
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				// Get HTTP response headers, if necessary
 				// Map<String, List<String>> headers = connection.getHeaderFields();

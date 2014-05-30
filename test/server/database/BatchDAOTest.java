@@ -174,7 +174,7 @@ public class BatchDAOTest {
 		batch1.setImage_url("example/img.png");
 		batch1.setNum_fields(6);
 		batch1.setNum_records(18);
-		batch1.setProject_id(3);
+		batch1.setProject_id(1);
 		batch1.setRecord_height(14);
 		
 		Batch batch2 = new Batch();
@@ -182,7 +182,7 @@ public class BatchDAOTest {
 		batch2.setImage_url("example/img.png");
 		batch2.setNum_fields(6);
 		batch2.setNum_records(18);
-		batch2.setProject_id(3);
+		batch2.setProject_id(2);
 		batch2.setRecord_height(14);
 		
 		batches.add(batch1);

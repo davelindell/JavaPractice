@@ -26,7 +26,7 @@ public class IndexedDataDAO {
 		ResultSet rs = null;
 		List<IndexedData> data_list = new ArrayList<IndexedData>();
 		try {
-			String sql = "select * from indexed_data where field_id = ? and record_value = ?";
+			String sql = "select * from indexed_data where field_id = ? and lower(record_value) = ?";
 			stmt = db.getConnection().prepareStatement(sql);
 			stmt.setInt(1, field_id);
 			stmt.setString(2, value);

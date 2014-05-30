@@ -44,7 +44,7 @@ public class ServerFacadeTest {
 		user_test = new UserDAOTest();
 		
 		batches = batch_test.initBatches();
-		fields = field_test.initFields();
+		fields = initFields();
 		data = data_test.initData();
 		projects = project_test.initProjects();
 		users = user_test.initUsers();
@@ -115,23 +115,104 @@ public class ServerFacadeTest {
 	}
 
 	@Test
-	public void testDownloadBatch() {
-		fail("Not yet implemented");
+	public void testDownloadBatch() throws DatabaseException {
+		Database db = new Database();
+		DownloadBatch_Params params = new DownloadBatch_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1);
+		db.startTransaction();
+		db.getProjectDAO().add(projects.get(0));
+		db.getBatchDAO().add(batches.get(0));
+		db.endTransaction(true);
+		
+		try {
+			DownloadBatch_Result result = sf.downloadBatch(params);
+			assertTrue( result.getBatch_id() == 1 && 
+						result.getNum_fields() == 6 &&
+						result.getProject_id() == 1);
+		} catch (DatabaseException e) {
+			assertTrue(false);
+		}
 	}
 
 	@Test
-	public void testSubmitBatch() {
-		fail("Not yet implemented");
+	public void testSubmitBatch() throws DatabaseException {
+		Database db = new Database();
+		String record_str = "a,b,c,d;e,f,g,h;";
+		List<List<IndexedData>> records = makeRecords(record_str, 1);
+		SubmitBatch_Params params = new SubmitBatch_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1, records);
+		db.startTransaction();
+		db.getProjectDAO().add(projects.get(0));
+		db.getBatchDAO().add(batches.get(0));
+		db.getFieldDAO().add(fields.get(0));
+		db.getFieldDAO().add(fields.get(1));
+		db.getFieldDAO().add(fields.get(2));
+		db.getFieldDAO().add(fields.get(3));
+		db.endTransaction(true);
+		
+		try {
+			testDownloadBatch();
+			SubmitBatch_Result result = sf.submitBatch(params);
+			assertTrue(result.isValid());
+			db.startTransaction();
+			assertTrue(db.getBatchDAO().getBatch(1).getCur_username().equals(""));
+			assertTrue(db.getIndexeddataDAO().getAll().size() == 8);
+			db.endTransaction(true);
+			
+		} catch (DatabaseException e) {
+			assertTrue(false);
+		}
 	}
 
 	@Test
-	public void testGetFields() {
-		fail("Not yet implemented");
+	public void testGetFields() throws DatabaseException {
+		Database db = new Database();
+		String record_str = "a,b,c,d;e,f,g,h;";
+		List<List<IndexedData>> records = makeRecords(record_str, 1);
+		GetFields_Params params = new GetFields_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1);
+		db.startTransaction();
+		db.getFieldDAO().add(fields.get(0));
+		db.getFieldDAO().add(fields.get(1));
+		db.getFieldDAO().add(fields.get(2));
+		db.getFieldDAO().add(fields.get(3));
+		db.endTransaction(true);
+		
+		try {
+			GetFields_Result result = sf.getFields(params);
+			
+		} catch (DatabaseException e) {
+			assertTrue(false);
+		}
 	}
 
 	@Test
-	public void testSearch() {
-		fail("Not yet implemented");
+	public void testSearch() throws DatabaseException {
+		Database db = new Database();
+		String record_str = "a,b,c,d;e,f,g,h;";
+		List<List<IndexedData>> records = makeRecords(record_str, 1);
+		SubmitBatch_Params params = new SubmitBatch_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1, records);
+		db.startTransaction();
+		db.getProjectDAO().add(projects.get(0));
+		db.getBatchDAO().add(batches.get(0));
+		db.getFieldDAO().add(fields.get(0));
+		db.getFieldDAO().add(fields.get(1));
+		db.getFieldDAO().add(fields.get(2));
+		db.getFieldDAO().add(fields.get(3));
+		db.endTransaction(true);
+		
+		Search_Params search_params = new Search_Params(users.get(0).getUsername(), users.get(0).getPassword(), "1,2,3,4","a,b,c,d");
+		
+		try {
+			testDownloadBatch();
+			SubmitBatch_Result result = sf.submitBatch(params);
+			
+			Search_Result search_result = sf.search(search_params);
+			assertTrue(search_result.getMatches().size() == 4);
+			assertTrue( search_result.getMatches().get(0).getBatch_id() == 1 &&
+					search_result.getMatches().get(0).getField_id() == 1 &&
+					search_result.getMatches().get(0).getRecord_number() == 1 &&
+					search_result.getMatches().get(0).getImage_url().equals("example/img.png"));
+		} catch (DatabaseException e) {
+			assertTrue(false);
+		}
 	}
 
 	@Test
@@ -139,5 +220,67 @@ public class ServerFacadeTest {
 		fail("Not yet implemented");
 	}
 	
+	private List<List<IndexedData>> makeRecords(String record_str, int batch_id) {
+		String record_strings[] = record_str.split(";");
+		List<List<IndexedData>> records = new ArrayList<List<IndexedData>>();
+		List<IndexedData> indexed_data = new ArrayList<IndexedData>();
+		
+		for(int i = 0; i < record_strings.length; ++i) {
+			records.add(new ArrayList<IndexedData>());
+			String[] data = record_strings[i].split(",");
+			for (int j = 0; j < data.length; ++j) {
+				IndexedData cur_data = new IndexedData();
+				cur_data.setBatch_id(batch_id);
+				cur_data.setRecord_value(data[j]);
+				records.get(i).add(cur_data);
+			}
+		}
+		return records;
+	}
 
+	private List<Field> initFields() {
+		List<Field> fields = new ArrayList<Field>();
+		
+		Field field1 = new Field();
+		field1.setProject_id(1);
+		field1.setField_num(1);
+		field1.setField_title("field1");
+		field1.setHelp_url("help/text.txt");
+		field1.setX_coord(5);
+		field1.setPixel_width(10);
+		field1.setKnown_values_url("folder/knownvalues.txt");
+		
+		Field field2 = new Field();		
+		field2.setProject_id(1);
+		field2.setField_num(2);
+		field2.setField_title("field2");
+		field2.setHelp_url("help/text2.txt");
+		field2.setX_coord(25);
+		field2.setPixel_width(22);
+		field2.setKnown_values_url("folder/knownvalues2.txt");
+		
+		Field field3 = new Field();		
+		field3.setProject_id(1);
+		field3.setField_num(3);
+		field3.setField_title("field3");
+		field3.setHelp_url("help/text3.txt");
+		field3.setX_coord(25);
+		field3.setPixel_width(22);
+		field3.setKnown_values_url("folder/knownvalues3.txt");
+		
+		Field field4 = new Field();		
+		field4.setProject_id(1);
+		field4.setField_num(4);
+		field4.setField_title("field4");
+		field4.setHelp_url("help/text4.txt");
+		field4.setX_coord(25);
+		field4.setPixel_width(22);
+		field4.setKnown_values_url("folder/knownvalues4.txt");
+		
+		fields.add(field1);
+		fields.add(field2);
+		fields.add(field3);
+		fields.add(field4);
+		return fields;
+	}
 }

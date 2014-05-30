@@ -1,7 +1,6 @@
 package server;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Logger;
@@ -9,8 +8,6 @@ import java.util.logging.Logger;
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
 import shared.communication.SubmitBatch_Params;
-import shared.communication.SubmitBatch_Result;
-import shared.communication.ValidateUser_Params;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -23,6 +20,7 @@ public class SubmitBatchHandler implements HttpHandler {
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
+		logger.fine("at server");
 		ServerFacade facade = new ServerFacade();
 		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());

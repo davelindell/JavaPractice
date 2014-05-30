@@ -181,17 +181,26 @@ public class Controller implements IController {
 	
 	private void submitBatch() {
 		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		List<List<IndexedData>> records = new ArrayList<List<IndexedData>>();
 		
 		String[] param_values = _view.getParameterValues();
-
-		String record_values[] = param_values[3].split(",");
+		int batch_id = Integer.parseInt(param_values[2]);
+		
+		String record_strings[] = param_values[3].split(";");
 		List<IndexedData> indexed_data = new ArrayList<IndexedData>();
-		for(String r : record_values) {
-			IndexedData cur_data = new IndexedData();
-			cur_data.setRecord_value(r);
+		
+		for(int i = 0; i < record_strings.length; ++i) {
+			records.add(new ArrayList<IndexedData>());
+			String[] data = record_strings[i].split(",");
+			for (int j = 0; j < data.length; ++j) {
+				IndexedData cur_data = new IndexedData();
+				cur_data.setBatch_id(batch_id);
+				cur_data.setRecord_value(data[j]);
+				records.get(i).add(cur_data);
+			}
 		}
 		
-		SubmitBatch_Params params = new SubmitBatch_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]), indexed_data);
+		SubmitBatch_Params params = new SubmitBatch_Params(param_values[0], param_values[1], batch_id, records);
 		
 		try {
 			SubmitBatch_Result result = cc.submitBatch(params);
@@ -202,6 +211,21 @@ public class Controller implements IController {
 	}
 	
 	private void search() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		Search_Params params = new Search_Params(param_values[0], param_values[1], param_values[2], param_values[3]);
+		
+		try {
+			Search_Result result = cc.search(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
+	
+	
+	
 	}
 
 }

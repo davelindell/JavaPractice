@@ -135,18 +135,22 @@ public class ServerFacade {
 		DownloadBatch_Result result = new DownloadBatch_Result();
 		
 		if (validateUser(validate_user_params).isValid()) {
-			
+			db.startTransaction();
 			List<Batch> batches = db.getBatchDAO().getAll();
+			db.endTransaction(true);
 			Iterator<Batch> iter = batches.iterator();
 			boolean found_open_batch = false;
 			
 			while (iter.hasNext() && !found_open_batch){
 				Batch batch = iter.next();
 				
-				if (batch.getCur_username().equals(null)) {
+				if (batch.getCur_username().equals("")) {
 					found_open_batch = true;
 					batch.setCur_username(username);
+					
+					db.startTransaction();
 					db.getBatchDAO().update(batch);
+					db.endTransaction(true);
 				
 					result.setBatch_id(batch.getBatch_id());
 					result.setFirst_y_coord(batch.getFirst_y_coord());
@@ -155,7 +159,9 @@ public class ServerFacade {
 					result.setNum_records(batch.getNum_records());
 					result.setProject_id(batch.getProject_id());
 					result.setRecord_height(batch.getRecord_height());
+					db.startTransaction();
 					result.setFields(db.getFieldDAO().getBatchFields(batch.getProject_id()));
+					db.endTransaction(true);
 				}
 			}
 		}
@@ -168,20 +174,44 @@ public class ServerFacade {
 		SubmitBatch_Result result = new SubmitBatch_Result(false);
 		
 		if (validateUser(validate_user_params).isValid()) {
-			List<IndexedData> data = params.getIndexed_data();
-			for (IndexedData datum : data) {
-				db.getIndexeddataDAO().add(datum);
-			}
-			if (!data.isEmpty()) {
-				// get batch id from one of the data records
-				int batch_id = data.get(0).getBatch_id();
+			List<List<IndexedData>> records = params.getRecords();
+			int field_id = 0;
+			List<Field> fields = null;
+			int batch_id = params.getBatch_id();
+			
+			db.startTransaction();
+			Batch cur_batch = db.getBatchDAO().getBatch(batch_id);
+			db.endTransaction(true);
+			
+			if (cur_batch.getCur_username().equals(params.getUsername())) {
+				// retrieve the batch from the database and set the current user to empty
+				cur_batch.setCur_username("");
 				
-				// retrieve the batch from the database and set the current user to null
-				Batch cur_batch = db.getBatchDAO().getBatch(batch_id);
-				cur_batch.setCur_username(null);
+				db.startTransaction();
 				db.getBatchDAO().update(cur_batch);
-			}
-			result.setValid(true);
+				fields = db.getFieldDAO().getBatchFields(cur_batch.getProject_id());
+				db.endTransaction(true);
+				
+				for (int i = 0; i < records.size(); ++i) {
+					for (int j = 0; j < records.get(i).size(); ++j) {
+						IndexedData cur_data = records.get(i).get(j);
+						cur_data.setRecord_number(i + 1);
+						cur_data.setField_id(fields.get(j).getField_id());
+						db.startTransaction();
+						db.getIndexeddataDAO().add(cur_data);
+						db.endTransaction(true);
+					}
+				}
+				
+				result.setValid(true);
+			}	
+			else
+				result.setValid(false);
+			
+			
+			
+			
+					
 		}
 		
 		return result;
@@ -194,10 +224,18 @@ public class ServerFacade {
 		
 		if (validateUser(validate_user_params).isValid()) {
 			List<Field> fields = null;
-			if (params.getProject_id() == 0)
+			if (params.getProject_id() == 0){
+				db.startTransaction();
 				fields = db.getFieldDAO().getAll();
-			else
+				db.endTransaction(true);
+			}
+				
+			else {
+				db.startTransaction();
 				fields = db.getFieldDAO().getBatchFields(params.getProject_id());
+				db.endTransaction(true);
+			}
+				
 			
 			result.setFields(fields);
 		}
@@ -217,7 +255,9 @@ public class ServerFacade {
 			List<IndexedData> record_results = new ArrayList<IndexedData>();
 			for (String entry : search_entries) {
 				for (String ids : field_ids) {
-					record_results.addAll(db.getIndexeddataDAO().getByFieldAndValue(Integer.parseInt(ids), entry));
+					db.startTransaction();
+					record_results.addAll(db.getIndexeddataDAO().getByFieldAndValue(Integer.parseInt(ids), entry.toLowerCase()));
+					db.endTransaction(true);
 				}
 			}
 			
@@ -226,7 +266,9 @@ public class ServerFacade {
 				search_result_tuple.setBatch_id(record.getBatch_id());
 				search_result_tuple.setField_id(record.getField_id());
 				search_result_tuple.setRecord_number(record.getRecord_number());
+				db.startTransaction();
 				search_result_tuple.setImage_url(db.getBatchDAO().getBatch(record.getBatch_id()).getImage_url());
+				db.endTransaction(true);
 				matches.add(search_result_tuple);
 			}
 			result.setMatches(matches);
