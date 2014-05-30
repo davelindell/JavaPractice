@@ -3,10 +3,12 @@ package server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
+import shared.communication.GetProjects_Params;
 import shared.communication.GetSampleImage_Params;
 import shared.communication.GetSampleImage_Result;
 
@@ -22,18 +24,25 @@ public class GetSampleImageHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		ServerFacade facade = new ServerFacade();
-		
-		XStream xmlStream = new XStream(new DomDriver());
+		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
-		GetSampleImage_Params params = (GetSampleImage_Params)xmlStream.fromXML(bis);
-		GetSampleImage_Result result = null;
+		GetSampleImage_Params params = (GetSampleImage_Params)xml_stream.fromXML(bis);
+		bis.close();
+		Object result = null;
 		
 		try {
-			result = facade.getSampleImage(params);
-			xmlStream.toXML(result, new BufferedOutputStream(exchange.getResponseBody()));
+			result = (Object)facade.getSampleImage(params);
+			exchange.sendResponseHeaders(200, 0);
+
+			OutputStream os = exchange.getResponseBody();
+
+			xml_stream.toXML(result, os);		
+			
+			os.close();
 			
 		} catch (DatabaseException e) {
-			logger.severe("Exception in GetSampleImageHandler");
+			
+			logger.severe("Exception in ValidateUser handler");
 			throw new IOException(e.getMessage());
 		}
 	}

@@ -3,6 +3,9 @@ package server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import server.database.DatabaseException;
@@ -23,16 +26,24 @@ public class ValidateUserHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		ServerFacade facade = new ServerFacade();
-		
-		XStream xmlStream = new XStream(new DomDriver());
+		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
-		ValidateUser_Params params = (ValidateUser_Params)xmlStream.fromXML(bis);
-		ValidateUser_Result result = null;
+		ValidateUser_Params params = (ValidateUser_Params)xml_stream.fromXML(bis);
+		bis.close();
+		Object result = null;
+		
 		try {
-			result = facade.validateUser(params);
-			xmlStream.toXML(result, new BufferedOutputStream(exchange.getResponseBody()));
+			result = (Object)facade.validateUser(params);
+			exchange.sendResponseHeaders(200, 0);
+
+			OutputStream os = exchange.getResponseBody();
+
+			xml_stream.toXML(result, os);		
+			
+			os.close();
 			
 		} catch (DatabaseException e) {
+			
 			logger.severe("Exception in ValidateUser handler");
 			throw new IOException(e.getMessage());
 		}

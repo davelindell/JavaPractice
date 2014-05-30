@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -38,7 +39,8 @@ import shared.communication.ValidateUser_Result;
 public class ClientCommunicator {
 	private String host_url;
 	private String port;
-	
+	private Logger logger = Logger.getLogger("record_server"); 
+
 	public ClientCommunicator(String url, String port) {
 		this.host_url = url;
 		this.port = port;
@@ -57,7 +59,7 @@ public class ClientCommunicator {
 	 */
 	
 	public ValidateUser_Result validateUser(ValidateUser_Params params) throws ClientException {
-		return (ValidateUser_Result)doPost(host_url + ":" + port + "/UpdateContact", params);
+		return (ValidateUser_Result)doPost("http://" + host_url + ":" + port + "/ValidateUser", params);
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public GetProjects_Result getProjects(GetProjects_Params params) throws ClientException {
-		return (GetProjects_Result)doPost(host_url + ":" + port + "/GetProjects", params);
+		return (GetProjects_Result)doPost("http://" + host_url + ":" + port + "/GetProjects", params);
 	}
 	
 	/**
@@ -83,7 +85,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public GetSampleImage_Result getSampleImage(GetSampleImage_Params params) throws ClientException {
-		return (GetSampleImage_Result)doPost(host_url + ":" + port + "/GetSampleImage", params);
+		return (GetSampleImage_Result)doPost("http://" + host_url + ":" + port + "/GetSampleImage", params);
 
 	}
 	
@@ -95,7 +97,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public DownloadBatch_Result downloadBatch(DownloadBatch_Params params) throws ClientException {
-		return (DownloadBatch_Result)doPost(host_url + ":" + port + "/DownloadBatch", params);
+		return (DownloadBatch_Result)doPost("http://" + host_url + ":" + port + "/DownloadBatch", params);
 	}
 	
 	/**
@@ -106,7 +108,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public SubmitBatch_Result submitBatch(SubmitBatch_Params params) throws ClientException {
-		return (SubmitBatch_Result)doPost(host_url + ":" + port + "/SubmitBatch", params);
+		return (SubmitBatch_Result)doPost("http://" + host_url + ":" + port + "/SubmitBatch", params);
 	}
 	
 	/**
@@ -119,7 +121,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public GetFields_Result getFields(GetFields_Params params) throws ClientException {
-		return (GetFields_Result)doPost(host_url + ":" + port + "/GetFields", params);
+		return (GetFields_Result)doPost("http://" + host_url + ":" + port + "/GetFields", params);
 	}
 	
 	/**
@@ -130,7 +132,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public Search_Result search(Search_Params params) throws ClientException {
-		return (Search_Result)doPost(host_url + ":" + port + "/Search", params);
+		return (Search_Result)doPost("http://" + host_url + ":" + port + "/Search", params);
 	}
 	/**
 	 * Downloads the file from the server. Uses HTTP GET requests to download the data.
@@ -138,8 +140,8 @@ public class ClientCommunicator {
 	 * @return wrapper class containing a byte array representing the downloaded data.
 	 * @throws ClientException 
 	 */
-	public DownloadFile_Result downloadFile(DownloadFile_Params params) throws ClientException {
-		return (DownloadFile_Result)doPost(host_url + ":" + port + "/DownloadFile", params);
+	public DownloadFile_Result downloadFile(String url) throws ClientException {
+		return (DownloadFile_Result)doGet("http://" + host_url + ":" + port + "/" + url);
 	}
 	
 	private Object doGet(String urlPath) throws ClientException {
@@ -199,16 +201,14 @@ public class ClientCommunicator {
 			connection.setDoOutput(true);
 
 			// Set HTTP request headers, if necessary
-			// connection.addRequestProperty(”Accept”, ”text/html”);
-			   
+			// connection.addRequestProperty(”Accept”, ”text/html”);			
 			connection.connect();
-			
 			OutputStream requestBody = connection.getOutputStream();
 			// Write request body to OutputStream ...
 			xml_stream.toXML(postData, requestBody);
 			
 			requestBody.close();
-			   
+			logger.fine(Integer.toString(connection.getResponseCode()));
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				// Get HTTP response headers, if necessary
 				// Map<String, List<String>> headers = connection.getHeaderFields();

@@ -5,8 +5,9 @@ import java.util.*;
 import client.ClientException;
 import client.communication.ClientCommunicator;
 import servertester.views.*;
-import shared.communication.ValidateUser_Params;
-import shared.communication.ValidateUser_Result;
+import shared.communication.*;
+import shared.models.IndexedData;
+
 
 public class Controller implements IController {
 
@@ -119,18 +120,85 @@ public class Controller implements IController {
 	}
 	
 	private void getProjects() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		GetProjects_Params params = new GetProjects_Params(param_values[0], param_values[1]);
+		
+		try {
+			GetProjects_Result result = cc.getProjects(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
 	}
 	
 	private void getSampleImage() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		GetSampleImage_Params params = new GetSampleImage_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		
+		try {
+			GetSampleImage_Result result = cc.getSampleImage(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
 	}
 	
 	private void downloadBatch() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		DownloadBatch_Params params = new DownloadBatch_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		
+		try {
+			DownloadBatch_Result result = cc.downloadBatch(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
 	}
 	
 	private void getFields() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		GetFields_Params params = new GetFields_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		
+		try {
+			GetFields_Result result = cc.getFields(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
 	}
 	
 	private void submitBatch() {
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		
+		String[] param_values = _view.getParameterValues();
+
+		String record_values[] = param_values[3].split(",");
+		List<IndexedData> indexed_data = new ArrayList<IndexedData>();
+		for(String r : record_values) {
+			IndexedData cur_data = new IndexedData();
+			cur_data.setRecord_value(r);
+		}
+		
+		SubmitBatch_Params params = new SubmitBatch_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]), indexed_data);
+		
+		try {
+			SubmitBatch_Result result = cc.submitBatch(params);
+			System.out.println(result.toString());
+		} catch (ClientException e) {
+			System.out.println("FAILED\n");
+		}
 	}
 	
 	private void search() {
