@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class GetFieldsHandler implements HttpHandler {
 
-	private Logger logger = Logger.getLogger("contactmanager"); 
+	private Logger logger = Logger.getLogger("record_server"); 
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {

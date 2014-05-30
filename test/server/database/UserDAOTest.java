@@ -18,6 +18,14 @@ public class UserDAOTest {
 	private UserDAO userDAO;
 	private List<User> users;
 	
+	public UserDAOTest() throws DatabaseException {
+		Database.initialize();
+		db  = new Database();
+		userDAO = new UserDAO(db);
+		db.startTransaction();
+		users = initUsers();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
@@ -145,7 +153,7 @@ public class UserDAOTest {
 				user1.getEmail().equals(user2.getEmail());
 	}
 	
-	private List<User> initUsers() {
+	public List<User> initUsers() {
 		List<User> users = new ArrayList<User>();
 		
 		User user1 = new User();

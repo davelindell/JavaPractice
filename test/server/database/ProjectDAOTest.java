@@ -18,6 +18,15 @@ public class ProjectDAOTest {
 	private ProjectDAO projectDAO;
 	private List<Project> projects;
 	
+	
+	public ProjectDAOTest() throws DatabaseException {
+		Database.initialize();
+		db  = new Database();
+		projectDAO = new ProjectDAO(db);
+		db.startTransaction();
+		projects = initProjects();
+	}
+	
 	@Before
 	public void setUp() throws Exception {	
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
@@ -132,7 +141,7 @@ public class ProjectDAOTest {
 		return 	project1.getProject_title().equals(project2.getProject_title());
 	}
 	
-	private List<Project> initProjects() {
+	public List<Project> initProjects() {
 		List<Project> projects = new ArrayList<Project>();
 		
 		Project project1 = new Project();

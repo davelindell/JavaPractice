@@ -1,12 +1,18 @@
 package server.facade;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 import server.database.Database;
 import server.database.DatabaseException;
@@ -30,6 +36,8 @@ import shared.communication.ValidateUser_Result;
 import shared.models.*;
 
 public class ServerFacade {
+	
+	private Logger logger = Logger.getLogger("record_server"); 
 	
 	public static void initialize() throws ServerFacadeException {		
 		try {
@@ -226,9 +234,14 @@ public class ServerFacade {
 		return result;
 	}
 
-	public DownloadFile_Result downloadFile(DownloadFile_Params params) throws IOException {
-		Path path = Paths.get(params.getUrl());
-		byte[] data = Files.readAllBytes(path);
+	public DownloadFile_Result downloadFile(String url) throws IOException {
+		
+		url = url.substring(1,url.length());
+		InputStream input_stream = new FileInputStream(url);
+		byte[] data = null;
+		data = IOUtils.toByteArray(input_stream);
+		//boolean null_data = data == null;
+		//logger.fine(Boolean.toString(null_data));
 		return new DownloadFile_Result(data);
 	}
 }

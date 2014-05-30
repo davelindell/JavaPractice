@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import client.ClientException;
 import shared.communication.DownloadBatch_Params;
@@ -144,7 +145,7 @@ public class ClientCommunicator {
 	private Object doGet(String urlPath) throws ClientException {
 		// Make HTTP GET request to the specified URL, 
 		// and return the object returned by the server
-		XStream xml_stream = new XStream();
+		XStream xml_stream = new XStream(new DomDriver());
 		Object result_obj = null;
 		
 		try {
@@ -170,13 +171,13 @@ public class ClientCommunicator {
 			}
 			else {
 				// SERVER RETURNED AN HTTP ERROR
-				System.out.println("HTTP Error");
+				//System.out.println("HTTP Error");
 				throw new ClientException();
 			}
 		}
 		catch (IOException e) {
 			// IO ERROR
-			System.out.println("IO Error");
+			//System.out.println("IO Error");
 			throw new ClientException();
 		} 
 			
@@ -186,7 +187,7 @@ public class ClientCommunicator {
 	private Object doPost(String urlPath, Object postData) throws ClientException {
 		// Make HTTP POST request to the specified URL, 
 		// passing in the specified postData object
-		XStream xml_stream = new XStream();
+		XStream xml_stream = new XStream(new DomDriver());
 		Object result_obj = null;
 		
 		try {

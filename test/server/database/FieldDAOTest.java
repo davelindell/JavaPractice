@@ -19,6 +19,14 @@ public class FieldDAOTest {
 	private FieldDAO fieldDAO;
 	private List<Field> fields;
 	
+	public FieldDAOTest() throws DatabaseException {	
+		Database.initialize();
+		db  = new Database();
+		fieldDAO = new FieldDAO(db);
+		db.startTransaction();
+		fields = initFields();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
@@ -169,7 +177,7 @@ public class FieldDAOTest {
 				field1.getKnown_values_url().equals(field2.getKnown_values_url());
 	}
 	
-	private List<Field> initFields() {
+	public List<Field> initFields() {
 		List<Field> fields = new ArrayList<Field>();
 		
 		Field field1 = new Field();

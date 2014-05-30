@@ -100,7 +100,7 @@
 	<!-- If port number is omitted, run on default port. -->
 	<!-- EXAMPLE: ant server -->
 	<target name="server" depends="compile" description="run server on specified port">
-		<java classname="THE NAME OF YOUR SERVER CLASS GOES HERE" fork="yes">
+		<java classname="server.Server" fork="yes">
 			<classpath>
 				<path refid="all-classpath"/>
 			</classpath>

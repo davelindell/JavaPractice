@@ -19,6 +19,14 @@ public class IndexedDataDAOTest {
 	private IndexedDataDAO dataDAO;
 	private List<IndexedData> data;
 	
+	public IndexedDataDAOTest() throws DatabaseException {
+		Database.initialize();
+		db  = new Database();
+		dataDAO = new IndexedDataDAO(db);
+		db.startTransaction();
+		data = initData();
+	}
+	
 	@Before
 	public void setUp() throws Exception {		
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
@@ -151,7 +159,7 @@ public class IndexedDataDAOTest {
 				data1.getRecord_value().equals(data2.getRecord_value());
 	}
 	
-	private List<IndexedData> initData() {
+	public List<IndexedData> initData() {
 		List<IndexedData> data = new ArrayList<IndexedData>();
 		
 		IndexedData data1 = new IndexedData();

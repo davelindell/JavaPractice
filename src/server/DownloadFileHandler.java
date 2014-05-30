@@ -3,7 +3,11 @@ package server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 import server.facade.ServerFacade;
 import shared.communication.DownloadFile_Params;
@@ -16,20 +20,23 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class DownloadFileHandler implements HttpHandler {
 
-	private Logger logger = Logger.getLogger("contactmanager"); 
+	private Logger logger = Logger.getLogger("record_server"); 
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		ServerFacade facade = new ServerFacade();
 		
-		XStream xmlStream = new XStream(new DomDriver());
-		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
-		DownloadFile_Params params = (DownloadFile_Params)xmlStream.fromXML(bis);
 		DownloadFile_Result result = null;
+		URI uri = exchange.getRequestURI();	
+		String url = uri.toString();
 		
-		result = facade.downloadFile(params);
-		xmlStream.toXML(result, new BufferedOutputStream(exchange.getResponseBody()));
+		result = facade.downloadFile(url.toString());
+		OutputStream os = exchange.getResponseBody();
+		byte[] data = result.getFile_download();
 
-		logger.severe("Exception in DownloadFileHandler");		
+		exchange.sendResponseHeaders(200, data.length);
+		
+		os.write(data);
+		os.close();
 	}
 }

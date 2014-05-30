@@ -7,6 +7,8 @@ public class ServerUnitTests {
 	
 	@Before
 	public void setup() {
+		
+		
 	}
 	
 	@After
@@ -23,7 +25,14 @@ public class ServerUnitTests {
 	public static void main(String[] args) {
 		
 		String[] testClasses = new String[] {
-				"server.ServerUnitTests"
+				"server.ServerUnitTests",
+				"server.database.BatchDAOTest",
+				"server.database.DatabaseTest",
+				"server.database.FieldDAOTest",
+				"server.database.IndexedDataDAOTest",
+				"server.database.ProjectDAOTest",
+				"server.database.UserDAOTest",
+				"importer.DataImporterTest"
 		};
 
 		org.junit.runner.JUnitCore.main(testClasses);

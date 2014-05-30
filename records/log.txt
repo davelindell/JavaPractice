@@ -1,0 +1,10 @@
+May 29, 2014 5:56:20 PM server.Server run
+INFO: Initializing Model
+May 29, 2014 5:56:20 PM server.Server run
+INFO: Initializing HTTP Server
+May 29, 2014 5:56:20 PM server.Server run
+INFO: Starting HTTP Server
+May 29, 2014 5:56:21 PM server.DownloadFileHandler handle
+FINE: /records/images/draft_image4.png
+May 29, 2014 5:56:21 PM server.DownloadFileHandler handle
+FINE: 38571

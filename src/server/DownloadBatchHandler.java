@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class DownloadBatchHandler implements HttpHandler {
 
-	private Logger logger = Logger.getLogger("contactmanager"); 
+	private Logger logger = Logger.getLogger("record_server"); 
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -31,7 +31,7 @@ public class DownloadBatchHandler implements HttpHandler {
 		try {
 			result = facade.downloadBatch(params);
 			xmlStream.toXML(result, new BufferedOutputStream(exchange.getResponseBody()));
-			
+
 		} catch (DatabaseException e) {
 			logger.severe("Exception in GetSampleImageHandler");
 			throw new IOException(e.getMessage());

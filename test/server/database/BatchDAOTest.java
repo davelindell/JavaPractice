@@ -18,11 +18,20 @@ public class BatchDAOTest {
 	private Database db;
 	private List<Batch> batches;
 	
+	public BatchDAOTest() throws DatabaseException {
+		Database.initialize();
+		db  = new Database();
+		batchDAO = new BatchDAO(db);
+		db.startTransaction();
+		batches = initBatches();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
 		File dst = new File("database"  + File.separator + "record_indexer.sqlite");
 		FileUtils.copyFile(src, dst);		Database.initialize();
+		
 		db  = new Database();
 		batchDAO = new BatchDAO(db);
 		db.startTransaction();
@@ -157,7 +166,7 @@ public class BatchDAOTest {
 				batch1.getRecord_height() == batch2.getRecord_height();
 	}
 	
-	private List<Batch> initBatches() {
+	public List<Batch> initBatches() {
 		List<Batch> batches = new ArrayList<Batch>();
 		
 		Batch batch1 = new Batch();

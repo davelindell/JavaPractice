@@ -89,10 +89,8 @@ public class Server {
 		server.createContext("/SubmitBatch", submitBatchHandler);
 		server.createContext("/GetFields", getFieldsHandler);
 		server.createContext("/Search", searchHandler);
-		server.createContext("/DownloadFile", downloadFileHandler);
+		server.createContext("/records", downloadFileHandler);
 
-		
-		
 		logger.info("Starting HTTP Server");
 
 		server.start();
