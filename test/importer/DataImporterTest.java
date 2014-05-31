@@ -83,7 +83,6 @@ public class DataImporterTest {
 		Batch batch = batches.get(59);
 		
 		assertTrue( batch.getProject_id() == 3 &&
-					batch.getImage_url().equals("images/draft_image19.png") &&
 					batch.getFirst_y_coord() == 195 &&
 					batch.getRecord_height() == 65 && 
 					batch.getNum_records() == 7 &&
