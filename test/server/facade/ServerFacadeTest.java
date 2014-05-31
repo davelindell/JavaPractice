@@ -111,7 +111,7 @@ public class ServerFacadeTest {
 	}
 */
 	@Test
-	public void testDownloadBatch() throws DatabaseException {
+	public void testDownloadBatch() throws Exception {
 		Database db = new Database();
 		DownloadBatch_Params params = new DownloadBatch_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1);
 		db.startTransaction();
@@ -130,7 +130,7 @@ public class ServerFacadeTest {
 	}
 
 	@Test
-	public void testSubmitBatch() throws DatabaseException {
+	public void testSubmitBatch() throws Exception {
 		Database db = new Database();
 		String record_str = "a,b,c,d;e,f,g,h;";
 		List<List<IndexedData>> records = makeRecords(record_str, 1);
@@ -149,7 +149,7 @@ public class ServerFacadeTest {
 			SubmitBatch_Result result = sf.submitBatch(params);
 			assertTrue(result.isValid());
 			db.startTransaction();
-			assertTrue(db.getBatchDAO().getBatch(1).getCur_username().equals(""));
+			assertTrue(db.getBatchDAO().getBatch(1).getCur_username().equals("already_indexed"));
 			assertTrue(db.getIndexeddataDAO().getAll().size() == 8);
 			db.endTransaction(true);
 			
@@ -159,10 +159,10 @@ public class ServerFacadeTest {
 	}
 
 	@Test
-	public void testGetFields() throws DatabaseException {
+	public void testGetFields() throws Exception {
 		Database db = new Database();
 
-		GetFields_Params params = new GetFields_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1);
+		GetFields_Params params = new GetFields_Params(users.get(0).getUsername(), users.get(0).getPassword(), "1");
 		db.startTransaction();
 		db.getFieldDAO().add(fields.get(0));
 		db.getFieldDAO().add(fields.get(1));
@@ -180,7 +180,7 @@ public class ServerFacadeTest {
 	}
 
 	@Test
-	public void testSearch() throws DatabaseException {
+	public void testSearch() throws Exception {
 		Database db = new Database();
 		String record_str = "a,b,c,d;e,f,g,h;";
 		List<List<IndexedData>> records = makeRecords(record_str, 1);
@@ -204,8 +204,7 @@ public class ServerFacadeTest {
 			assertTrue(search_result.getMatches().size() == 4);
 			assertTrue( search_result.getMatches().get(0).getBatch_id() == 1 &&
 					search_result.getMatches().get(0).getField_id() == 1 &&
-					search_result.getMatches().get(0).getRecord_number() == 1 &&
-					search_result.getMatches().get(0).getImage_url().equals("example/img.png"));
+					search_result.getMatches().get(0).getRecord_number() == 1);
 		} catch (DatabaseException e) {
 			assertTrue(false);
 		}

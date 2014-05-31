@@ -15,12 +15,15 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class GetFieldsHandler implements HttpHandler {
-
 	private Logger logger = Logger.getLogger("record_server"); 
+	private int port;
 	
+	public GetFieldsHandler(int port) {
+		this.port = port;
+	}
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		ServerFacade facade = new ServerFacade();
+		ServerFacade facade = new ServerFacade(port);
 		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
 		GetFields_Params params = (GetFields_Params)xml_stream.fromXML(bis);
@@ -39,7 +42,7 @@ public class GetFieldsHandler implements HttpHandler {
 			
 		} catch (DatabaseException e) {
 			
-			logger.severe("Exception in ValidateUser handler");
+			logger.severe("Exception in GetFieldsHandler");
 			throw new IOException(e.getMessage());
 		}
 	}

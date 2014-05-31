@@ -38,7 +38,7 @@ public class DataImporter {
 		DataImporter importer;
 		try {
 			importer = new DataImporter();
-	
+			
 			File xml_file = new File(args[0]);
 			importer.parseUsers(xml_file);
 			importer.parseProjectData(xml_file);
@@ -160,7 +160,7 @@ public class DataImporter {
 			batch.setRecord_height(record_height);
 			batch.setNum_records(num_records);
 			batch.setNum_fields(num_fields);
-			batch.setImage_url(image_url);
+			batch.setImage_url("records/" + image_url);
 			
 			db.startTransaction();
 			try {
