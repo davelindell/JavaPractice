@@ -22,7 +22,7 @@ public class GetProjects_Result {
 	@Override
 	public String toString() {
 		if (project_info == null)
-			return "FALSE";
+			return "FAILED\n";
 		else {
 			String result = "";
 			for (Project proj : project_info) {

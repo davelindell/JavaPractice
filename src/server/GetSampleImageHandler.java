@@ -1,16 +1,13 @@
 package server;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
-import shared.communication.GetProjects_Params;
 import shared.communication.GetSampleImage_Params;
-import shared.communication.GetSampleImage_Result;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

@@ -5,16 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import client.ClientException;
+import servertester.controllers.Controller;
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
-import shared.communication.DownloadFile_Params;
 import shared.communication.DownloadFile_Result;
 import shared.communication.GetFields_Params;
 import shared.communication.GetFields_Result;
@@ -28,7 +28,6 @@ import shared.communication.SubmitBatch_Params;
 import shared.communication.SubmitBatch_Result;
 import shared.communication.ValidateUser_Params;
 import shared.communication.ValidateUser_Result;
-import shared.models.IndexedData;
 
 /** 
  * The Client Communicator class acts as a proxy communicator for the client
@@ -39,13 +38,20 @@ import shared.models.IndexedData;
  */
 
 public class ClientCommunicator {
+	private Controller controller;
 	private String host_url;
 	private String port;
-	private Logger logger = Logger.getLogger("record_server"); 
 
+	public ClientCommunicator(String url, String port, Controller controller) {
+		this.host_url = url;
+		this.port = port;
+		this.controller = controller;
+	}
+	
 	public ClientCommunicator(String url, String port) {
 		this.host_url = url;
 		this.port = port;
+		this.controller = null;
 	}
 	
 	/** 
@@ -143,35 +149,37 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public DownloadFile_Result downloadFile(String url) throws ClientException {
-		return (DownloadFile_Result)doGet("http://" + host_url + ":" + port + "/" + url);
+		return new DownloadFile_Result(doGet("http://" + host_url + ":" + port + "/" + url));
 	}
 	
-	private Object doGet(String urlPath) throws ClientException {
+	private byte[] doGet(String urlPath) throws ClientException {
 		// Make HTTP GET request to the specified URL, 
 		// and return the object returned by the server
-		XStream xml_stream = new XStream(new DomDriver());
-		Object result_obj = null;
+		byte[] result = null;
 		
 		try {
 			URL url = new URL(urlPath);
-			   
+
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 			   
 			connection.setRequestMethod("GET");	   
-			   
+			
+			if(controller != null)
+				controller.getView().setRequest(connection.getRequestMethod());
+
 			// Set HTTP request headers, if necessary
 			// connection.addRequestProperty(”Accept”, ”text/html”);
-			   
+			
 			connection.connect();
 			   
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				// Get HTTP response headers, if necessary
 				// Map<String, List<String>> headers = connection.getHeaderFields();
 		
-				InputStream responseBody = connection.getInputStream();
+				InputStream response_body = connection.getInputStream();
 				// Read response body from InputStream ...
 				
-				result_obj = xml_stream.fromXML(responseBody);
+				result = IOUtils.toByteArray(response_body);
 			}
 			else {
 				// SERVER RETURNED AN HTTP ERROR
@@ -185,7 +193,7 @@ public class ClientCommunicator {
 			throw new ClientException();
 		} 
 			
-		return result_obj;
+		return result;
 	}
 	
 	private Object doPost(String urlPath, Object postData) throws ClientException {
@@ -194,6 +202,7 @@ public class ClientCommunicator {
 		XStream xml_stream = new XStream(new DomDriver());
 		Object result_obj = null;
 		
+		
 		try {
 			URL url = new URL(urlPath);
 			   
@@ -201,15 +210,17 @@ public class ClientCommunicator {
 			   
 			connection.setRequestMethod("POST");
 			connection.setDoOutput(true);
-
 			connection.connect();
 			OutputStream requestBody = connection.getOutputStream();
 			
 			// Write request body to OutputStream ...
 			xml_stream.toXML(postData, requestBody);
 			
+			if(controller != null)
+				controller.getView().setRequest(connection.getRequestMethod() + "\n" + xml_stream.toXML(postData));
+			
 			requestBody.close();
-
+			
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				// Get HTTP response headers, if necessary
 				// Map<String, List<String>> headers = connection.getHeaderFields();
@@ -220,40 +231,19 @@ public class ClientCommunicator {
 			}
 			else {
 				// SERVER RETURNED AN HTTP ERROR
-				System.out.println("HTTP Error");
+				//System.out.println("HTTP Error");
 				throw new ClientException();
 			}
 		}
 		catch (IOException e) {
 			// IO ERROR
-			System.out.println("IO Error");
+			//System.out.println("IO Error");
 			throw new ClientException();
 		} 
 		return result_obj;
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

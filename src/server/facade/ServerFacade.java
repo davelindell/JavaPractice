@@ -1,44 +1,20 @@
 package server.facade;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
 import server.database.Database;
 import server.database.DatabaseException;
-import shared.communication.DownloadBatch_Params;
-import shared.communication.DownloadBatch_Result;
-import shared.communication.DownloadFile_Params;
-import shared.communication.DownloadFile_Result;
-import shared.communication.GetFields_Params;
-import shared.communication.GetFields_Result;
-import shared.communication.GetProjects_Params;
-import shared.communication.GetProjects_Result;
-import shared.communication.GetSampleImage_Params;
-import shared.communication.GetSampleImage_Result;
-import shared.communication.SearchResultTuple;
-import shared.communication.Search_Params;
-import shared.communication.Search_Result;
-import shared.communication.SubmitBatch_Params;
-import shared.communication.SubmitBatch_Result;
-import shared.communication.ValidateUser_Params;
-import shared.communication.ValidateUser_Result;
+import shared.communication.*;
 import shared.models.*;
 
 public class ServerFacade {
-	
-	private Logger logger = Logger.getLogger("record_server"); 
-	
+		
 	public static void initialize() throws ServerFacadeException {		
 		try {
 			Database.initialize();		
@@ -112,8 +88,15 @@ public class ServerFacade {
 				List<Batch> batches = db.getBatchDAO().getAll();
 				db.endTransaction(true);
 				String sample_image = null;
-				if(!batches.isEmpty())
-					sample_image = batches.get(0).getImage_url();
+				boolean found_url = false;
+				int i = 0;
+						
+				while(!found_url && i < batches.size()) {
+					if (batches.get(i).getProject_id() == params.getProject_id()) {
+						sample_image = batches.get(i).getImage_url();
+					}
+					++i;
+				}
 				
 				GetSampleImage_Result result = new GetSampleImage_Result(sample_image);
 				return result;
@@ -144,7 +127,7 @@ public class ServerFacade {
 			while (iter.hasNext() && !found_open_batch){
 				Batch batch = iter.next();
 				
-				if (batch.getCur_username().equals("")) {
+				if (batch.getCur_username().equals("") && batch.getProject_id() == params.getProject_id()) {
 					found_open_batch = true;
 					batch.setCur_username(username);
 					
@@ -172,10 +155,10 @@ public class ServerFacade {
 		Database db = new Database();
 		ValidateUser_Params validate_user_params = new ValidateUser_Params(params.getUsername(), params.getPassword());
 		SubmitBatch_Result result = new SubmitBatch_Result(false);
+		ValidateUser_Result validate_user_result = validateUser(validate_user_params);
 		
-		if (validateUser(validate_user_params).isValid()) {
+		if (validate_user_result.isValid()) {
 			List<List<IndexedData>> records = params.getRecords();
-			int field_id = 0;
 			List<Field> fields = null;
 			int batch_id = params.getBatch_id();
 			
@@ -188,6 +171,11 @@ public class ServerFacade {
 				cur_batch.setCur_username("");
 				
 				db.startTransaction();
+				
+				// update the number of records the user has indexed
+				User cur_user = validate_user_result.getUser();
+				cur_user.setNum_records(cur_user.getNum_records() + cur_batch.getNum_records());
+				db.getUserDAO().update(cur_user);
 				db.getBatchDAO().update(cur_batch);
 				fields = db.getFieldDAO().getBatchFields(cur_batch.getProject_id());
 				db.endTransaction(true);
@@ -207,10 +195,6 @@ public class ServerFacade {
 			}	
 			else
 				result.setValid(false);
-			
-			
-			
-			
 					
 		}
 		
@@ -256,7 +240,12 @@ public class ServerFacade {
 			for (String entry : search_entries) {
 				for (String ids : field_ids) {
 					db.startTransaction();
-					record_results.addAll(db.getIndexeddataDAO().getByFieldAndValue(Integer.parseInt(ids), entry.toLowerCase()));
+					try {
+						record_results.addAll(db.getIndexeddataDAO().getByFieldAndValue(Integer.parseInt(ids), entry.toLowerCase()));
+					}
+					catch (NumberFormatException e) {
+						return result;
+					}
 					db.endTransaction(true);
 				}
 			}

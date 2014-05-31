@@ -18,17 +18,18 @@ import shared.models.*;
 public class ServerFacadeTest {
 	private ServerFacade sf;
 	private BatchDAOTest batch_test;
-	private FieldDAOTest field_test;
-	private IndexedDataDAOTest data_test;
 	private ProjectDAOTest project_test;
 	private UserDAOTest user_test;
 	
 	private List<User> users;
 	private List<Project> projects;
-	private List<IndexedData> data;
 	private List<Field> fields;
 	private List<Batch> batches;
 
+	public ServerFacadeTest() {
+		
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		File src = new File("database" + File.separator + "empty_record_indexer.sqlite");
@@ -38,14 +39,11 @@ public class ServerFacadeTest {
 		sf = new ServerFacade();
 		
 		batch_test = new BatchDAOTest();
-		field_test = new FieldDAOTest();
-		data_test = new IndexedDataDAOTest();
 		project_test = new ProjectDAOTest();
 		user_test = new UserDAOTest();
 		
 		batches = batch_test.initBatches();
 		fields = initFields();
-		data = data_test.initData();
 		projects = project_test.initProjects();
 		users = user_test.initUsers();
 		
@@ -62,8 +60,6 @@ public class ServerFacadeTest {
 	@After
 	public void tearDown() throws Exception {
 		batch_test = null;
-		field_test = null;
-		data_test = null;
 		project_test = null;
 		user_test = null;
 	}
@@ -108,12 +104,12 @@ public class ServerFacadeTest {
 			assertTrue(false);
 		}
 	}
-
+/*
 	@Test
 	public void testGetSampleImage() {
 		fail("Not yet implemented");
 	}
-
+*/
 	@Test
 	public void testDownloadBatch() throws DatabaseException {
 		Database db = new Database();
@@ -165,8 +161,7 @@ public class ServerFacadeTest {
 	@Test
 	public void testGetFields() throws DatabaseException {
 		Database db = new Database();
-		String record_str = "a,b,c,d;e,f,g,h;";
-		List<List<IndexedData>> records = makeRecords(record_str, 1);
+
 		GetFields_Params params = new GetFields_Params(users.get(0).getUsername(), users.get(0).getPassword(), 1);
 		db.startTransaction();
 		db.getFieldDAO().add(fields.get(0));
@@ -177,7 +172,8 @@ public class ServerFacadeTest {
 		
 		try {
 			GetFields_Result result = sf.getFields(params);
-			
+			assertTrue( result.getFields().size() == 4 &&
+						result.getFields().get(0).getField_title().equals("field1"));
 		} catch (DatabaseException e) {
 			assertTrue(false);
 		}
@@ -202,7 +198,7 @@ public class ServerFacadeTest {
 		
 		try {
 			testDownloadBatch();
-			SubmitBatch_Result result = sf.submitBatch(params);
+			sf.submitBatch(params);
 			
 			Search_Result search_result = sf.search(search_params);
 			assertTrue(search_result.getMatches().size() == 4);
@@ -214,16 +210,15 @@ public class ServerFacadeTest {
 			assertTrue(false);
 		}
 	}
-
+/*
 	@Test
 	public void testDownloadFile() {
 		fail("Not yet implemented");
 	}
-	
-	private List<List<IndexedData>> makeRecords(String record_str, int batch_id) {
+*/	
+	public List<List<IndexedData>> makeRecords(String record_str, int batch_id) {
 		String record_strings[] = record_str.split(";");
 		List<List<IndexedData>> records = new ArrayList<List<IndexedData>>();
-		List<IndexedData> indexed_data = new ArrayList<IndexedData>();
 		
 		for(int i = 0; i < record_strings.length; ++i) {
 			records.add(new ArrayList<IndexedData>());

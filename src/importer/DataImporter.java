@@ -58,8 +58,8 @@ public class DataImporter {
 		File src_file = new File(xml_path_str);
 		File dst_file = new File("records");
 
-		if(!src_file.getParentFile().getCanonicalPath().equals(dst_file.getCanonicalPath()))
-			FileUtils.deleteDirectory(dst_file);
+		//if(!src_file.getParentFile().getCanonicalPath().equals(dst_file.getCanonicalPath()))
+		//	FileUtils.deleteDirectory(dst_file);
 			
 		FileUtils.copyDirectory(src_file.getParentFile(), dst_file);
 	}

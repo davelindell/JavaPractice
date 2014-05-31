@@ -23,7 +23,8 @@ public class ClientUnitTests {
 	public static void main(String[] args) {
 
 		String[] testClasses = new String[] {
-				"client.ClientUnitTests"
+				"client.ClientUnitTests",
+				"client.communication.ClientCommunicatorTest"
 		};
 
 		org.junit.runner.JUnitCore.main(testClasses);

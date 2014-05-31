@@ -21,9 +21,11 @@ public class GetFields_Result {
 
 	@Override
 	public String toString() {
-		String result = null;
+		String result = "";
 		
 		if (fields == null)
+			result = "FAILED\n";
+		else if (fields.size() == 0)
 			result = "FAILED\n";
 		else {
 			for (Field field : fields) {

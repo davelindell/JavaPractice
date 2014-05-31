@@ -26,7 +26,9 @@ public class Search_Result {
 	@Override
 	public String toString() {
 		String result = "";
-		if (matches.size() == 0) 
+		if (matches == null)
+			result = "FAILED\n";
+		else if (matches.size() == 0) 
 			result = "FAILED\n";
 		else {
 			for (SearchResultTuple s : matches) {

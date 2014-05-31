@@ -1,7 +1,6 @@
 package server;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Logger;
@@ -9,8 +8,6 @@ import java.util.logging.Logger;
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
 import shared.communication.GetProjects_Params;
-import shared.communication.GetProjects_Result;
-import shared.communication.ValidateUser_Params;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

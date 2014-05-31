@@ -1,15 +1,12 @@
 package server;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
-import shared.communication.DownloadBatch_Params;
-import shared.communication.GetFields_Result;
 import shared.communication.GetFields_Params;
 
 import com.sun.net.httpserver.HttpExchange;

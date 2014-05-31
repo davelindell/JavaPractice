@@ -33,7 +33,7 @@ public class Server {
 	
 	private static void initLog() throws IOException {
 		
-		Level logLevel = Level.FINE;
+		Level logLevel = Level.INFO;
 		
 		logger = Logger.getLogger("record_server"); 
 		logger.setLevel(logLevel);

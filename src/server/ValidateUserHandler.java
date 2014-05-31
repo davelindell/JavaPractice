@@ -1,17 +1,13 @@
 package server;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import server.database.DatabaseException;
 import server.facade.ServerFacade;
 import shared.communication.ValidateUser_Params;
-import shared.communication.ValidateUser_Result;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

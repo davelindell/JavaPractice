@@ -31,8 +31,7 @@ public class ServerUnitTests {
 				"server.database.FieldDAOTest",
 				"server.database.IndexedDataDAOTest",
 				"server.database.ProjectDAOTest",
-				"server.database.UserDAOTest",
-				"importer.DataImporterTest"
+				"server.database.UserDAOTest"
 		};
 
 		org.junit.runner.JUnitCore.main(testClasses);

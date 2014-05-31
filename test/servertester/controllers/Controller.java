@@ -104,7 +104,7 @@ public class Controller implements IController {
 	}
 	
 	private void validateUser() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
 		
 		String[] param_values = _view.getParameterValues();
 
@@ -112,15 +112,16 @@ public class Controller implements IController {
 		
 		try {
 			ValidateUser_Result result = cc.validateUser(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 		
 	}
 	
 	private void getProjects() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
 		
 		String[] param_values = _view.getParameterValues();
 
@@ -128,66 +129,92 @@ public class Controller implements IController {
 		
 		try {
 			GetProjects_Result result = cc.getProjects(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	}
 	
 	private void getSampleImage() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
-		
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
+		GetSampleImage_Params params = null;
 		String[] param_values = _view.getParameterValues();
-
-		GetSampleImage_Params params = new GetSampleImage_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
-		
+		try {
+			params = new GetSampleImage_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		}
+		catch (NumberFormatException e) {
+			_view.setResponse("FAILED\n");
+			return;
+		}
 		try {
 			GetSampleImage_Result result = cc.getSampleImage(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	}
 	
 	private void downloadBatch() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
-		
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
+		DownloadBatch_Params params = null;
 		String[] param_values = _view.getParameterValues();
-
-		DownloadBatch_Params params = new DownloadBatch_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		
+		try {
+			params = new DownloadBatch_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		}
+		catch (NumberFormatException e) {
+			_view.setResponse("FAILED\n");
+			return;
+		}
 		
 		try {
 			DownloadBatch_Result result = cc.downloadBatch(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	}
 	
 	private void getFields() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
-		
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
+		GetFields_Params params = null;
 		String[] param_values = _view.getParameterValues();
-
-		GetFields_Params params = new GetFields_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		
+		try {
+			params = new GetFields_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+		}
+		catch (NumberFormatException e) {
+			_view.setResponse("FAILED\n");
+			return;
+		}
 		
 		try {
 			GetFields_Result result = cc.getFields(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	}
 	
 	private void submitBatch() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
 		List<List<IndexedData>> records = new ArrayList<List<IndexedData>>();
-		
 		String[] param_values = _view.getParameterValues();
-		int batch_id = Integer.parseInt(param_values[2]);
+		int batch_id = 0;
+		
+		try {
+			batch_id = Integer.parseInt(param_values[2]);
+		} 
+		catch (NumberFormatException e) {
+			_view.setResponse("FAILED\n");
+			return;
+		}
 		
 		String record_strings[] = param_values[3].split(";");
-		List<IndexedData> indexed_data = new ArrayList<IndexedData>();
 		
 		for(int i = 0; i < record_strings.length; ++i) {
 			records.add(new ArrayList<IndexedData>());
@@ -204,14 +231,15 @@ public class Controller implements IController {
 		
 		try {
 			SubmitBatch_Result result = cc.submitBatch(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	}
 	
 	private void search() {
-		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort());
+		ClientCommunicator cc = new ClientCommunicator(_view.getHost(), _view.getPort(), this);
 		
 		String[] param_values = _view.getParameterValues();
 
@@ -219,9 +247,10 @@ public class Controller implements IController {
 		
 		try {
 			Search_Result result = cc.search(params);
-			System.out.println(result.toString());
-		} catch (ClientException e) {
-			System.out.println("FAILED\n");
+			_view.setResponse(result.toString());
+		} 
+		catch (ClientException e) {
+			_view.setResponse("FAILED\n");
 		}
 	
 	

@@ -52,7 +52,7 @@ public class IndexedDataDAOTest {
 	public void testGetByFieldAndValue() throws DatabaseException {
 		dataDAO.add(data.get(0));
 		dataDAO.add(data.get(1));
-		List<IndexedData> result = dataDAO.getByFieldAndValue(data.get(0).getField_id(), data.get(0).getRecord_value());
+		List<IndexedData> result = dataDAO.getByFieldAndValue(data.get(0).getField_id(), data.get(0).getRecord_value().toLowerCase());
 		assertTrue(result.size() == 1);
 		assertTrue(areEqual(result.get(0), data.get(0)));
 	}
