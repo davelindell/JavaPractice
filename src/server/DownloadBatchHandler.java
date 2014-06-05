@@ -15,12 +15,18 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class DownloadBatchHandler implements HttpHandler {
-
+	private int port;
 	private Logger logger = Logger.getLogger("record_server"); 
+
+	public DownloadBatchHandler(int port) {
+		super();
+		this.port = port;
+	}
+	
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		ServerFacade facade = new ServerFacade();
+		ServerFacade facade = new ServerFacade(port);
 		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
 		DownloadBatch_Params params = (DownloadBatch_Params)xml_stream.fromXML(bis);
@@ -28,10 +34,9 @@ public class DownloadBatchHandler implements HttpHandler {
 		Object result = null;
 		
 		try {
-			logger.fine("at server1");
+			logger.fine("Downloading batch on server. . .");
 			result = (Object)facade.downloadBatch(params);
 			exchange.sendResponseHeaders(200, 0);
-			logger.fine("at server2");
 			OutputStream os = exchange.getResponseBody();
 
 			xml_stream.toXML(result, os);		
@@ -40,7 +45,7 @@ public class DownloadBatchHandler implements HttpHandler {
 			
 		} catch (DatabaseException e) {
 			
-			logger.severe("Exception in ValidateUser handler");
+			logger.severe("Exception in DownloadBatchHandler");
 			throw new IOException(e.getMessage());
 		}
 	}

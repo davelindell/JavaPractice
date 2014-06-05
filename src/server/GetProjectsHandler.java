@@ -39,7 +39,7 @@ public class GetProjectsHandler implements HttpHandler {
 			
 		} catch (DatabaseException e) {
 			
-			logger.severe("Exception in ValidateUser handler");
+			logger.severe("Exception in GetProjectsHandler");
 			throw new IOException(e.getMessage());
 		}
 	}

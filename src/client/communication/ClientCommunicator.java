@@ -93,8 +93,10 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public GetSampleImage_Result getSampleImage(GetSampleImage_Params params) throws ClientException {
-		return (GetSampleImage_Result)doPost("http://" + host_url + ":" + port + "/GetSampleImage", params);
-
+		GetSampleImage_Result result = (GetSampleImage_Result)doPost("http://" + host_url + ":" + port + "/GetSampleImage", params);
+		if (result.getImage_url() != null)
+			result.setImage_url("http://" + host_url + ":" + port + "/" + result.getImage_url());
+		return result;
 	}
 	
 	/**
@@ -166,15 +168,10 @@ public class ClientCommunicator {
 			
 			if(controller != null)
 				controller.getView().setRequest(connection.getRequestMethod());
-
-			// Set HTTP request headers, if necessary
-			// connection.addRequestProperty(”Accept”, ”text/html”);
 			
 			connection.connect();
 			   
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				// Get HTTP response headers, if necessary
-				// Map<String, List<String>> headers = connection.getHeaderFields();
 		
 				InputStream response_body = connection.getInputStream();
 				// Read response body from InputStream ...
@@ -183,13 +180,11 @@ public class ClientCommunicator {
 			}
 			else {
 				// SERVER RETURNED AN HTTP ERROR
-				//System.out.println("HTTP Error");
 				throw new ClientException();
 			}
 		}
 		catch (IOException e) {
 			// IO ERROR
-			//System.out.println("IO Error");
 			throw new ClientException();
 		} 
 			
@@ -222,8 +217,6 @@ public class ClientCommunicator {
 			requestBody.close();
 			
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				// Get HTTP response headers, if necessary
-				// Map<String, List<String>> headers = connection.getHeaderFields();
 
 				InputStream responseBody = connection.getInputStream();
 				// Read response body from InputStream ...
@@ -231,13 +224,11 @@ public class ClientCommunicator {
 			}
 			else {
 				// SERVER RETURNED AN HTTP ERROR
-				//System.out.println("HTTP Error");
 				throw new ClientException();
 			}
 		}
 		catch (IOException e) {
 			// IO ERROR
-			//System.out.println("IO Error");
 			throw new ClientException();
 		} 
 		return result_obj;

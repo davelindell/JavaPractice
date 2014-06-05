@@ -18,6 +18,7 @@ import org.junit.Test;
 import server.database.Database;
 import server.facade.ServerFacadeTest;
 import shared.communication.*;
+import shared.models.Batch;
 import shared.models.IndexedData;
 
 
@@ -101,15 +102,15 @@ public class ClientCommunicatorTest {
 	public void testGetSampleImage() throws Exception {
 		GetSampleImage_Params params = new GetSampleImage_Params("sheila", "parker", 1);
 		GetSampleImage_Result result = cc.getSampleImage(params);
-		assertTrue(result.toString().equals("images/1890_image19.png\n"));	
+		assertTrue(result.toString().equals("http://localhost:39640/records/images/1890_image19.png\n"));	
 		
 		params = new GetSampleImage_Params("sheila", "parker", 2);
 		result = cc.getSampleImage(params);
-		assertTrue(result.toString().equals("images/1900_image19.png\n"));
+		assertTrue(result.toString().equals("http://localhost:39640/records/images/1900_image19.png\n"));
 		
 		params = new GetSampleImage_Params("sheila", "parker", 3);
 		result = cc.getSampleImage(params);
-		assertTrue(result.toString().equals("images/draft_image19.png\n"));
+		assertTrue(result.toString().equals("http://localhost:39640/records/images/draft_image19.png\n"));
 		
 		params = new GetSampleImage_Params("sheila", "parer", 3);
 		result = cc.getSampleImage(params);
@@ -121,13 +122,9 @@ public class ClientCommunicatorTest {
 	public void testDownloadBatch() throws Exception {		
 		DownloadBatch_Params params = new DownloadBatch_Params("sheila", "parker", 1);
 		DownloadBatch_Result result = cc.downloadBatch(params);
-		assertTrue(result.toString().equals("1\n1\nimages/1890_image0.png\n199\n60\n8\n4\n1\n1\n"
-											+ "Last Name\nfieldhelp/last_name.html\n60\n300\n"
-											+ "knowndata/1890_last_names.txt\n2\n2\nFirst Name\n"
-											+ "fieldhelp/first_name.html\n360\n280\nknowndata/1890_first_names.txt\n"
-											+ "3\n3\nGender\nfieldhelp/gender.html\n640\n205\nknowndata/genders.txt\n"
-											+ "4\n4\nAge\nfieldhelp/age.html\n845\n120\n"));	
-		
+		assertTrue(result.getFields().get(0).getField_title().equals("Last Name") &&
+				   result.getFields().get(0).getPixel_width() == 300);
+
 		ServerFacadeTest sft = new ServerFacadeTest();
 		List<List<IndexedData>> data_list = sft.makeRecords("a,b,c,d;e,,f;",1);
 		SubmitBatch_Params submit_params = new SubmitBatch_Params("sheila", "parker",1, data_list);
@@ -136,13 +133,9 @@ public class ClientCommunicatorTest {
 		
 		params = new DownloadBatch_Params("sheila", "parker", 2);
 		result = cc.downloadBatch(params);
-		assertTrue(result.toString().equals("21\n2\nimages/1900_image0.png\n204\n62\n10\n5\n5\n1\n"
-											+ "Gender\nfieldhelp/gender.html\n45\n205\nknowndata/genders.txt\n6\n"
-											+ "2\nAge\nfieldhelp/age.html\n250\n120\n7\n3\n"
-											+ "Last Name\nfieldhelp/last_name.html\n370\n325\nknowndata/1900_last_names.txt\n"
-											+ "8\n4\nFirst Name\nfieldhelp/first_name.html\n695\n325\n"
-											+ "knowndata/1900_first_names.txt\n9\n5\nEthnicity\nfieldhelp/ethnicity.html\n"
-											+ "1020\n450\nknowndata/ethnicities.txt\n"));
+		assertTrue(result.getFields().size() == 5 &&
+				   result.getFields().get(0).getField_id() == 5 &&
+				   result.getFields().get(0).getX_coord() == 45);
 		
 		data_list = sft.makeRecords("a,b,c,d;e,,f;",21);
 		submit_params = new SubmitBatch_Params("sheila", "parker",21, data_list);
@@ -150,11 +143,8 @@ public class ClientCommunicatorTest {
 		
 		params = new DownloadBatch_Params("sheila", "parker", 3);
 		result = cc.downloadBatch(params);
-		assertTrue(result.toString().equals("41\n3\nimages/draft_image0.png\n195\n65\n7\n4\n10\n1\nLast Name\n"
-											+ "fieldhelp/last_name.html\n75\n325\nknowndata/draft_last_names.txt\n11\n2\nFirst Name\n"
-											+ "fieldhelp/first_name.html\n400\n325\nknowndata/draft_first_names.txt\n12\n3\nAge\n"
-											+ "fieldhelp/age.html\n725\n120\n13\n4\nEthnicity\nfieldhelp/ethnicity.html\n845\n450"
-											+ "\nknowndata/ethnicities.txt\n"));
+		assertTrue(result.getFields().get(0).getField_id() == 10 &&
+				   result.getFields().get(0).getField_title().equals("Last Name"));
 		
 		data_list = sft.makeRecords("a,b,c,d;e,,f;;",41);
 		submit_params = new SubmitBatch_Params("sheila", "parker",41, data_list);
@@ -164,7 +154,20 @@ public class ClientCommunicatorTest {
 		result = cc.downloadBatch(params);
 		assertTrue(result.toString().equals("FAILED\n"));
 		
+		db.startTransaction();
+		Batch batch1 = db.getBatchDAO().getBatch(1);
+		Batch batch2 = db.getBatchDAO().getBatch(21);
+		Batch batch3 = db.getBatchDAO().getBatch(41);
 		
+		batch1.setCur_username("");
+		batch2.setCur_username("");
+		batch3.setCur_username("");
+		
+		db.getBatchDAO().update(batch1);
+		db.getBatchDAO().update(batch2);
+		db.getBatchDAO().update(batch3);
+
+		db.endTransaction(true);
 
 	}
 
@@ -205,27 +208,42 @@ public class ClientCommunicatorTest {
 		submit_result = cc.submitBatch(submit_params);
 		assertTrue(submit_result.toString().equals("FAILED\n"));
 		
+		db.startTransaction();
+		Batch batch1 = db.getBatchDAO().getBatch(1);
+		Batch batch2 = db.getBatchDAO().getBatch(21);
+		Batch batch3 = db.getBatchDAO().getBatch(41);
+		
+		batch1.setCur_username("");
+		batch2.setCur_username("");
+		batch3.setCur_username("");
+		
+		db.getBatchDAO().update(batch1);
+		db.getBatchDAO().update(batch2);
+		db.getBatchDAO().update(batch3);
+
+		db.endTransaction(true);
+		
 	}
 
 	@Test
 	public void testGetFields() throws Exception {
-		GetFields_Params params = new GetFields_Params("sheila", "parker", 1);
+		GetFields_Params params = new GetFields_Params("sheila", "parker", "1");
 		GetFields_Result result = cc.getFields(params);
 		assertTrue(result.toString().equals("1\n1\nLast Name\n1\n2\nFirst Name\n1\n3\nGender\n1\n4\nAge\n"));
 
-		params = new GetFields_Params("sheila", "parker", 2);
+		params = new GetFields_Params("sheila", "parker", "2");
 		result = cc.getFields(params);
 		assertTrue(result.toString().equals("2\n5\nGender\n2\n6\nAge\n2\n7\nLast Name\n2\n8\nFirst Name\n2\n9\nEthnicity\n"));
 		
-		params = new GetFields_Params("sheila", "parker", 3);
+		params = new GetFields_Params("sheila", "parker", "3");
 		result = cc.getFields(params);
 		assertTrue(result.toString().equals("3\n10\nLast Name\n3\n11\nFirst Name\n3\n12\nAge\n3\n13\nEthnicity\n"));
 		
-		params = new GetFields_Params("sheila", "parkr", 3);
+		params = new GetFields_Params("sheila", "parkr", "3");
 		result = cc.getFields(params);
 		assertTrue(result.toString().equals("FAILED\n"));
 		
-		params = new GetFields_Params("", "", 3);
+		params = new GetFields_Params("", "", "3");
 		result = cc.getFields(params);
 		assertTrue(result.toString().equals("FAILED\n"));
 	}
@@ -234,11 +252,11 @@ public class ClientCommunicatorTest {
 	public void testSearch() throws Exception {
 		Search_Params params = new Search_Params("sheila", "parker", "10,11,12,13", "SLOAN");
 		Search_Result result = cc.search(params);
-		assertTrue(result.toString().equals("51\nimages/draft_image10.png\n4\n10\n"));
+		assertTrue(result.getMatches().size() == 1);
 		
 		params = new Search_Params("sheila", "parker", "10,11,12,13", "sloan");
 		result = cc.search(params);
-		assertTrue(result.toString().equals("51\nimages/draft_image10.png\n4\n10\n"));
+		assertTrue(result.getMatches().size() == 1);
 		
 		params = new Search_Params("sheila", "parker", "11", "slOAn");
 		result = cc.search(params);
@@ -258,15 +276,7 @@ public class ClientCommunicatorTest {
 		
 		params = new Search_Params("sheila", "parker", "10,11,12,13", "22");
 		result = cc.search(params);
-		assertTrue(result.toString().equals("44\nimages/draft_image3.png\n2\n12\n45\nimages/draft_image4.png\n"
-											+ "2\n12\n45\nimages/draft_image4.png\n3\n12\n45\nimages/draft_image4.png\n"
-											+ "5\n12\n46\nimages/draft_image5.png\n4\n12\n47\nimages/draft_image6.png\n"
-											+ "7\n12\n48\nimages/draft_image7.png\n5\n12\n49\nimages/draft_image8.png\n"
-											+ "7\n12\n50\nimages/draft_image9.png\n2\n12\n51\nimages/draft_image10.png\n"
-											+ "4\n12\n51\nimages/draft_image10.png\n5\n12\n52\nimages/draft_image11.png\n"
-											+ "2\n12\n56\nimages/draft_image15.png\n2\n12\n56\nimages/draft_image15.png\n"
-											+ "3\n12\n56\nimages/draft_image15.png\n5\n12\n57\nimages/draft_image16.png\n2"
-											+ "\n12\n"));
+		assertTrue(result.getMatches().size() == 16);
 	}
 
 	@Test
@@ -276,6 +286,7 @@ public class ClientCommunicatorTest {
 		byte[] result = obj_result.getFile_download();
 		Path path = new File("records/images/1890_image0.png").toPath();
 		assertTrue(Arrays.equals(result, Files.readAllBytes(path)));
+		
 	}
 
 }

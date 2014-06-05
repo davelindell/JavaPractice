@@ -39,7 +39,7 @@ public class GetSampleImageHandler implements HttpHandler {
 			
 		} catch (DatabaseException e) {
 			
-			logger.severe("Exception in ValidateUser handler");
+			logger.severe("Exception in GetSampleImageHandler");
 			throw new IOException(e.getMessage());
 		}
 	}

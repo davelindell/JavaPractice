@@ -15,12 +15,17 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class SearchHandler implements HttpHandler {
-
+	private int port;
 	private Logger logger = Logger.getLogger("record_server"); 
+	
+	public SearchHandler(int port) {
+		super();
+		this.port = port;
+	}
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		ServerFacade facade = new ServerFacade();
+		ServerFacade facade = new ServerFacade(port);
 		XStream xml_stream = new XStream(new DomDriver());
 		BufferedInputStream bis = new BufferedInputStream(exchange.getRequestBody());
 		Search_Params params = (Search_Params)xml_stream.fromXML(bis);
@@ -39,7 +44,7 @@ public class SearchHandler implements HttpHandler {
 			
 		} catch (DatabaseException e) {
 			
-			logger.severe("Exception in ValidateUser handler");
+			logger.severe("Exception in SearchHandler");
 			throw new IOException(e.getMessage());
 		}
 	}

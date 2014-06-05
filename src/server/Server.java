@@ -81,6 +81,15 @@ public class Server {
 		}
 
 		server.setExecutor(null); // use the default executor
+			
+		validateUserHandler = new ValidateUserHandler();
+		getProjectsHandler = new GetProjectsHandler();
+		getSampleImageHandler = new GetSampleImageHandler();
+		downloadBatchHandler = new DownloadBatchHandler(this.server.getAddress().getPort());
+		submitBatchHandler = new SubmitBatchHandler();
+		getFieldsHandler = new GetFieldsHandler(this.server.getAddress().getPort());
+		searchHandler = new SearchHandler(this.server.getAddress().getPort());
+		downloadFileHandler = new DownloadFileHandler();
 		
 		server.createContext("/ValidateUser", validateUserHandler);
 		server.createContext("/GetProjects", getProjectsHandler);
@@ -96,14 +105,14 @@ public class Server {
 		server.start();
 	}
 
-	private HttpHandler validateUserHandler = new ValidateUserHandler();
-	private HttpHandler getProjectsHandler = new GetProjectsHandler();
-	private HttpHandler getSampleImageHandler = new GetSampleImageHandler();
-	private HttpHandler downloadBatchHandler = new DownloadBatchHandler();
-	private HttpHandler submitBatchHandler = new SubmitBatchHandler();
-	private HttpHandler getFieldsHandler = new GetFieldsHandler();
-	private HttpHandler searchHandler = new SearchHandler();
-	private HttpHandler downloadFileHandler = new DownloadFileHandler();
+	private HttpHandler validateUserHandler;
+	private HttpHandler getProjectsHandler;
+	private HttpHandler getSampleImageHandler;
+	private HttpHandler downloadBatchHandler;
+	private HttpHandler submitBatchHandler;
+	private HttpHandler getFieldsHandler;
+	private HttpHandler searchHandler;
+	private HttpHandler downloadFileHandler;
 	
 	public static void main(String[] args) {
 		new Server(Integer.parseInt(args[0])).run();

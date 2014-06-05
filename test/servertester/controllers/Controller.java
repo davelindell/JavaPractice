@@ -184,7 +184,7 @@ public class Controller implements IController {
 		String[] param_values = _view.getParameterValues();
 		
 		try {
-			params = new GetFields_Params(param_values[0], param_values[1], Integer.parseInt(param_values[2]));
+			params = new GetFields_Params(param_values[0], param_values[1], param_values[2]);
 		}
 		catch (NumberFormatException e) {
 			_view.setResponse("FAILED\n");
