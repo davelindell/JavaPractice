@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 
 import shared.communication.ValidateUser_Params;
 import shared.communication.ValidateUser_Result;
+import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
 
@@ -87,8 +88,10 @@ public class LoginWindow extends JFrame {
 				result = cc.validateUser(params);
 				if(!result.isValid())
 					loginError();
-				else {}
-					//TODO: get number of batches that user has indexed
+				else {
+					loginSuccess(result.getUser());
+				}
+
 			} 
 			catch (ClientException e1) {
 				loginError();
@@ -97,6 +100,16 @@ public class LoginWindow extends JFrame {
 		}
 	};
 
+	private void loginSuccess(User user) {
+		int num_records = user.getNum_records();
+		String message_str = "Welcome " + user.getUser_first_name() + 
+							 " " + user.getUser_last_name() + ".\n" + 
+							 "You have indexed " + 
+							 Integer.toString(user.getNum_records()) + " records.";
+		
+		JOptionPane.showMessageDialog(this, message_str, "Welcome to Indexer", JOptionPane.PLAIN_MESSAGE);
+	}
+	
 	private void loginError() {
 		JOptionPane.showMessageDialog(this, "Invalid username and/or password", 
 									  "Login Failed", JOptionPane.ERROR_MESSAGE);
