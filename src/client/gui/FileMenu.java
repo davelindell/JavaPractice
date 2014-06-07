@@ -1,28 +1,39 @@
 package client.gui;
 
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import shared.communication.ValidateUser_Params;
 import shared.communication.ValidateUser_Result;
 import client.ClientException;
-import client.synchronizer.BatchStatus;
-import client.synchronizer.BatchStatusListener;
+import client.synchronizer.BatchState;
+import client.synchronizer.BatchStateListener;
 
-public class FileMenu extends JMenuBar implements BatchStatusListener {
+public class FileMenu extends JMenuBar implements BatchStateListener {
 	private JMenuItem download_batch_menu_item;
 	private JMenuItem logout_menu_item;
 	private JMenuItem exit_menu_item;
-	private BatchStatus batch_status;
+	private BatchState batch_state;
 	
-	public FileMenu(BatchStatus batch_status) {
-		this.batch_status = batch_status;
-		batch_status.addListener(this);
+	public FileMenu(BatchState batch_state) {
+		this.batch_state = batch_state;
+		batch_state.addListener(this);
 		createComponents();
 	}
 	
@@ -47,7 +58,7 @@ public class FileMenu extends JMenuBar implements BatchStatusListener {
 	private ActionListener logout_button_listener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			batch_status.pushLogout();
+			batch_state.pushLogout();
 		}
 	};
 	
@@ -61,9 +72,7 @@ public class FileMenu extends JMenuBar implements BatchStatusListener {
 	private ActionListener download_batch_button_listener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-			// TODO: Make the dialog box that pops up and prompts to select a project
-			//batch_status.pushDownloadBatch(project_id);
+			DownloadBatchWindow download_batch_window = new DownloadBatchWindow(batch_state);
 		}
 	};
 	

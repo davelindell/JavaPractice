@@ -6,20 +6,20 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
-import client.synchronizer.BatchStatus;
-import client.synchronizer.BatchStatusListener;
+import client.synchronizer.BatchState;
+import client.synchronizer.BatchStateListener;
 
-public class RecordIndexer implements LoginWindowListener, BatchStatusListener {
+public class RecordIndexer implements LoginWindowListener, BatchStateListener {
 	private IndexerFrame indexer_frame;
 	private LoginWindow login_window;
 	private String hostname;
 	private String port;
-	private BatchStatus batch_status;
+	private BatchState batch_status;
 	
 	public RecordIndexer(String hostname, String port) {
 		this.hostname = hostname;
 		this.port = port;
-		this.batch_status = new BatchStatus(hostname, port);
+		this.batch_status = new BatchState(hostname, port);
 		batch_status.addListener(this);
 		createComponents();
 	}

@@ -20,7 +20,7 @@ import shared.communication.ValidateUser_Result;
 import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
-import client.synchronizer.BatchStatus;
+import client.synchronizer.BatchState;
 
 public class LoginWindow extends JFrame {
 	private ClientCommunicator cc;
@@ -33,9 +33,9 @@ public class LoginWindow extends JFrame {
 	private String hostname;
 	private String port;
 	private LoginWindowListener login_listener;
-	private BatchStatus batch_status;
+	private BatchState batch_status;
 	
-	public LoginWindow(String hostname, String port, BatchStatus batch_status) {
+	public LoginWindow(String hostname, String port, BatchState batch_status) {
 		this.hostname = hostname;
 		this.port = port;
 		cc = new ClientCommunicator(hostname, port);
@@ -46,7 +46,8 @@ public class LoginWindow extends JFrame {
 	
 	private void createComponents() {		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		this.setLocationRelativeTo(null);
+		//this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		this.setTitle("Login to Indexer");
 		this.setPreferredSize(new Dimension(370, 100));
 		this.setResizable(false);

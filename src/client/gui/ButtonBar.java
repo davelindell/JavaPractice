@@ -7,9 +7,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import client.synchronizer.BatchStatusListener;
+import client.synchronizer.BatchStateListener;
 
-public class ButtonBar extends JPanel implements BatchStatusListener {
+public class ButtonBar extends JPanel implements BatchStateListener {
 	private JButton zoom_in_button;
 	private JButton zoom_out_button;
 	private JButton invert_image_button;

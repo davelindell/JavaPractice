@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import client.synchronizer.BatchStatus;
+import client.synchronizer.BatchState;
 
 public class IndexerFrame extends JFrame {
 	private FileMenu file_menu;
@@ -24,16 +24,17 @@ public class IndexerFrame extends JFrame {
 	private FormEntry form_entry;
 	private FieldHelp field_help;
 	private ImagePanel image_panel;
-	private BatchStatus batch_status;
+	private BatchState batch_status;
 
-	public IndexerFrame(BatchStatus batch_status) {
+	public IndexerFrame(BatchState batch_status) {
 		this.batch_status = batch_status;
 		createComponents();
 	}
 	
 	private void createComponents() {
 		this.setTitle("Indexer Beta");
-		
+		this.setLocationRelativeTo(null);
+
 		file_menu = new FileMenu(batch_status);
 		button_bar = new ButtonBar();
 		image_panel = new ImagePanel();

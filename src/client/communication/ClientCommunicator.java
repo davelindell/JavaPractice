@@ -151,7 +151,7 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public DownloadFile_Result downloadFile(String url) throws ClientException {
-		return new DownloadFile_Result(doGet("http://" + host_url + ":" + port + "/" + url));
+		return new DownloadFile_Result(doGet(url));
 	}
 	
 	private byte[] doGet(String urlPath) throws ClientException {

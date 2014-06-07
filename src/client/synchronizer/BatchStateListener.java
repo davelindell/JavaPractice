@@ -1,6 +1,6 @@
 package client.synchronizer;
 
-public interface BatchStatusListener {	
+public interface BatchStateListener {	
 	public void fireLogoutButton();
 	
 	public void fireDownloadedBatch();

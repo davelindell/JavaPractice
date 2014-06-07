@@ -13,7 +13,7 @@ import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
 
-public class BatchStatus extends JPanel {
+public class BatchState extends JPanel {
 	private boolean has_batch;
 	private ClientCommunicator cc;
 	private User user;
@@ -27,10 +27,10 @@ public class BatchStatus extends JPanel {
 	private int num_records;
 	private int project_id;
 	
-	private List<BatchStatusListener> listeners;
+	private List<BatchStateListener> listeners;
 	
-	public BatchStatus(String hostname, String port) {
-		listeners = new ArrayList<BatchStatusListener>();
+	public BatchState(String hostname, String port) {
+		listeners = new ArrayList<BatchStateListener>();
 		has_batch = false;
 		cc = new ClientCommunicator(hostname, port);
 		
@@ -43,7 +43,7 @@ public class BatchStatus extends JPanel {
 		project_id = 0;
 	}
 	
-	public void addListener(BatchStatusListener listener) {
+	public void addListener(BatchStateListener listener) {
 		listeners.add(listener);
 	}
 	
@@ -51,8 +51,16 @@ public class BatchStatus extends JPanel {
 		this.user = user;
 	}
 	
+	public User getUser() {
+		return this.user;
+	}
+	
+	public ClientCommunicator getClientCommunicator() {
+		return this.cc;
+	}
+	
 	public void pushLogout() {		
-		for (BatchStatusListener l : listeners) {
+		for (BatchStateListener l : listeners) {
 			l.fireLogoutButton();
 		}
 	}
@@ -74,7 +82,7 @@ public class BatchStatus extends JPanel {
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
 		}
 		
-		for (BatchStatusListener l : listeners) {
+		for (BatchStateListener l : listeners) {
 			l.fireDownloadedBatch();
 		}
 	}
