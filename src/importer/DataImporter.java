@@ -31,7 +31,6 @@ public class DataImporter {
 		try {
 			Files.copy(	src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

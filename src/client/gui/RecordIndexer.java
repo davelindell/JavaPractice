@@ -6,25 +6,37 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
-public class RecordIndexer extends JFrame {
+import client.synchronizer.BatchStatus;
+import client.synchronizer.BatchStatusListener;
+
+public class RecordIndexer implements LoginWindowListener, BatchStatusListener {
 	private IndexerFrame indexer_frame;
 	private LoginWindow login_window;
 	private String hostname;
 	private String port;
+	private BatchStatus batch_status;
 	
 	public RecordIndexer(String hostname, String port) {
 		this.hostname = hostname;
 		this.port = port;
+		this.batch_status = new BatchStatus(hostname, port);
+		batch_status.addListener(this);
 		createComponents();
 	}
 	
 	private void createComponents() {
-		indexer_frame = new IndexerFrame();
-		login_window = new LoginWindow(hostname, port);
+		indexer_frame = new IndexerFrame(batch_status);
+		login_window = new LoginWindow(hostname, port, batch_status);
+		login_window.addListener(this);
+
 	}
 	
 	private LoginWindow getLoginWindow() {
 		return this.login_window;
+	}
+	
+	private IndexerFrame getIndexerFrame() {
+		return this.indexer_frame;
 	}
 	
 	public static void main(final String[] args) {
@@ -32,8 +44,10 @@ public class RecordIndexer extends JFrame {
 		EventQueue.invokeLater(new Runnable() {		
 			public void run() {
 				RecordIndexer record_indexer = new RecordIndexer(args[0], args[1]);
-				record_indexer.pack();
-				record_indexer.setVisible(false);
+				
+				IndexerFrame indexer_frame = record_indexer.getIndexerFrame();
+				indexer_frame.pack();
+				indexer_frame.setVisible(false);
 				
 				LoginWindow login_window = record_indexer.getLoginWindow();
 				login_window.pack();
@@ -42,4 +56,25 @@ public class RecordIndexer extends JFrame {
 		});
 
 	}
+
+	@Override
+	public void loginSuccessful() {
+		login_window.setVisible(false);
+		indexer_frame.setVisible(true);
+	}
+
+	@Override
+	public void fireLogoutButton() {
+		indexer_frame.setVisible(false);
+		login_window.setVisible(true);
+	}
+
+	@Override
+	public void fireDownloadedBatch() {		
+	}
+
+	@Override
+	public void fireSubmittedBatch() {		
+	}
+	
 }

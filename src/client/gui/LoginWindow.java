@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +20,7 @@ import shared.communication.ValidateUser_Result;
 import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
+import client.synchronizer.BatchStatus;
 
 public class LoginWindow extends JFrame {
 	private ClientCommunicator cc;
@@ -30,11 +32,14 @@ public class LoginWindow extends JFrame {
 	private JPasswordField password_field;
 	private String hostname;
 	private String port;
+	private LoginWindowListener login_listener;
+	private BatchStatus batch_status;
 	
-	public LoginWindow(String hostname, String port) {
+	public LoginWindow(String hostname, String port, BatchStatus batch_status) {
 		this.hostname = hostname;
 		this.port = port;
 		cc = new ClientCommunicator(hostname, port);
+		this.batch_status = batch_status;
 
 		createComponents();
 	}
@@ -75,7 +80,6 @@ public class LoginWindow extends JFrame {
 		this.add(exit_button);
 	}
 	
-	
 	private ActionListener login_button_listener = new ActionListener() {
 
 		@Override
@@ -90,13 +94,14 @@ public class LoginWindow extends JFrame {
 					loginError();
 				else {
 					loginSuccess(result.getUser());
+					username_field.setText("");
+					password_field.setText("");
 				}
 
 			} 
 			catch (ClientException e1) {
 				loginError();
-			}
-			
+			}	
 		}
 	};
 
@@ -106,8 +111,10 @@ public class LoginWindow extends JFrame {
 							 " " + user.getUser_last_name() + ".\n" + 
 							 "You have indexed " + 
 							 Integer.toString(user.getNum_records()) + " records.";
-		
+
 		JOptionPane.showMessageDialog(this, message_str, "Welcome to Indexer", JOptionPane.PLAIN_MESSAGE);
+		login_listener.loginSuccessful();
+		batch_status.setUser(user);
 	}
 	
 	private void loginError() {
@@ -122,5 +129,13 @@ public class LoginWindow extends JFrame {
 		}
 	};
 	
-	
+	public void addListener(LoginWindowListener login_listener) {
+		this.login_listener = login_listener;
+	}
+
 }
+
+interface LoginWindowListener {	
+	public void loginSuccessful();	
+}
+
