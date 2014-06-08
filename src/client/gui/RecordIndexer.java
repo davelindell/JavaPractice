@@ -1,32 +1,36 @@
 package client.gui;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListener;
+import client.synchronizer.BatchStateListenerAdapter;
 
-public class RecordIndexer implements LoginWindowListener, BatchStateListener {
+public class RecordIndexer implements LoginWindowListener {
 	private IndexerFrame indexer_frame;
 	private LoginWindow login_window;
 	private String hostname;
 	private String port;
-	private BatchState batch_status;
+	private BatchState batch_state;
 	
 	public RecordIndexer(String hostname, String port) {
 		this.hostname = hostname;
 		this.port = port;
-		this.batch_status = new BatchState(hostname, port);
-		batch_status.addListener(this);
+		this.batch_state = new BatchState(hostname, port);
+		batch_state.addListener(batch_state_listener);
 		createComponents();
 	}
 	
 	private void createComponents() {
-		indexer_frame = new IndexerFrame(batch_status);
-		login_window = new LoginWindow(hostname, port, batch_status);
+		indexer_frame = new IndexerFrame(batch_state);
+		login_window = new LoginWindow(hostname, port, batch_state);
 		login_window.addListener(this);
 
 	}
@@ -57,24 +61,19 @@ public class RecordIndexer implements LoginWindowListener, BatchStateListener {
 
 	}
 
+	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
+		@Override
+		public void fireLogoutButton() {
+			indexer_frame.setVisible(false);
+			login_window.setVisible(true);
+		}
+	};
+	
 	@Override
 	public void loginSuccessful() {
 		login_window.setVisible(false);
 		indexer_frame.setVisible(true);
 	}
 
-	@Override
-	public void fireLogoutButton() {
-		indexer_frame.setVisible(false);
-		login_window.setVisible(true);
-	}
-
-	@Override
-	public void fireDownloadedBatch() {		
-	}
-
-	@Override
-	public void fireSubmittedBatch() {		
-	}
 	
 }

@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -24,8 +25,9 @@ import shared.communication.ValidateUser_Result;
 import client.ClientException;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListener;
+import client.synchronizer.BatchStateListenerAdapter;
 
-public class FileMenu extends JMenuBar implements BatchStateListener {
+public class FileMenu extends JMenuBar {
 	private JMenuItem download_batch_menu_item;
 	private JMenuItem logout_menu_item;
 	private JMenuItem exit_menu_item;
@@ -33,7 +35,7 @@ public class FileMenu extends JMenuBar implements BatchStateListener {
 	
 	public FileMenu(BatchState batch_state) {
 		this.batch_state = batch_state;
-		batch_state.addListener(this);
+		batch_state.addListener(batch_state_listener);
 		createComponents();
 	}
 	
@@ -76,18 +78,12 @@ public class FileMenu extends JMenuBar implements BatchStateListener {
 		}
 	};
 	
-	@Override
-	public void fireLogoutButton() {		
-	}
-
-	@Override
-	public void fireDownloadedBatch() {		
-		download_batch_menu_item.setEnabled(false);
-	}
-
-	@Override
-	public void fireSubmittedBatch() {		
-	}
+	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
+		@Override
+		public void fireDownloadedBatch(BufferedImage batch_image) {		
+			download_batch_menu_item.setEnabled(false);
+		}
+	};
 	
 }
 

@@ -1,13 +1,19 @@
 package client.synchronizer;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
+import shared.communication.DownloadFile_Params;
+import shared.communication.DownloadFile_Result;
 import shared.models.Field;
 import shared.models.User;
 import client.ClientException;
@@ -65,11 +71,26 @@ public class BatchState extends JPanel {
 		}
 	}
 	
+	public void pushZoomIn() {
+		for (BatchStateListener l : listeners) {
+			l.fireZoomInButton();
+		}
+	}
+	
+	public void pushZoomOut() {
+		for (BatchStateListener l : listeners) {
+			l.fireZoomOutButton();
+		}
+	}
+	
 	public void pushDownloadBatch(int project_id) {
-		DownloadBatch_Params params = new DownloadBatch_Params(user.getUsername(), user.getPassword(), project_id);
+		DownloadBatch_Params batch_params = new DownloadBatch_Params(user.getUsername(), user.getPassword(), project_id);
 		DownloadBatch_Result result = null;
+		DownloadFile_Result file_result = null;
+		
+		BufferedImage batch_image = null;
 		try {
-			result = cc.downloadBatch(params);
+			result = cc.downloadBatch(batch_params);
 			this.batch_id = result.getBatch_id();
 			this.fields = result.getFields();
 			this.first_y_coord = result.getFirst_y_coord();
@@ -77,15 +98,29 @@ public class BatchState extends JPanel {
 			this.num_fields = result.getNum_fields();
 			this.num_records = result.getNum_records();
 			this.project_id = result.getProject_id();
+			
+			file_result = cc.downloadFile(image_url);
+			batch_image = ImageIO.read(new ByteArrayInputStream(file_result.getFile_download()));
+			
 		} catch (ClientException e) {
 			JOptionPane.showMessageDialog(this, "Connection Error", 
+					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "File Read Error", 
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		for (BatchStateListener l : listeners) {
-			l.fireDownloadedBatch();
+			l.fireDownloadedBatch(batch_image);
 		}
 	}
+	
+	public void pushInvertImage() {
+		for (BatchStateListener l : listeners) {
+			l.fireInvertImage();
+		}
+	}
+
 }
 
 

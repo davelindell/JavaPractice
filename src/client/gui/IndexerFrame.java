@@ -24,10 +24,10 @@ public class IndexerFrame extends JFrame {
 	private FormEntry form_entry;
 	private FieldHelp field_help;
 	private ImagePanel image_panel;
-	private BatchState batch_status;
+	private BatchState batch_state;
 
-	public IndexerFrame(BatchState batch_status) {
-		this.batch_status = batch_status;
+	public IndexerFrame(BatchState batch_state) {
+		this.batch_state = batch_state;
 		createComponents();
 	}
 	
@@ -35,9 +35,9 @@ public class IndexerFrame extends JFrame {
 		this.setTitle("Indexer Beta");
 		this.setLocationRelativeTo(null);
 
-		file_menu = new FileMenu(batch_status);
-		button_bar = new ButtonBar();
-		image_panel = new ImagePanel();
+		file_menu = new FileMenu(batch_state);
+		button_bar = new ButtonBar(batch_state);
+		image_panel = new ImagePanel(batch_state);
 		
 		table_entry = new TableEntry();
 		form_entry = new FormEntry();

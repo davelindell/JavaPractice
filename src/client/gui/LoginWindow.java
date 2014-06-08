@@ -33,13 +33,13 @@ public class LoginWindow extends JFrame {
 	private String hostname;
 	private String port;
 	private LoginWindowListener login_listener;
-	private BatchState batch_status;
+	private BatchState batch_state;
 	
-	public LoginWindow(String hostname, String port, BatchState batch_status) {
+	public LoginWindow(String hostname, String port, BatchState batch_state) {
 		this.hostname = hostname;
 		this.port = port;
 		cc = new ClientCommunicator(hostname, port);
-		this.batch_status = batch_status;
+		this.batch_state = batch_state;
 
 		createComponents();
 	}
@@ -115,7 +115,7 @@ public class LoginWindow extends JFrame {
 
 		JOptionPane.showMessageDialog(this, message_str, "Welcome to Indexer", JOptionPane.PLAIN_MESSAGE);
 		login_listener.loginSuccessful();
-		batch_status.setUser(user);
+		batch_state.setUser(user);
 	}
 	
 	private void loginError() {
