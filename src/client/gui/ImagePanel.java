@@ -64,10 +64,10 @@ public class ImagePanel extends JComponent {
 	
 	private void initDrag() {
 	    drag_image = false;
-		w_dragStartX = this.getWidth()/2;
-		w_dragStartY = this.getHeight()/2;
-		w_dragStartOriginX = this.getWidth()/2;
-		w_dragStartOriginY = this.getHeight()/2;
+		w_dragStartX = 0;
+		w_dragStartY = 0;
+		w_dragStartOriginX = 0;
+		w_dragStartOriginY = 0;
 	}
 	
 	public void setScale(double newScale) {
@@ -119,16 +119,14 @@ public class ImagePanel extends JComponent {
 				
 				int w_deltaX = w_X - w_dragStartX;
 				int w_deltaY = w_Y - w_dragStartY;
-				
-				Image cur_image =  drawing_image.getImage();
-				
-				if (!(w_centerX - w_deltaX < ImagePanel.this.getX() - 400) &&
-						!(w_centerX - w_deltaX > ImagePanel.this.getX() + ImagePanel.this.getWidth() + 400)){
+								
+				if (!(w_centerX - w_deltaX < -400) &&
+						!(w_centerX - w_deltaX > ImagePanel.this.getWidth() + 400)){
 					w_centerX = w_dragStartOriginX - w_deltaX;
 				}
 				
-				if (!(w_centerY - w_deltaY < -cur_image.getHeight(null)/7) &&
-						!(w_centerY - w_deltaY > cur_image.getHeight(null))){
+				if (!(w_centerY - w_deltaY < -400) &&
+						!(w_centerY - w_deltaY > 400)) {
 					w_centerY = w_dragStartOriginY - w_deltaY;
 				}
 				

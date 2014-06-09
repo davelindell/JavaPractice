@@ -89,7 +89,7 @@ public class DownloadBatchWindow extends JDialog {
 		this.setModal(true);
 		this.setResizable(false);
 		this.setTitle("Download Batch");
-		this.setPreferredSize(new Dimension(300,70));
+		//this.setPreferredSize(new Dimension(300,70));
 		this.setLocationRelativeTo(null);
 		this.pack();
 		this.setVisible(true);

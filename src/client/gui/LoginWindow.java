@@ -1,17 +1,22 @@
 package client.gui;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -44,41 +49,61 @@ public class LoginWindow extends JFrame {
 		createComponents();
 	}
 	
-	private void createComponents() {		
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocationRelativeTo(null);
-		//this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-		this.setTitle("Login to Indexer");
-		this.setPreferredSize(new Dimension(370, 100));
-		this.setResizable(false);
-		this.setLayout(null);
-		this.setExtendedState(NORMAL);
+	private void createComponents() {				
+		
+		// Create JPanels
+		JPanel login_window_panel = new JPanel();
+		login_window_panel.setLayout(new BoxLayout(login_window_panel, BoxLayout.PAGE_AXIS));
+		
+		JPanel top_row = new JPanel();
+		top_row.setLayout(new BoxLayout(top_row, BoxLayout.LINE_AXIS));
+		
+		JPanel middle_row = new JPanel();
+		middle_row.setLayout(new BoxLayout(middle_row, BoxLayout.LINE_AXIS));
+		
+		JPanel bottom_row = new JPanel();
+		bottom_row.setLayout(new BoxLayout(bottom_row, BoxLayout.LINE_AXIS));
+		
 		
 		username_label = new JLabel("Username:");
-		username_label.setBounds(10, 10, 80, 25);
-		this.add(username_label);
-
-		username_field = new JTextField(40);
-		username_field.setBounds(80, 10, 280, 20);
-		this.add(username_field);
-
-		password_label = new JLabel("Password:");
-		password_label.setBounds(10, 40, 80, 25);
-		this.add(password_label);
-
-		password_field = new JPasswordField(40);
-		password_field.setBounds(80, 40, 280, 20);
-		this.add(password_field);
-
+		JPanel username_field_panel = new JPanel();
+		username_field = new JTextField(20);
+		
+		password_label = new JLabel("Password: ");
+		JPanel password_field_panel = new JPanel();
+		password_field = new JPasswordField(20);
+		password_field.setSize(new Dimension(100,10));
+		
 		login_button = new JButton("Login");
-		login_button.setBounds(120, 70, 70, 25);
 		login_button.addActionListener(login_button_listener);
-		this.add(login_button);
 		
 		exit_button = new JButton("Exit");
-		exit_button.setBounds(195, 70, 70, 25);
 		exit_button.addActionListener(exit_button_listener);
-		this.add(exit_button);
+		
+		username_field_panel.add(username_field);
+		top_row.add(username_label);
+		top_row.add(username_field_panel);
+		
+		password_field_panel.add(password_field);
+		middle_row.add(password_label);
+		middle_row.add(password_field_panel);
+		
+		bottom_row.add(login_button);
+		bottom_row.add(Box.createRigidArea(new Dimension(10,0)));
+		bottom_row.add(exit_button);
+
+		login_window_panel.add(top_row);
+		login_window_panel.add(middle_row);
+		login_window_panel.add(bottom_row);
+		
+		login_window_panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		
+		this.add(login_window_panel);
+		this.setLocationRelativeTo(null);
+		this.setTitle("Login to Indexer");
+		this.setPreferredSize(new Dimension(320, 100));
+		this.setResizable(false);
+		this.setExtendedState(NORMAL);
 	}
 	
 	private ActionListener login_button_listener = new ActionListener() {
