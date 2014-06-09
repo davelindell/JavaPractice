@@ -41,7 +41,7 @@ public class IndexerFrame extends JFrame {
 		
 		table_entry = new TableEntry();
 		form_entry = new FormEntry();
-		field_help = new FieldHelp();
+		field_help = new FieldHelp(batch_state);
 		
 		entry_tabbed_pane = new JTabbedPane();
 		help_tabbed_pane = new JTabbedPane();

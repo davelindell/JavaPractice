@@ -65,6 +65,10 @@ public class BatchState extends JPanel {
 		return this.cc;
 	}
 	
+	public int getProjectId() {
+		return this.project_id;
+	}
+	
 	public void pushLogout() {		
 		for (BatchStateListener l : listeners) {
 			l.fireLogoutButton();
