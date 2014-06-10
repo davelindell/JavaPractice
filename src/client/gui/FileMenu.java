@@ -80,7 +80,7 @@ public class FileMenu extends JMenuBar {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadedBatch(BufferedImage batch_image) {		
+		public void fireDownloadBatch(BufferedImage batch_image) {		
 			download_batch_menu_item.setEnabled(false);
 		}
 	};

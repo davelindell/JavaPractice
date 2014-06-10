@@ -102,6 +102,8 @@ public class ImagePanel extends JComponent {
 				int d_Y = e.getY();
 				
 				AffineTransform transform = new AffineTransform();
+				
+				//transform.translate(ImagePanel.this.getWidth()/2, ImagePanel.this.getHeight()/2);
 				transform.scale(scale, scale);
 				transform.translate(-w_dragStartOriginX, -w_dragStartOriginY);
 				
@@ -120,17 +122,34 @@ public class ImagePanel extends JComponent {
 				int w_deltaX = w_X - w_dragStartX;
 				int w_deltaY = w_Y - w_dragStartY;
 								
-				if (!(w_centerX - w_deltaX < -400) &&
-						!(w_centerX - w_deltaX > ImagePanel.this.getWidth() + 400)){
-					w_centerX = w_dragStartOriginX - w_deltaX;
+				boolean x_limit = false;
+				boolean y_limit = false;
+				
+				w_centerX = w_dragStartOriginX - w_deltaX;
+				w_centerY = w_dragStartOriginY - w_deltaY;
+				
+ 				if (w_dragStartOriginX - w_deltaX < 300) {
+					w_centerX = 300;
+					x_limit = true;
+				}
+						
+				if (w_dragStartOriginX - w_deltaX > 2000) {
+					w_centerX = 2000;
+					x_limit = true;
 				}
 				
-				if (!(w_centerY - w_deltaY < -400) &&
-						!(w_centerY - w_deltaY > 400)) {
-					w_centerY = w_dragStartOriginY - w_deltaY;
+				if (w_dragStartOriginY - w_deltaY < -100) {
+					w_centerY = -100;
+					y_limit = true;
 				}
-				
-				
+					
+				if(w_dragStartOriginY - w_deltaY > 1000) {
+					w_centerY = 1000;
+					y_limit = true;
+				}
+
+
+
 				ImagePanel.this.repaint();
 			}
 		}
@@ -141,6 +160,7 @@ public class ImagePanel extends JComponent {
 			int d_Y = e.getY();
 			
 			AffineTransform transform = new AffineTransform();
+			//transform.translate(ImagePanel.this.getWidth()/2, ImagePanel.this.getHeight()/2);
 			transform.scale(scale, scale);
 			transform.translate(-w_centerX, -w_centerY);
 			
@@ -173,7 +193,7 @@ public class ImagePanel extends JComponent {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			double scroll_amount = 0;
 			scroll_amount = ((double)e.getWheelRotation()) / 6;
-			if ((scale < .5 && scroll_amount > 0) ||
+			if ((scale < .25 && scroll_amount > 0) ||
 				 (scale > 2 && scroll_amount < 0)) {
 				scroll_amount = 0;
 			}
@@ -197,6 +217,10 @@ public class ImagePanel extends JComponent {
 		
 		public void draw(Graphics2D g2) {
 			Rectangle2D bounds = rect.getBounds2D();
+			//int minX = (int)bounds.getMinX();
+			//int minY = (int)bounds.getMinY();
+			//int maxX = (int)bounds.getMaxX();
+			//int maxY = (int)bounds.getMaxY();
 			g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getMaxX(), (int)bounds.getMaxY(),
 							0, 0, image.getWidth(null), image.getHeight(null), null);
 		}
@@ -216,7 +240,7 @@ public class ImagePanel extends JComponent {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadedBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch(BufferedImage batch_image) {
 			ImagePanel.this.w_centerX = ImagePanel.this.getWidth()/2;
 			ImagePanel.this.w_centerY = ImagePanel.this.getHeight()/2;
 			initDrag();
@@ -230,7 +254,7 @@ public class ImagePanel extends JComponent {
 		}
 		@Override
 		public void fireZoomOutButton() {
-			if (!(scale < .5))
+			if (!(scale < .25))
 				setScale(scale - .15);
 		}
 

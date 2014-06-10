@@ -9,11 +9,11 @@ public class BatchStateListenerAdapter implements BatchStateListener {
 	}
 
 	@Override
-	public void fireDownloadedBatch(BufferedImage batch_image) {		
+	public void fireDownloadBatch(BufferedImage batch_image) {		
 	}
 
 	@Override
-	public void fireSubmittedBatch() {		
+	public void fireSubmitBatch() {		
 	}
 
 	@Override

@@ -54,6 +54,7 @@ public class ButtonBar extends JPanel {
 		this.add(save_button);
 		
 		submit_button = new JButton("Submit");
+		submit_button.addActionListener(submit_button_listener);
 		submit_button.setEnabled(false);
 		this.add(submit_button);
 		
@@ -82,9 +83,17 @@ public class ButtonBar extends JPanel {
 		}
 	};
 
+	
+	private ActionListener submit_button_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			batch_state.pushSubmitBatch();
+		}
+	};
+	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadedBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch(BufferedImage batch_image) {
 			ButtonBar.this.zoom_in_button.setEnabled(true);
 			ButtonBar.this.zoom_out_button.setEnabled(true);
 			ButtonBar.this.invert_image_button.setEnabled(true);
@@ -94,7 +103,7 @@ public class ButtonBar extends JPanel {
 		}
 
 		@Override
-		public void fireSubmittedBatch() {
+		public void fireSubmitBatch() {
 			ButtonBar.this.zoom_in_button.setEnabled(false);
 			ButtonBar.this.zoom_out_button.setEnabled(false);
 			ButtonBar.this.invert_image_button.setEnabled(false);

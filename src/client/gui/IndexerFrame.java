@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
@@ -20,9 +21,9 @@ public class IndexerFrame extends JFrame {
 	private JSplitPane horz_split_pane;
 	private JTabbedPane entry_tabbed_pane;
 	private JTabbedPane help_tabbed_pane;
-	private TableEntry table_entry;
-	private FormEntry form_entry;
-	private FieldHelp field_help;
+	private JScrollPane table_entry;
+	private JScrollPane form_entry;
+	private JScrollPane field_help;
 	private ImagePanel image_panel;
 	private BatchState batch_state;
 
@@ -39,9 +40,9 @@ public class IndexerFrame extends JFrame {
 		button_bar = new ButtonBar(batch_state);
 		image_panel = new ImagePanel(batch_state);
 		
-		table_entry = new TableEntry();
-		form_entry = new FormEntry();
-		field_help = new FieldHelp(batch_state);
+		table_entry = new JScrollPane(new TableEntry(batch_state));
+		form_entry = new JScrollPane(new FormEntry());
+		field_help = new JScrollPane(new FieldHelp(batch_state));
 		
 		entry_tabbed_pane = new JTabbedPane();
 		help_tabbed_pane = new JTabbedPane();

@@ -15,6 +15,7 @@ import shared.communication.DownloadBatch_Result;
 import shared.communication.DownloadFile_Params;
 import shared.communication.DownloadFile_Result;
 import shared.models.Field;
+import shared.models.IndexedData;
 import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
@@ -32,6 +33,7 @@ public class BatchState extends JPanel {
 	private int num_fields;
 	private int num_records;
 	private int project_id;
+	private List<List<IndexedData>> records;
 	
 	private List<BatchStateListener> listeners;
 	
@@ -47,6 +49,7 @@ public class BatchState extends JPanel {
 		num_fields = 0;
 		num_records = 0;
 		project_id = 0;
+		records = new ArrayList<List<IndexedData>>();
 	}
 	
 	public void addListener(BatchStateListener listener) {
@@ -68,7 +71,43 @@ public class BatchState extends JPanel {
 	public int getProjectId() {
 		return this.project_id;
 	}
-	
+
+	public List<Field> getFields() {
+		return fields;
+	}
+
+	public int getFirstYCoord() {
+		return first_y_coord;
+	}
+
+	public String getImageUrl() {
+		return image_url;
+	}
+
+	public int getNumFields() {
+		return num_fields;
+	}
+
+	public int getNumRecords() {
+		return num_records;
+	}
+
+	public int getBatchID() {
+		return batch_id;
+	}
+
+	public List<List<IndexedData>> getRecords() {
+		return records;
+	}
+
+	public void setRecords(List<List<IndexedData>> records) {
+		this.records = records;
+	}
+
+	public List<BatchStateListener> getListeners() {
+		return listeners;
+	}
+
 	public void pushLogout() {		
 		for (BatchStateListener l : listeners) {
 			l.fireLogoutButton();
@@ -113,15 +152,34 @@ public class BatchState extends JPanel {
 			JOptionPane.showMessageDialog(this, "File Read Error", 
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
 		}
+			
+		// init indexed data for when we submit the batch
+		for (int i = 0; i < num_records; ++i) {
+			records.add(new ArrayList<IndexedData>());
+			
+			for (int j = 0; j < num_fields; ++j) {
+				IndexedData cur_data = new IndexedData();
+				cur_data.setBatch_id(batch_id);
+				cur_data.setRecord_value("");				
+				records.get(i).add(cur_data);
+			}
+		}
+		
 		
 		for (BatchStateListener l : listeners) {
-			l.fireDownloadedBatch(batch_image);
+			l.fireDownloadBatch(batch_image);
 		}
 	}
 	
 	public void pushInvertImage() {
 		for (BatchStateListener l : listeners) {
 			l.fireInvertImage();
+		}
+	}
+	
+	public void pushSubmitBatch() {
+		for (BatchStateListener l : listeners) {
+			l.fireSubmitBatch();
 		}
 	}
 
