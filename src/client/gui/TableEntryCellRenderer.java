@@ -9,14 +9,16 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
+import client.synchronizer.BatchState;
+
 @SuppressWarnings("serial")
 class TableEntryCellRenderer extends JLabel implements TableCellRenderer {
-
+	private BatchState batch_state;
 	private Border unselectedBorder = BorderFactory.createMatteBorder(0,0,1,1, Color.black);
 	private Border selectedBorder = BorderFactory.createMatteBorder(2,2,2,2, Color.BLUE);
 
-	public TableEntryCellRenderer() {
-		
+	public TableEntryCellRenderer(BatchState batch_state) {
+		this.batch_state = batch_state;
 		setOpaque(true);
 		setFont(getFont().deriveFont(12.0f));
 	}
@@ -24,7 +26,14 @@ class TableEntryCellRenderer extends JLabel implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table,
 			Object value, boolean isSelected, boolean hasFocus, int row,
 			int column) {
-
+		
+		// update currently selected row
+		if (isSelected && 
+				(row != batch_state.getCurRow() || 
+					column != batch_state.getCurColumn())) {
+			batch_state.pushChangeSelectedEntry(row, column);
+		}
+		
 		// Color c = ColorUtils.fromString((String)value);
 		this.setBackground(Color.WHITE);
 		

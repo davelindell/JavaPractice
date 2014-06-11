@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -25,6 +26,10 @@ public class BatchState extends JPanel {
 	private ClientCommunicator cc;
 	private User user;
 	
+	// synch info
+	private int cur_row;
+	private int cur_column;
+
 	// batch information
 	private int batch_id;
 	private List<Field> fields;
@@ -34,6 +39,7 @@ public class BatchState extends JPanel {
 	private int num_records;
 	private int project_id;
 	private List<List<IndexedData>> records;
+	private List<String> field_helps;
 	
 	private List<BatchStateListener> listeners;
 	
@@ -50,6 +56,10 @@ public class BatchState extends JPanel {
 		num_records = 0;
 		project_id = 0;
 		records = new ArrayList<List<IndexedData>>();
+		field_helps = new ArrayList<String>();
+
+		cur_row = -1;
+		cur_column =-1;
 	}
 	
 	public void addListener(BatchStateListener listener) {
@@ -103,6 +113,26 @@ public class BatchState extends JPanel {
 	public void setRecords(List<List<IndexedData>> records) {
 		this.records = records;
 	}
+	
+	public int getCurRow() {
+		return cur_row;
+	}
+
+	public void setCurRow(int cur_row) {
+		this.cur_row = cur_row;
+	}
+
+	public int getCurColumn() {
+		return cur_column;
+	}
+
+	public void setCurColumn(int cur_column) {
+		this.cur_column = cur_column;
+	}
+	
+	public List<String> getFieldHelps() {
+		return field_helps;
+	}
 
 	public List<BatchStateListener> getListeners() {
 		return listeners;
@@ -145,6 +175,13 @@ public class BatchState extends JPanel {
 			file_result = cc.downloadFile(image_url);
 			batch_image = ImageIO.read(new ByteArrayInputStream(file_result.getFile_download()));
 			
+			for(Field f : fields) {
+				String help_url = f.getHelp_url();
+				file_result = cc.downloadFile(help_url);
+				String field_help = new String(file_result.getFile_download());
+				field_helps.add(field_help);
+			}
+			
 		} catch (ClientException e) {
 			JOptionPane.showMessageDialog(this, "Connection Error", 
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
@@ -182,7 +219,14 @@ public class BatchState extends JPanel {
 			l.fireSubmitBatch();
 		}
 	}
-
+	
+	public void pushChangeSelectedEntry(int row, int column) {
+		cur_row = row;
+		cur_column = column;
+		for (BatchStateListener l : listeners) {
+			l.fireChangeSelectedEntry(row, column);
+		}
+	}
 }
 
 

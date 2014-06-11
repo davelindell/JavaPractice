@@ -77,7 +77,7 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 		}		
 		for (int i = 0; i < table_model.getColumnCount(); ++i) {
 			TableColumn column = columnModel.getColumn(i);
-			column.setCellRenderer(new TableEntryCellRenderer());
+			column.setCellRenderer(new TableEntryCellRenderer(batch_state));
 		}	
 	}
 	
@@ -103,7 +103,7 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 			}		
 			for (int i = 0; i < table_model.getColumnCount(); ++i) {
 				TableColumn column = columnModel.getColumn(i);
-				column.setCellRenderer(new TableEntryCellRenderer());
+				column.setCellRenderer(new TableEntryCellRenderer(batch_state));
 				// column.setCellEditor(new TableEntryCellRenderer());
 			}	
 			

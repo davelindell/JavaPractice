@@ -15,4 +15,6 @@ public interface BatchStateListener {
 	public void fireZoomOutButton();
 
 	public void fireInvertImage();
+	
+	public void fireChangeSelectedEntry(int row, int column);
 }
