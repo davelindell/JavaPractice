@@ -10,7 +10,6 @@ import javax.swing.table.AbstractTableModel;
 import shared.models.IndexedData;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
-import client.synchronizer.TableModelListener;
 
 public class TableModel extends AbstractTableModel {
 	private BatchState batch_state;
@@ -23,12 +22,20 @@ public class TableModel extends AbstractTableModel {
 	
 	@Override
 	public int getRowCount() {
-		return batch_state.getNumRecords() + 1;
+		return batch_state.getNumRecords();
 	}
 
 	@Override
 	public int getColumnCount() {
 		return batch_state.getNumFields() + 1;
+	}
+	
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		if (column == 0)
+			return false;
+		else
+			return true;
 	}
 
 	@Override
@@ -61,13 +68,29 @@ public class TableModel extends AbstractTableModel {
 		return result;
 	}
 	
-	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
-		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {
-			TableModelEvent e = new TableModelEvent(TableModel.this);
-			TableModel.this.fireTableChanged(e);
+	@Override
+	public void setValueAt(Object value, int row, int column) {
+		
+		if (row >= 0 && row < getRowCount() && column >= 0
+				&& column < getColumnCount()) {
+			batch_state.getRecords().get(row).get(column - 1).setRecord_value((String)value);
 			
-		}
+			this.fireTableCellUpdated(row, column);
+			
+		} else {
+			throw new IndexOutOfBoundsException();
+		}		
+	}
+	
+	
+	
+	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
+//		@Override
+//		public void fireDownloadBatch(BufferedImage batch_image) {
+//			TableModelEvent e = new TableModelEvent(TableModel.this);
+//			TableModel.this.fireTableChanged(e);
+//			
+//		}
 
 	};
 	

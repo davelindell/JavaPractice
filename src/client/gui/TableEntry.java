@@ -3,10 +3,12 @@ package client.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -20,7 +22,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import client.synchronizer.BatchState;
-import client.synchronizer.TableModelListener;
+import client.synchronizer.BatchStateListenerAdapter;
 
 public class TableEntry extends JPanel implements javax.swing.event.TableModelListener {
 	private TableModel table_model;
@@ -31,12 +33,13 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 		table_model = new TableModel(batch_state);
 		this.batch_state = batch_state;
 		table_model.addTableModelListener(this);
+		batch_state.addListener(batch_state_listener);
 		createComponents();
 	}
 	
 	private void createComponents() {
 		this.setPreferredSize(new Dimension(600, 200));
-		
+
 		
 	}
 
@@ -65,35 +68,52 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 	};
 
 	@Override
-	public void tableChanged(TableModelEvent e) {
-		table = new JTable(table_model);
-		table.setRowHeight(30);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setCellSelectionEnabled(true);
-		table.getTableHeader().setReorderingAllowed(false);
-		table.addMouseListener(mouse_adapter);
-		
+	public void tableChanged(TableModelEvent e) {		
 		TableColumnModel columnModel = table.getColumnModel();		
 		
 		for (int i = 0; i < table_model.getColumnCount(); ++i) {
 			TableColumn column = columnModel.getColumn(i);
-			column.setPreferredWidth(150);
+			column.setPreferredWidth(100);
 		}		
-		for (int i = 1; i < table_model.getColumnCount(); ++i) {
+		for (int i = 0; i < table_model.getColumnCount(); ++i) {
 			TableColumn column = columnModel.getColumn(i);
 			column.setCellRenderer(new TableEntryCellRenderer());
-			// column.setCellEditor(new TableEntryCellRenderer());
 		}	
-		
-		JPanel root_panel = new JPanel(new BorderLayout());
-		root_panel.add(table.getTableHeader(), BorderLayout.NORTH);
-		root_panel.add(table, BorderLayout.CENTER);
-
-		this.add(root_panel);
-		this.setVisible(true);
-
 	}
 	
-	
+	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
+		@Override
+		public void fireDownloadBatch(BufferedImage batch_image) {
+			TableEntry.this.removeAll();
+			table = new JTable(table_model);
+			table.setRowHeight(15);
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setCellSelectionEnabled(true);
+			table.getTableHeader().setReorderingAllowed(false);
+			table.addMouseListener(mouse_adapter);
+			table.setIntercellSpacing(new Dimension(0,0));
+			table.setGridColor(Color.BLACK);
+			table.setFont(table.getFont().deriveFont(Font.PLAIN));
+			
+			TableColumnModel columnModel = table.getColumnModel();		
+			
+			for (int i = 0; i < table_model.getColumnCount(); ++i) {
+				TableColumn column = columnModel.getColumn(i);
+				column.setPreferredWidth(100);
+			}		
+			for (int i = 0; i < table_model.getColumnCount(); ++i) {
+				TableColumn column = columnModel.getColumn(i);
+				column.setCellRenderer(new TableEntryCellRenderer());
+				// column.setCellEditor(new TableEntryCellRenderer());
+			}	
+			
+			JPanel root_panel = new JPanel(new BorderLayout());
+			root_panel.add(table.getTableHeader(), BorderLayout.NORTH);
+			root_panel.add(table, BorderLayout.CENTER);
+
+			TableEntry.this.add(root_panel);
+		}
+
+	};
 	
 }
