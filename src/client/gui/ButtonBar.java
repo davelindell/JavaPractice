@@ -46,6 +46,7 @@ public class ButtonBar extends JPanel {
 		this.add(invert_image_button);
 		
 		toggle_highlights_button = new JButton("Toggle Highlights");
+		toggle_highlights_button.addActionListener(toggle_highlights_listener);
 		toggle_highlights_button.setEnabled(false);
 		this.add(toggle_highlights_button);
 		
@@ -88,6 +89,13 @@ public class ButtonBar extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			batch_state.pushSubmitBatch();
+		}
+	};
+	
+	private ActionListener toggle_highlights_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			batch_state.pushToggleHighlights();
 		}
 	};
 	

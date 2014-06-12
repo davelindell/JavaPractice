@@ -34,10 +34,12 @@ public class BatchState extends JPanel {
 	private int batch_id;
 	private List<Field> fields;
 	private int first_y_coord;
+	private int first_x_coord;
 	private String image_url;
 	private int num_fields;
 	private int num_records;
 	private int project_id;
+	private int record_height;
 	private List<List<IndexedData>> records;
 	private List<String> field_helps;
 	
@@ -51,10 +53,12 @@ public class BatchState extends JPanel {
 		batch_id = 0;
 		fields = null;
 		first_y_coord = 0;
+		first_x_coord = 0;
 		image_url = null;
 		num_fields = 0;
 		num_records = 0;
 		project_id = 0;
+		record_height = 0;
 		records = new ArrayList<List<IndexedData>>();
 		field_helps = new ArrayList<String>();
 
@@ -90,6 +94,10 @@ public class BatchState extends JPanel {
 		return first_y_coord;
 	}
 
+	public int getFirstXCoord() {
+		return first_x_coord;
+	}
+	
 	public String getImageUrl() {
 		return image_url;
 	}
@@ -104,6 +112,11 @@ public class BatchState extends JPanel {
 
 	public int getBatchID() {
 		return batch_id;
+	}
+	
+
+	public int getRecord_height() {
+		return record_height;
 	}
 
 	public List<List<IndexedData>> getRecords() {
@@ -167,10 +180,12 @@ public class BatchState extends JPanel {
 			this.batch_id = result.getBatch_id();
 			this.fields = result.getFields();
 			this.first_y_coord = result.getFirst_y_coord();
+			this.first_x_coord = fields.get(0).getX_coord();
 			this.image_url = result.getImage_url();
 			this.num_fields = result.getNum_fields();
 			this.num_records = result.getNum_records();
 			this.project_id = result.getProject_id();
+			this.record_height = result.getRecord_height();
 			
 			file_result = cc.downloadFile(image_url);
 			batch_image = ImageIO.read(new ByteArrayInputStream(file_result.getFile_download()));
@@ -187,6 +202,9 @@ public class BatchState extends JPanel {
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, "File Read Error", 
+					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
+		} catch (NullPointerException e) {
+			JOptionPane.showMessageDialog(this, "Connection Error", 
 					  "Download Batch Failed", JOptionPane.ERROR_MESSAGE);
 		}
 			
@@ -213,6 +231,13 @@ public class BatchState extends JPanel {
 			l.fireInvertImage();
 		}
 	}
+	
+	public void pushToggleHighlights() {
+		for (BatchStateListener l : listeners) {
+			l.fireToggleHighlights();
+		}
+	}
+	
 	
 	public void pushSubmitBatch() {
 		for (BatchStateListener l : listeners) {

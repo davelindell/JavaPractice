@@ -1,6 +1,6 @@
-Jun 11, 2014 3:24:25 PM server.Server run
+Jun 11, 2014 6:10:49 PM server.Server run
 INFO: Initializing Model
-Jun 11, 2014 3:24:25 PM server.Server run
+Jun 11, 2014 6:10:50 PM server.Server run
 INFO: Initializing HTTP Server
-Jun 11, 2014 3:24:25 PM server.Server run
+Jun 11, 2014 6:10:50 PM server.Server run
 INFO: Starting HTTP Server

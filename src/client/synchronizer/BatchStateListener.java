@@ -16,5 +16,7 @@ public interface BatchStateListener {
 
 	public void fireInvertImage();
 	
+	public void fireToggleHighlights();
+	
 	public void fireChangeSelectedEntry(int row, int column);
 }

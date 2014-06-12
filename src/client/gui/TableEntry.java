@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BoxLayout;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -39,7 +40,7 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 	
 	private void createComponents() {
 		this.setPreferredSize(new Dimension(600, 200));
-
+		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
 	}
 
@@ -113,7 +114,13 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 
 			TableEntry.this.add(root_panel);
 		}
-
+		
+		@Override
+		public void fireChangeSelectedEntry(int row, int column) {
+				table.changeSelection(row, column + 1, false, false);
+		}
+		
+		
 	};
 	
 }

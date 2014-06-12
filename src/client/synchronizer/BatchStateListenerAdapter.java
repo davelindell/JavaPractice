@@ -27,6 +27,10 @@ public class BatchStateListenerAdapter implements BatchStateListener {
 	@Override
 	public void fireInvertImage() {		
 	}
+	
+	@Override
+	public void fireToggleHighlights(){
+	}
 
 	@Override
 	public void fireChangeSelectedEntry(int row, int column) {

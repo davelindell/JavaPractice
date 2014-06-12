@@ -8,15 +8,20 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.JTextComponent;
 
 import client.communication.ClientCommunicator;
 import client.synchronizer.BatchState;
@@ -24,7 +29,7 @@ import client.synchronizer.BatchStateListenerAdapter;
 
 public class FieldHelp extends JPanel {
 	private BatchState batch_state;
-	private JLabel text_field;
+	private JEditorPane text_field;
 	
 	public FieldHelp(BatchState batch_state) {
 		this.batch_state = batch_state;
@@ -34,33 +39,23 @@ public class FieldHelp extends JPanel {
 	
 	private void createComponents() {
 		this.setPreferredSize(new Dimension(600, 200));
-		this.setLayout(new FlowLayout());
-		this.setBackground(Color.WHITE);
-		text_field = new JLabel();
-		FieldHelp.this.add(text_field);
+		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+		this.setVisible(true);
 	}
 	
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
-//		@Override
-//		public void fireDownloadBatch(BufferedImage batch_image) {
-//			JLabel text_field = new JLabel("A label");
-//			label.setFont(new Font("Serif", Font.PLAIN, 14));
-//			label.setForeground(new Color(0xffffdd));
-//		}
-		
 		@Override
 		public void fireChangeSelectedEntry(int row, int column) {
-			FieldHelp.this.removeAll();
-			if (column != 0) {
-				String text_body = batch_state.getFieldHelps().get(column - 1);
-				JLabel text_field = new JLabel(text_body);
-				text_field.setBackground(Color.white);
-				text_field.setFont(new Font("Serif", Font.PLAIN, 14));
+				FieldHelp.this.removeAll();
+				String field_help = batch_state.getFieldHelps().get(column);
+				text_field = new JEditorPane("text/html",field_help);
+				text_field.setPreferredSize(new Dimension(600, 200));
+				text_field.setEditable(false);
 				FieldHelp.this.add(text_field);
-				FieldHelp.this.setVisible(true);
+				FieldHelp.this.revalidate();
 				repaint();
-			}
+
 		}
 		
 	};

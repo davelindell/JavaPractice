@@ -1,9 +1,11 @@
 package client.gui;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JEditorPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
@@ -17,7 +19,6 @@ public class TableModel extends AbstractTableModel {
 	public TableModel(BatchState batch_state) {
 		super();
 		this.batch_state = batch_state;
-		batch_state.addListener(batch_state_listener);
 	}
 	
 	@Override
@@ -81,17 +82,6 @@ public class TableModel extends AbstractTableModel {
 			throw new IndexOutOfBoundsException();
 		}		
 	}
-	
-	
-	
-	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
-//		@Override
-//		public void fireDownloadBatch(BufferedImage batch_image) {
-//			TableModelEvent e = new TableModelEvent(TableModel.this);
-//			TableModel.this.fireTableChanged(e);
-//			
-//		}
 
-	};
 	
 }
