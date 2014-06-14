@@ -31,9 +31,6 @@ public class ImagePanel extends JComponent {
 	private DrawingRect drawing_rect;
 	private BatchState batch_state;
 	
-	private int w_centerX;
-	private int w_centerY;
-	private double scale;
 	private boolean drag_image;
 
 	private int w_dragStartX;
@@ -63,20 +60,18 @@ public class ImagePanel extends JComponent {
 		highlight_height = 0;
 		highlight_width = 0;
 		
-		scale = 1.0;
-
 		batch_state.addListener(batch_state_listener);
 		this.setBackground(new Color(120,120,120));
 		this.setPreferredSize(new Dimension(1100, 500));		
 		
-		this.w_centerX = this.getWidth()/2;
-		this.w_centerY = this.getHeight()/2;
+		batch_state.setImagePosX(this.getWidth()/2);
+		batch_state.setImagePosY(this.getHeight()/2);
 		
 		initDrag();
 		
-		this.addMouseListener(mouseAdapter);
-		this.addMouseMotionListener(mouseAdapter);
-		this.addMouseWheelListener(mouseAdapter);
+		this.addMouseListener(mouse_adapter);
+		this.addMouseMotionListener(mouse_adapter);
+		this.addMouseWheelListener(mouse_adapter);
 		
 		invert_lookup_table = new short[256];
 		for (int i = 0; i < 256; i++) {
@@ -93,13 +88,13 @@ public class ImagePanel extends JComponent {
 	}
 	
 	public void setScale(double newScale) {
-		scale = newScale;
+		batch_state.setZoomLevel(newScale);
 		this.repaint();
 	}
 	
 	public void setOrigin(int w_newCenterX, int w_newCenterY) {
-		w_centerX = w_newCenterX;
-		w_centerY = w_newCenterY;
+		batch_state.setImagePosX(w_newCenterX);
+		batch_state.setImagePosY(w_newCenterY);
 		this.repaint();
 	}
 	
@@ -109,8 +104,8 @@ public class ImagePanel extends JComponent {
 		g.fillRect(0, 0, getWidth(), getHeight());
 		Graphics2D g2 = (Graphics2D)g;
 		g2.translate(ImagePanel.this.getWidth()/2, ImagePanel.this.getHeight()/2);
-		g2.scale(scale, scale);
-		g2.translate(-w_centerX, -w_centerY);
+		g2.scale(batch_state.getZoomLevel(), batch_state.getZoomLevel());
+		g2.translate(-batch_state.getImagePosX(), -batch_state.getImagePosY());
 		
 		if (drawing_image != null)
 			drawing_image.draw(g2);	
@@ -118,7 +113,7 @@ public class ImagePanel extends JComponent {
 			drawing_rect.draw(g2);
 	}
 	
-	private MouseAdapter mouseAdapter = new MouseAdapter() {
+	private MouseAdapter mouse_adapter = new MouseAdapter() {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
@@ -129,7 +124,7 @@ public class ImagePanel extends JComponent {
 				AffineTransform transform = new AffineTransform();
 				
 				//transform.translate(ImagePanel.this.getWidth()/2, ImagePanel.this.getHeight()/2);
-				transform.scale(scale, scale);
+				transform.scale(batch_state.getZoomLevel(), batch_state.getZoomLevel());
 				transform.translate(-w_dragStartOriginX, -w_dragStartOriginY);
 				
 				Point2D d_Pt = new Point2D.Double(d_X, d_Y);
@@ -150,26 +145,26 @@ public class ImagePanel extends JComponent {
 				boolean x_limit = false;
 				boolean y_limit = false;
 				
-				w_centerX = w_dragStartOriginX - w_deltaX;
-				w_centerY = w_dragStartOriginY - w_deltaY;
+				batch_state.setImagePosX(w_dragStartOriginX - w_deltaX);
+				batch_state.setImagePosY(w_dragStartOriginY - w_deltaY);
 				
  				if (w_dragStartOriginX - w_deltaX < 300) {
-					w_centerX = 300;
+ 					batch_state.setImagePosX(300);
 					x_limit = true;
 				}
 						
 				if (w_dragStartOriginX - w_deltaX > 1000) {
-					w_centerX = 1000;
+					batch_state.setImagePosX(1000);
 					x_limit = true;
 				}
 				
 				if (w_dragStartOriginY - w_deltaY < -100) {
-					w_centerY = -100;
+					batch_state.setImagePosY(-100);
 					y_limit = true;
 				}
 					
 				if(w_dragStartOriginY - w_deltaY > 700) {
-					w_centerY = 700;
+					batch_state.setImagePosY(700);
 					y_limit = true;
 				}
 
@@ -186,8 +181,8 @@ public class ImagePanel extends JComponent {
 			
 			AffineTransform transform = new AffineTransform();
 			transform.translate(ImagePanel.this.getWidth()/2, ImagePanel.this.getHeight()/2);
-			transform.scale(scale, scale);
-			transform.translate(-w_centerX, -w_centerY);
+			transform.scale(batch_state.getZoomLevel(), batch_state.getZoomLevel());
+			transform.translate(-batch_state.getImagePosX(), -batch_state.getImagePosY());
 			
 			Point2D d_Pt = new Point2D.Double(d_X, d_Y);
 			Point2D w_Pt = new Point2D.Double();
@@ -244,8 +239,8 @@ public class ImagePanel extends JComponent {
 			int d_Y = e.getY();
 			
 			AffineTransform transform = new AffineTransform();
-			transform.scale(scale, scale);
-			transform.translate(-w_centerX, -w_centerY);
+			transform.scale(batch_state.getZoomLevel(), batch_state.getZoomLevel());
+			transform.translate(-batch_state.getImagePosX(), -batch_state.getImagePosY());
 			
 			Point2D d_Pt = new Point2D.Double(d_X, d_Y);
 			Point2D w_Pt = new Point2D.Double();
@@ -262,8 +257,8 @@ public class ImagePanel extends JComponent {
 			drag_image = true;		
 			w_dragStartX = w_X;
 			w_dragStartY = w_Y;		
-			w_dragStartOriginX = w_centerX;
-			w_dragStartOriginY = w_centerY;
+			w_dragStartOriginX = batch_state.getImagePosX();
+			w_dragStartOriginY = batch_state.getImagePosY();
 			
 		}
 
@@ -276,11 +271,11 @@ public class ImagePanel extends JComponent {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			double scroll_amount = 0;
 			scroll_amount = ((double)e.getWheelRotation()) / 6;
-			if ((scale < .25 && scroll_amount > 0) ||
-				 (scale > 2 && scroll_amount < 0)) {
+			if ((batch_state.getZoomLevel() < .25 && scroll_amount > 0) ||
+				 (batch_state.getZoomLevel() > 2 && scroll_amount < 0)) {
 				scroll_amount = 0;
 			}
-			setScale(scale - scroll_amount);
+			setScale(batch_state.getZoomLevel() - scroll_amount);
 		}	
 	};
 
@@ -350,8 +345,8 @@ public class ImagePanel extends JComponent {
 		@Override
 		public void fireDownloadBatch(BufferedImage batch_image) {
 			// Initialize Image Panel
-			ImagePanel.this.w_centerX = ImagePanel.this.getWidth()/2;
-			ImagePanel.this.w_centerY = ImagePanel.this.getHeight()/2;
+			batch_state.setImagePosX(ImagePanel.this.getWidth()/2);
+			batch_state.setImagePosY(ImagePanel.this.getHeight()/2);
 			initDrag();
 			drawing_image = new DrawingImage(batch_image, new Rectangle2D.Double(0,0, batch_image.getWidth(null), batch_image.getHeight(null)));
 			
@@ -383,13 +378,13 @@ public class ImagePanel extends JComponent {
 		}
 		@Override
 		public void fireZoomInButton() {	
-			if (!(scale > 2))
-				setScale(scale + .15);
+			if (!(batch_state.getZoomLevel() > 2))
+				setScale(batch_state.getZoomLevel() + .15);
 		}
 		@Override
 		public void fireZoomOutButton() {
-			if (!(scale < .25))
-				setScale(scale - .15);
+			if (!(batch_state.getZoomLevel() < .25))
+				setScale(batch_state.getZoomLevel() - .15);
 		}
 
 		

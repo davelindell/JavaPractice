@@ -14,9 +14,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
@@ -30,10 +33,26 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 	private JTable table;
 	private BatchState batch_state;
 	
+	private JPopupMenu popup_menu;
+	private JMenuItem menu_item;
+	private int suggestion_row;
+	private int suggestion_column;
+	
 	public TableEntry(BatchState batch_state) {
 		table_model = new TableModel(batch_state);
-		this.batch_state = batch_state;
 		table_model.addTableModelListener(this);
+
+		popup_menu = new JPopupMenu();
+		menu_item = new JMenuItem("See Suggestions");
+		popup_menu.add(menu_item);
+		menu_item.addActionListener(suggestions_listener);
+
+		suggestion_row = 0;
+		suggestion_column = 0;
+		
+		this.addMouseListener(mouse_adapter);
+		this.batch_state = batch_state;
+		
 		batch_state.addListener(batch_state_listener);
 		createComponents();
 	}
@@ -43,16 +62,11 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
 	}
-
-	
-	
-
-	
 	
 	private MouseAdapter mouse_adapter = new MouseAdapter() {
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
 
 			if (e.isPopupTrigger()) {
 				
@@ -61,11 +75,25 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 				
 				if (row >= 0 && row < table_model.getRowCount() &&
 						column >= 1 && column < table_model.getColumnCount()) {
-										
+					if (!batch_state.isQuality(row, column)) {
+						suggestion_row = row;
+						suggestion_column = column;
+						popup_menu.show(e.getComponent(), e.getX(), e.getY());
+					}
 				}
 			}
 		}
 		
+	};
+	
+	private ActionListener suggestions_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			SuggestionsDialog suggestions_dialog = 
+					new SuggestionsDialog(batch_state, suggestion_row, suggestion_column);
+			suggestions_dialog.setVisible(true);
+		}
 	};
 
 	@Override
@@ -121,9 +149,8 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 		}
 		
 		@Override
-		public void fireEnteredData() {
-
-			TableEntry.this.repaint();
+		public void fireEnteredData(int row, int column) {
+			table.tableChanged(new TableModelEvent(table.getModel(), row, column));
 		}
 		
 		@Override

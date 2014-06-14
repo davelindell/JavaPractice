@@ -37,6 +37,11 @@ public class BatchStateListenerAdapter implements BatchStateListener {
 	}
 
 	@Override
-	public void fireEnteredData() {
+	public void fireEnteredData(int row, int column) {
 	}
+	
+	@Override
+	public void fireLoad(){
+	}
+
 }

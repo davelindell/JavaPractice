@@ -51,6 +51,7 @@ public class ButtonBar extends JPanel {
 		this.add(toggle_highlights_button);
 		
 		save_button = new JButton("Save");
+		save_button.addActionListener(save_listener);
 		save_button.setEnabled(false);
 		this.add(save_button);
 		
@@ -80,6 +81,7 @@ public class ButtonBar extends JPanel {
 	private ActionListener invert_button_listener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			batch_state.setImageInverted(!batch_state.getImageInverted());
 			batch_state.pushInvertImage();
 		}
 	};
@@ -95,7 +97,15 @@ public class ButtonBar extends JPanel {
 	private ActionListener toggle_highlights_listener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			batch_state.setHighlightsVisible(!batch_state.getHighlightsVisible());
 			batch_state.pushToggleHighlights();
+		}
+	};
+	
+	private ActionListener save_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			batch_state.pushSave();
 		}
 	};
 	

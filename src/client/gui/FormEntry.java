@@ -15,6 +15,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -55,11 +59,24 @@ public class FormEntry extends JPanel {
 	private JPanel east_side;
 	private FormEntryCellRenderer form_renderer;
 	
+	private JPopupMenu popup_menu;
+	private JMenuItem menu_item;
+	private int suggestion_row;
+	private int suggestion_column;
+	
 	public FormEntry(BatchState batch_state) {
 		this.batch_state = batch_state;
 		batch_state.addListener(batch_state_listener);
 		form_model = new FormEntryModel(batch_state);
 		form_renderer = new FormEntryCellRenderer(batch_state);
+		
+		popup_menu = new JPopupMenu();
+		menu_item = new JMenuItem("See Suggestions");
+		popup_menu.add(menu_item);
+		menu_item.addActionListener(suggestions_listener);
+
+		suggestion_row = 0;
+		suggestion_column = 0;
 		
 		this.setPreferredSize(new Dimension(600, 200));
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -72,9 +89,45 @@ public class FormEntry extends JPanel {
 			for (int i = 0; i < text_fields.size(); ++i) {
 				IndexedData cur_entry = batch_state.getRecords().get(cur_row).get(i);
 				text_fields.get(i).setText(cur_entry.getRecord_value());
+				
+				boolean is_quality = batch_state.isQuality(cur_row, i + 1);
+				if (!is_quality) 
+					text_fields.get(i).setBackground(Color.RED);
+				else
+					text_fields.get(i).setBackground(Color.WHITE);
+				
 			}
 		}		
 	}
+	
+	private MouseAdapter mouse_adapter = new MouseAdapter() {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+
+			if (e.isPopupTrigger()) {				
+				for (int i = 0; i < text_fields.size(); ++i) {
+					if (text_fields.get(i).contains(e.getPoint())) {
+						if (!batch_state.isQuality(batch_state.getCurRow(), i + 1)) {
+							suggestion_row = batch_state.getCurRow();
+							suggestion_column = i + 1;
+							popup_menu.show(e.getComponent(), e.getX(), e.getY());
+						}
+					}
+				}		
+			}	
+		}
+	};
+	
+	private ActionListener suggestions_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			SuggestionsDialog suggestions_dialog = 
+					new SuggestionsDialog(batch_state, suggestion_row, suggestion_column);
+			suggestions_dialog.setVisible(true);
+		}
+	};
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
@@ -112,6 +165,8 @@ public class FormEntry extends JPanel {
 				
 				field_labels.add(cur_field_label);
 				text_fields.add(cur_text_field);
+				
+				cur_text_field.addMouseListener(mouse_adapter);
 				
 				east_gbc.gridx = 0;
 				east_gbc.gridy = i;
@@ -159,6 +214,13 @@ public class FormEntry extends JPanel {
 			if (column == 0)
 				column = 1;
 			text_fields.get(column - 1).requestFocus();
+			
+			
+			repaint();
+		}
+		
+		@Override
+		public void fireEnteredData(int row, int column) {
 			repaint();
 		}
 		
@@ -195,6 +257,7 @@ public class FormEntry extends JPanel {
 					batch_state.pushChangeSelectedEntry(batch_state.getCurRow(), i + 1);
 				}
 			}
+
 		}
 
 		@Override
@@ -203,11 +266,14 @@ public class FormEntry extends JPanel {
 			String cur_text = cur_field.getText();
 			int row = batch_state.getCurRow();
 			int column = batch_state.getCurColumn();
+			int table_column = column;
 			// adjust to table entry coordinates
 			if (column == 0)
 				column = 1;
+		
 			IndexedData cur_entry = batch_state.getRecords().get(row).get(column - 1);
 			cur_entry.setRecord_value(cur_text);
+			batch_state.pushEnteredData(row, table_column);
 		}
 	};
 }

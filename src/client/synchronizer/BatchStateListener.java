@@ -20,5 +20,7 @@ public interface BatchStateListener {
 	
 	public void fireChangeSelectedEntry(int row, int column);
 	
-	public void fireEnteredData();
+	public void fireEnteredData(int row, int column);
+	
+	public void fireLoad();
 }

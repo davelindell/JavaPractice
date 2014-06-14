@@ -35,22 +35,36 @@ class TableEntryCellRenderer extends JLabel implements TableCellRenderer {
 			batch_state.pushChangeSelectedEntry(row, column);
 		}
 		
-		// Color c = ColorUtils.fromString((String)value);
-		this.setBackground(Color.WHITE);
+		boolean is_quality = true;
+		if(column != 0)
+			is_quality = batch_state.isQuality(row, column);
 		
-		if (isSelected) {
+
+
+		if (isSelected && hasFocus && is_quality) {
 			this.setBorder(selectedBorder);
 			this.setBackground(new Color(172, 199, 230));
 		}
-		else {
-			this.setBorder(unselectedBorder);
-			this.setBackground(Color.WHITE);
-		}
 		
-		if(!hasFocus && isSelected) {
+		else if(isSelected && !hasFocus && is_quality) {
 			this.setBorder(unselectedBorder);
 			this.setBackground(new Color(172, 199, 230));
 		}
+		
+		else if (!is_quality) {
+			this.setBackground(Color.red);
+			
+			if (isSelected) 
+				this.setBorder(selectedBorder);
+			else
+				this.setBorder(unselectedBorder);
+		}
+		
+		else {
+			this.setBackground(Color.WHITE);
+			this.setBorder(unselectedBorder);
+		}
+		
 		
 		if (column == 0 && !isSelected) {
 			this.setBorder(BorderFactory.createMatteBorder(0,1,1,1, Color.black));
