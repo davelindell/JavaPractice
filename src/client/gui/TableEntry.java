@@ -117,9 +117,21 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 		
 		@Override
 		public void fireChangeSelectedEntry(int row, int column) {
-				table.changeSelection(row, column + 1, false, false);
+				table.changeSelection(row, column, false, false);
 		}
 		
+		@Override
+		public void fireEnteredData() {
+
+			TableEntry.this.repaint();
+		}
+		
+		@Override
+		public void fireSubmitBatch() {
+			TableEntry.this.removeAll();
+			TableEntry.this.revalidate();
+			TableEntry.this.repaint();
+		}
 		
 	};
 	

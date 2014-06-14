@@ -47,15 +47,25 @@ public class FieldHelp extends JPanel {
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
 		public void fireChangeSelectedEntry(int row, int column) {
-				FieldHelp.this.removeAll();
-				String field_help = batch_state.getFieldHelps().get(column);
-				text_field = new JEditorPane("text/html",field_help);
-				text_field.setPreferredSize(new Dimension(600, 200));
-				text_field.setEditable(false);
-				FieldHelp.this.add(text_field);
-				FieldHelp.this.revalidate();
-				repaint();
+			// adjust to table coordinates
+			if (column == 0)
+				column = 1;
+			FieldHelp.this.removeAll();
+			String field_help = batch_state.getFieldHelps().get(column - 1);
+			text_field = new JEditorPane("text/html",field_help);
+			text_field.setPreferredSize(new Dimension(600, 200));
+			text_field.setEditable(false);
+			FieldHelp.this.add(text_field);
+			FieldHelp.this.revalidate();
+			repaint();
 
+		}
+		
+		@Override
+		public void fireSubmitBatch() {
+			FieldHelp.this.removeAll();
+			FieldHelp.this.revalidate();
+			FieldHelp.this.repaint();
 		}
 		
 	};

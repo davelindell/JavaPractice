@@ -22,7 +22,7 @@ public class IndexerFrame extends JFrame {
 	private JTabbedPane entry_tabbed_pane;
 	private JTabbedPane help_tabbed_pane;
 	private JScrollPane table_entry;
-	private JScrollPane form_entry;
+	private FormEntry form_entry;
 	private JScrollPane field_help;
 	private ImagePanel image_panel;
 	private BatchState batch_state;
@@ -41,7 +41,7 @@ public class IndexerFrame extends JFrame {
 		image_panel = new ImagePanel(batch_state);
 		
 		table_entry = new JScrollPane(new TableEntry(batch_state));
-		form_entry = new JScrollPane(new FormEntry());
+		form_entry = new FormEntry(batch_state);
 		field_help = new JScrollPane(new FieldHelp(batch_state));
 		
 		entry_tabbed_pane = new JTabbedPane();

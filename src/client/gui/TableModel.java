@@ -77,11 +77,11 @@ public class TableModel extends AbstractTableModel {
 			batch_state.getRecords().get(row).get(column - 1).setRecord_value((String)value);
 			
 			this.fireTableCellUpdated(row, column);
+			batch_state.pushEnteredData();
 			
 		} else {
 			throw new IndexOutOfBoundsException();
 		}		
 	}
 
-	
 }

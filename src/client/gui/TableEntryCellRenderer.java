@@ -31,11 +31,8 @@ class TableEntryCellRenderer extends JLabel implements TableCellRenderer {
 		if (isSelected && 
 				(row != batch_state.getCurRow() || 
 					column != batch_state.getCurColumn())) {
-			// adjust for click in record number column
-			if (column == 0)
-				column = 1;
 			
-			batch_state.pushChangeSelectedEntry(row, column - 1);
+			batch_state.pushChangeSelectedEntry(row, column);
 		}
 		
 		// Color c = ColorUtils.fromString((String)value);
@@ -65,7 +62,7 @@ class TableEntryCellRenderer extends JLabel implements TableCellRenderer {
 		}
 			
 		else {
-			this.setHorizontalAlignment(SwingConstants.RIGHT);
+			this.setHorizontalAlignment(SwingConstants.LEFT);
 			this.setText((String)value);
 		}
 		

@@ -36,4 +36,7 @@ public class BatchStateListenerAdapter implements BatchStateListener {
 	public void fireChangeSelectedEntry(int row, int column) {
 	}
 
+	@Override
+	public void fireEnteredData() {
+	}
 }

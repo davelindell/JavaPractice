@@ -83,7 +83,14 @@ public class FileMenu extends JMenuBar {
 		public void fireDownloadBatch(BufferedImage batch_image) {		
 			download_batch_menu_item.setEnabled(false);
 		}
+		
+		@Override
+		public void fireSubmitBatch() {	
+			download_batch_menu_item.setEnabled(true);
+		}
 	};
+	
+
 	
 }
 

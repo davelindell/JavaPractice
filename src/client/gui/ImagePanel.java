@@ -234,7 +234,7 @@ public class ImagePanel extends JComponent {
 					++i;
 				}
 				
-				batch_state.pushChangeSelectedEntry(row, column);
+				batch_state.pushChangeSelectedEntry(row, column + 1);
 			}
 		}
 		
@@ -423,15 +423,25 @@ public class ImagePanel extends JComponent {
 		}
 		
 		public void fireChangeSelectedEntry(int row, int column) {
-				int first_y_coord = batch_state.getFirstYCoord();
-				Field cur_field = batch_state.getFields().get(column);
-				int highlight_width = cur_field.getPixel_width();
-				int highlight_height = batch_state.getRecord_height();
-				int highlight_x = cur_field.getX_coord();
-				int highlight_y = first_y_coord + row * highlight_height;
-				drawing_rect.setRectDim(highlight_x, highlight_y, highlight_width, highlight_height);
-				ImagePanel.this.repaint();
+			// adjust to table coordinates
+			if (column == 0)
+				column = 1;
+			int first_y_coord = batch_state.getFirstYCoord();
+			Field cur_field = batch_state.getFields().get(column - 1);
+			int highlight_width = cur_field.getPixel_width();
+			int highlight_height = batch_state.getRecord_height();
+			int highlight_x = cur_field.getX_coord();
+			int highlight_y = first_y_coord + row * highlight_height;
+			drawing_rect.setRectDim(highlight_x, highlight_y, highlight_width, highlight_height);
+			ImagePanel.this.repaint();
 
+		}
+		
+		@Override
+		public void fireSubmitBatch() {
+			ImagePanel.this.drawing_image = null;
+			ImagePanel.this.drawing_rect = null;
+			ImagePanel.this.repaint();
 		}
 	};
 	

@@ -15,6 +15,7 @@ import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
 import shared.communication.DownloadFile_Params;
 import shared.communication.DownloadFile_Result;
+import shared.communication.SubmitBatch_Params;
 import shared.models.Field;
 import shared.models.IndexedData;
 import shared.models.User;
@@ -22,7 +23,6 @@ import client.ClientException;
 import client.communication.ClientCommunicator;
 
 public class BatchState extends JPanel {
-	private boolean has_batch;
 	private ClientCommunicator cc;
 	private User user;
 	
@@ -47,9 +47,11 @@ public class BatchState extends JPanel {
 	
 	public BatchState(String hostname, String port) {
 		listeners = new ArrayList<BatchStateListener>();
-		has_batch = false;
 		cc = new ClientCommunicator(hostname, port);
-		
+		init();
+	}
+	
+	public void init() {
 		batch_id = 0;
 		fields = null;
 		first_y_coord = 0;
@@ -61,9 +63,8 @@ public class BatchState extends JPanel {
 		record_height = 0;
 		records = new ArrayList<List<IndexedData>>();
 		field_helps = new ArrayList<String>();
-
-		cur_row = -1;
-		cur_column =-1;
+		cur_row = 0;
+		cur_column = 1;
 	}
 	
 	public void addListener(BatchStateListener listener) {
@@ -240,6 +241,18 @@ public class BatchState extends JPanel {
 	
 	
 	public void pushSubmitBatch() {
+		SubmitBatch_Params params = 
+					new SubmitBatch_Params(user.getUsername(), user.getPassword(), batch_id, records);
+		
+		try {
+			cc.submitBatch(params);
+		} catch (ClientException e) {
+			JOptionPane.showMessageDialog(this, "Connection Error", 
+					  "Submit Batch Failed", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		init();
+		
 		for (BatchStateListener l : listeners) {
 			l.fireSubmitBatch();
 		}
@@ -250,6 +263,12 @@ public class BatchState extends JPanel {
 		cur_column = column;
 		for (BatchStateListener l : listeners) {
 			l.fireChangeSelectedEntry(row, column);
+		}
+	}
+	
+	public void pushEnteredData() {
+		for (BatchStateListener l : listeners) {
+			l.fireEnteredData();
 		}
 	}
 }
