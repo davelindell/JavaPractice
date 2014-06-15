@@ -8,18 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 import javax.swing.BoxLayout;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
@@ -28,6 +22,7 @@ import javax.swing.table.TableColumnModel;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class TableEntry extends JPanel implements javax.swing.event.TableModelListener {
 	private TableModel table_model;
 	private JTable table;
@@ -112,7 +107,7 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch() {
 			TableEntry.this.removeAll();
 			table = new JTable(table_model);
 			table.setRowHeight(15);
@@ -160,6 +155,13 @@ public class TableEntry extends JPanel implements javax.swing.event.TableModelLi
 			TableEntry.this.repaint();
 		}
 		
+		@Override
+		public void fireLoad() {
+			if (batch_state.getImage() != null) {
+				fireDownloadBatch();
+			}
+		}
+
 	};
 	
 }

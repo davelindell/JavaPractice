@@ -1,9 +1,6 @@
 package client.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,7 +10,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import client.synchronizer.BatchState;
+import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class IndexerFrame extends JFrame {
 	private FileMenu file_menu;
 	private ButtonBar button_bar;
@@ -29,6 +28,7 @@ public class IndexerFrame extends JFrame {
 
 	public IndexerFrame(BatchState batch_state) {
 		this.batch_state = batch_state;
+		batch_state.addListener(batch_state_listener);
 		createComponents();
 	}
 	
@@ -57,12 +57,12 @@ public class IndexerFrame extends JFrame {
 		setJMenuBar(file_menu);
 		
 		this.add(button_bar, BorderLayout.NORTH);
-		
 		this.add(vert_split_pane);
 	}
 	
 	
 	
+	@SuppressWarnings("unused")
 	private WindowAdapter windowAdapter = new WindowAdapter() {
     	
         public void windowClosing(WindowEvent e) {
@@ -70,6 +70,24 @@ public class IndexerFrame extends JFrame {
         }
     };
 	
+	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
+		@Override
+		public void fireSave() {
+			batch_state.setFrameLocation(IndexerFrame.this.getLocationOnScreen());
+			batch_state.setFrameSize(IndexerFrame.this.getSize());
+			batch_state.setHorzDividerLocation(horz_split_pane.getDividerLocation());
+			batch_state.setVertDividerLocation(vert_split_pane.getDividerLocation());
+
+		}
+		
+		public void fireLoad() {
+			IndexerFrame.this.setLocation(batch_state.getFrameLocation());
+			IndexerFrame.this.setSize(batch_state.getFrameSize());
+			horz_split_pane.setDividerLocation(batch_state.getHorzDividerLocation());
+			vert_split_pane.setDividerLocation(batch_state.getVertDividerLocation());
+		}
+	};
+
 
 }
 

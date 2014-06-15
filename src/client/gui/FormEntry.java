@@ -1,11 +1,8 @@
 package client.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -13,42 +10,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIDefaults;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
-import shared.communication.ValidateUser_Params;
-import shared.communication.ValidateUser_Result;
 import shared.models.IndexedData;
-import client.ClientException;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class FormEntry extends JPanel {
 	private BatchState batch_state;
 	private FormEntryModel form_model;
@@ -131,7 +115,7 @@ public class FormEntry extends JPanel {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch() {
 			FormEntry.this.removeAll();
 			FormEntry.this.form_model = new FormEntryModel(batch_state);
 			
@@ -230,23 +214,17 @@ public class FormEntry extends JPanel {
 			east_side.setVisible(false);
 			FormEntry.this.repaint();
 		}
-	};
-	
-	private KeyListener text_field_key_listener = new KeyListener() {
+		
 		@Override
-		public void keyTyped(KeyEvent e) {
-	    }
-
-		@Override
-		public void keyPressed(KeyEvent e) {
+		public void fireLoad() {
+			if (batch_state.getImage() != null) {
+				fireDownloadBatch();
+			}
 		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
+		
+		
 	};
-	
-	
+		
 	private FocusListener text_field_listener = new FocusListener() {
 
 		@Override
@@ -257,7 +235,6 @@ public class FormEntry extends JPanel {
 					batch_state.pushChangeSelectedEntry(batch_state.getCurRow(), i + 1);
 				}
 			}
-
 		}
 
 		@Override

@@ -13,10 +13,10 @@ import javax.swing.border.Border;
 
 import client.synchronizer.BatchState;
 
+@SuppressWarnings("serial")
 public class FormEntryCellRenderer extends JLabel implements ListCellRenderer<Integer> {
 	private BatchState batch_state;
 	private Border unselectedBorder = BorderFactory.createMatteBorder(0,0,0,0, Color.WHITE);
-	private Border selectedBorder = BorderFactory.createMatteBorder(1,1,1,1, Color.BLUE);
 	
 	public FormEntryCellRenderer(BatchState batch_state) {
 		this.batch_state = batch_state;

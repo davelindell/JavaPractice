@@ -1,32 +1,15 @@
 package client.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.text.JTextComponent;
 
-import client.communication.ClientCommunicator;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class FieldHelp extends JPanel {
 	private BatchState batch_state;
 	private JEditorPane text_field;

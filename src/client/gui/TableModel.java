@@ -1,18 +1,10 @@
 package client.gui;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JEditorPane;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import shared.models.IndexedData;
 import client.synchronizer.BatchState;
-import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class TableModel extends AbstractTableModel {
 	private BatchState batch_state;
 

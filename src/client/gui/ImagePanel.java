@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 
 import shared.models.Field;
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class ImagePanel extends JComponent {
 	private DrawingImage drawing_image;
 	private DrawingRect drawing_rect;
@@ -141,31 +141,24 @@ public class ImagePanel extends JComponent {
 				
 				int w_deltaX = w_X - w_dragStartX;
 				int w_deltaY = w_Y - w_dragStartY;
-								
-				boolean x_limit = false;
-				boolean y_limit = false;
-				
+												
 				batch_state.setImagePosX(w_dragStartOriginX - w_deltaX);
 				batch_state.setImagePosY(w_dragStartOriginY - w_deltaY);
 				
  				if (w_dragStartOriginX - w_deltaX < 300) {
  					batch_state.setImagePosX(300);
-					x_limit = true;
 				}
 						
 				if (w_dragStartOriginX - w_deltaX > 1000) {
 					batch_state.setImagePosX(1000);
-					x_limit = true;
 				}
 				
 				if (w_dragStartOriginY - w_deltaY < -100) {
 					batch_state.setImagePosY(-100);
-					y_limit = true;
 				}
 					
 				if(w_dragStartOriginY - w_deltaY > 700) {
 					batch_state.setImagePosY(700);
-					y_limit = true;
 				}
 
 
@@ -288,19 +281,11 @@ public class ImagePanel extends JComponent {
 			this.image = image;
 			this.rect = rect;
 		}
-
-		public boolean contains(Graphics2D g2, double x, double y) {
-			return rect.contains(x, y);
-		}
 		
 		public void draw(Graphics2D g2) {
 			Rectangle2D bounds = rect.getBounds2D();
 			g2.drawImage(image, (int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getMaxX(), (int)bounds.getMaxY(),
 							0, 0, image.getWidth(null), image.getHeight(null), null);
-		}
-		
-		public Rectangle2D getRect() {
-			return this.rect;
 		}
 		
 		public Image getImage() {
@@ -343,7 +328,8 @@ public class ImagePanel extends JComponent {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch() {
+			Image batch_image = batch_state.getImage();
 			// Initialize Image Panel
 			batch_state.setImagePosX(ImagePanel.this.getWidth()/2);
 			batch_state.setImagePosY(ImagePanel.this.getHeight()/2);
@@ -354,7 +340,7 @@ public class ImagePanel extends JComponent {
 			highlight_x = batch_state.getFirstXCoord();
 			highlight_y = batch_state.getFirstYCoord();
 			highlight_width = batch_state.getFields().get(0).getPixel_width();
-			highlight_height = batch_state.getRecord_height();
+			highlight_height = batch_state.getRecordHeight();
 			Rectangle2D rect = new Rectangle2D.Double(highlight_x, highlight_y, highlight_width, highlight_height);
 			Color color = new Color(172, 199, 230,175);
 			drawing_rect = new DrawingRect(rect, color);
@@ -362,7 +348,7 @@ public class ImagePanel extends JComponent {
 			// get column widths and row heights;
 			int cur_height = 0;
 			for (int i = 0; i < batch_state.getNumRecords(); ++i) {
-				cur_height += batch_state.getRecord_height();
+				cur_height += batch_state.getRecordHeight();
 				row_heights.add(cur_height);
 			}
 			
@@ -424,7 +410,7 @@ public class ImagePanel extends JComponent {
 			int first_y_coord = batch_state.getFirstYCoord();
 			Field cur_field = batch_state.getFields().get(column - 1);
 			int highlight_width = cur_field.getPixel_width();
-			int highlight_height = batch_state.getRecord_height();
+			int highlight_height = batch_state.getRecordHeight();
 			int highlight_x = cur_field.getX_coord();
 			int highlight_y = first_y_coord + row * highlight_height;
 			drawing_rect.setRectDim(highlight_x, highlight_y, highlight_width, highlight_height);
@@ -438,6 +424,53 @@ public class ImagePanel extends JComponent {
 			ImagePanel.this.drawing_rect = null;
 			ImagePanel.this.repaint();
 		}
+		
+		@Override
+		public void fireLoad() {
+			if (batch_state.getImage() != null) {
+				Image batch_image = batch_state.getImage();
+				// Initialize Image Panel
+				
+				initDrag();
+				
+				drawing_image = new DrawingImage(batch_image, new Rectangle2D.Double(0,0, batch_image.getWidth(null), batch_image.getHeight(null)));
+				
+				// Initialize Highlighted Cell
+				highlight_x = batch_state.getFirstXCoord();
+				highlight_y = batch_state.getFirstYCoord();
+				highlight_width = batch_state.getFields().get(0).getPixel_width();
+				highlight_height = batch_state.getRecordHeight();
+				Rectangle2D rect = new Rectangle2D.Double(highlight_x, highlight_y, highlight_width, highlight_height);
+				Color color = new Color(172, 199, 230,175);
+				drawing_rect = new DrawingRect(rect, color);
+				
+				// get column widths and row heights;
+				int cur_height = 0;
+				for (int i = 0; i < batch_state.getNumRecords(); ++i) {
+					cur_height += batch_state.getRecordHeight();
+					row_heights.add(cur_height);
+				}
+				
+				int cur_width = 0;
+				List<Field> fields = batch_state.getFields();
+				for (int i = 0; i < batch_state.getNumFields(); ++i) {
+					cur_width += fields.get(i).getPixel_width();
+					column_widths.add(cur_width);
+				}
+				
+				if(batch_state.getHighlightsVisible()) {
+					batch_state.pushToggleHighlights();
+				}
+				
+				if(batch_state.getImageInverted()) {
+					batch_state.pushInvertImage();
+				}
+				
+				// repaint
+				ImagePanel.this.repaint();
+				
+			}
+		}
 	};
 	
 	private BufferedImage invertImage(BufferedImage in) {
@@ -448,6 +481,8 @@ public class ImagePanel extends JComponent {
 		return invert.filter(in, out);
 		
 	}
+	
+	
 
 }
 

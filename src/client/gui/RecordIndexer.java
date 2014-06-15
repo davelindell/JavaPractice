@@ -1,16 +1,8 @@
 package client.gui;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-
-import javax.swing.JFrame;
 
 import client.synchronizer.BatchState;
-import client.synchronizer.BatchStateListener;
 import client.synchronizer.BatchStateListenerAdapter;
 
 public class RecordIndexer implements LoginWindowListener {

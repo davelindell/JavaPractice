@@ -6,7 +6,7 @@ public interface BatchStateListener {
 	
 	public void fireLogoutButton();
 	
-	public void fireDownloadBatch(BufferedImage batch_image);
+	public void fireDownloadBatch();
 	
 	public void fireSubmitBatch();
 	
@@ -23,4 +23,6 @@ public interface BatchStateListener {
 	public void fireEnteredData(int row, int column);
 	
 	public void fireLoad();
+	
+	public void fireSave();
 }

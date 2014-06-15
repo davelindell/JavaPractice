@@ -23,7 +23,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadFile_Result;
 import shared.communication.GetSampleImage_Params;
 import shared.communication.GetSampleImage_Result;
@@ -33,6 +32,7 @@ import client.ClientException;
 import client.communication.ClientCommunicator;
 import client.synchronizer.BatchState;
 
+@SuppressWarnings("serial")
 public class DownloadBatchWindow extends JDialog {
 	private BatchState batch_state;
 	private JLabel project_text_label;

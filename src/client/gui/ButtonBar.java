@@ -3,17 +3,14 @@ package client.gui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 
 import client.synchronizer.BatchState;
-import client.synchronizer.BatchStateListener;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class ButtonBar extends JPanel {
 	private BatchState batch_state;
 	private JButton zoom_in_button;
@@ -111,7 +108,7 @@ public class ButtonBar extends JPanel {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {
+		public void fireDownloadBatch() {
 			ButtonBar.this.zoom_in_button.setEnabled(true);
 			ButtonBar.this.zoom_out_button.setEnabled(true);
 			ButtonBar.this.invert_image_button.setEnabled(true);
@@ -130,6 +127,16 @@ public class ButtonBar extends JPanel {
 			ButtonBar.this.submit_button.setEnabled(false);
 		}
 
+		@Override
+		public void fireLoad() {
+			if (batch_state.getImage() != null) {
+				fireDownloadBatch();
+			}
+			else {
+				fireSubmitBatch();
+			}
+		}
+		
 	};
 
 }

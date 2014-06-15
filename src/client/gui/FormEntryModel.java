@@ -1,11 +1,10 @@
 package client.gui;
 
 import javax.swing.AbstractListModel;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 
 import client.synchronizer.BatchState;
 
+@SuppressWarnings("serial")
 public class FormEntryModel extends AbstractListModel<Integer> {
 	private BatchState batch_state;
 	

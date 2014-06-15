@@ -1,32 +1,17 @@
 package client.gui;
 
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
 
-import shared.communication.ValidateUser_Params;
-import shared.communication.ValidateUser_Result;
-import client.ClientException;
 import client.synchronizer.BatchState;
-import client.synchronizer.BatchStateListener;
 import client.synchronizer.BatchStateListenerAdapter;
 
+@SuppressWarnings("serial")
 public class FileMenu extends JMenuBar {
 	private JMenuItem download_batch_menu_item;
 	private JMenuItem logout_menu_item;
@@ -72,6 +57,7 @@ public class FileMenu extends JMenuBar {
 	};
 
 	private ActionListener download_batch_button_listener = new ActionListener() {
+		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			DownloadBatchWindow download_batch_window = new DownloadBatchWindow(batch_state);
@@ -80,13 +66,23 @@ public class FileMenu extends JMenuBar {
 	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
-		public void fireDownloadBatch(BufferedImage batch_image) {		
+		public void fireDownloadBatch() {		
 			download_batch_menu_item.setEnabled(false);
 		}
 		
 		@Override
 		public void fireSubmitBatch() {	
 			download_batch_menu_item.setEnabled(true);
+		}
+		
+		@Override
+		public void fireLoad() {	
+			if (batch_state.getImage() != null) {
+				fireDownloadBatch();
+			}
+			else {
+				fireSubmitBatch();
+			}		
 		}
 	};
 	

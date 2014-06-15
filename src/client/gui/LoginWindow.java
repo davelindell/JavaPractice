@@ -1,18 +1,13 @@
 package client.gui;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +24,7 @@ import client.ClientException;
 import client.communication.ClientCommunicator;
 import client.synchronizer.BatchState;
 
+@SuppressWarnings("serial")
 public class LoginWindow extends JFrame {
 	private ClientCommunicator cc;
 	private JButton login_button;
@@ -37,14 +33,10 @@ public class LoginWindow extends JFrame {
 	private JLabel password_label;
 	private JTextField username_field;
 	private JPasswordField password_field;
-	private String hostname;
-	private String port;
 	private LoginWindowListener login_listener;
 	private BatchState batch_state;
 	
 	public LoginWindow(String hostname, String port, BatchState batch_state) {
-		this.hostname = hostname;
-		this.port = port;
 		cc = new ClientCommunicator(hostname, port);
 		this.batch_state = batch_state;
 
@@ -134,7 +126,6 @@ public class LoginWindow extends JFrame {
 	};
 
 	private void loginSuccess(User user) {
-		int num_records = user.getNum_records();
 		String message_str = "Welcome " + user.getUser_first_name() + 
 							 " " + user.getUser_last_name() + ".\n" + 
 							 "You have indexed " + 
@@ -147,6 +138,7 @@ public class LoginWindow extends JFrame {
 		GetProjects_Params proj_params = 
 				new GetProjects_Params(user.getUsername(),user.getPassword());
 		
+		batch_state.pushLoad();
 		
 		GetProjects_Result proj_result;
 		try {
@@ -156,8 +148,6 @@ public class LoginWindow extends JFrame {
 			JOptionPane.showMessageDialog(this, "Error loading data", 
 					  "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		
-		
 	}
 	
 	private void loginError() {

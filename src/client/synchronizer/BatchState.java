@@ -1,5 +1,8 @@
 package client.synchronizer;
 
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -17,10 +20,13 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import server.database.DatabaseException;
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
 import shared.communication.DownloadFile_Params;
@@ -37,6 +43,9 @@ import client.communication.ClientCommunicator;
 import client.qualitychecker.QualityChecker;
 
 import org.apache.commons.io.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 public class BatchState extends JPanel {
@@ -51,6 +60,7 @@ public class BatchState extends JPanel {
 	private double zoom_level;
 	private int image_pos_x;
 	private int image_pos_y;
+	private transient BufferedImage image;
 	
 	// batch information
 	private int batch_id;
@@ -71,17 +81,25 @@ public class BatchState extends JPanel {
 	private List<String> known_values;
 	private QualityChecker quality_checker;
 	
-	private List<BatchStateListener> listeners;
+	// positions
+	private Point frame_location;
+	private Dimension frame_size;
+	private int horz_divider_location;
+	private int vert_divider_location;
+	
+	private transient List<BatchStateListener> listeners;
 	
 	public BatchState(String hostname, String port) {
 		listeners = new ArrayList<BatchStateListener>();
 		cc = new ClientCommunicator(hostname, port);
+		projects = new ArrayList<Project>();
 		init();
 	}
 	
 	public void init() {
 		batch_id = 0;
 		fields = new ArrayList<Field>();
+		image = null;
 		first_y_coord = 0;
 		first_x_coord = 0;
 		image_url = null;
@@ -91,14 +109,18 @@ public class BatchState extends JPanel {
 		record_height = 0;
 		records = new ArrayList<List<IndexedData>>();
 		field_helps = new ArrayList<String>();
-		projects = new ArrayList<Project>();
 		cur_row = 0;
 		cur_column = 1;
 		quality_entries = new ArrayList<List<Boolean>>();
 		known_values = new ArrayList<String>();
 		quality_checker = new QualityChecker();
 		image_inverted = false;
+		highlights_visible = false;
 		zoom_level = 1;
+		frame_location = null;
+		frame_size = null;
+		horz_divider_location = 0;
+		vert_divider_location = 0;
 	}
 	
 	public void addListener(BatchStateListener listener) {
@@ -133,6 +155,10 @@ public class BatchState extends JPanel {
 		return fields;
 	}
 
+	public BufferedImage getImage() {
+		return image;
+	}
+	
 	public int getFirstYCoord() {
 		return first_y_coord;
 	}
@@ -158,7 +184,7 @@ public class BatchState extends JPanel {
 	}
 	
 
-	public int getRecord_height() {
+	public int getRecordHeight() {
 		return record_height;
 	}
 
@@ -209,7 +235,6 @@ public class BatchState extends JPanel {
 	public void setZoomLevel(double zoom_level) {
 		this.zoom_level = zoom_level;
 	}
-	
 
 	public int getImagePosX() {
 		return image_pos_x;
@@ -219,7 +244,6 @@ public class BatchState extends JPanel {
 		return image_pos_y;
 	}
 	
-
 	public void setImagePosX(int image_pos_x) {
 		this.image_pos_x = image_pos_x;
 	}
@@ -230,6 +254,51 @@ public class BatchState extends JPanel {
 
 	public List<String> getFieldHelps() {
 		return field_helps;
+	}
+
+	
+	public List<String> getKnownValues() {
+		return known_values;
+	}
+
+	public List<List<Boolean>> getQualityEntries() {
+		return quality_entries;
+	}
+
+	public QualityChecker getQualityChecker() {
+		return quality_checker;
+	}
+
+	public Point getFrameLocation() {
+		return frame_location;
+	}
+
+	public void setFrameLocation(Point frame_location) {
+		this.frame_location = frame_location;
+	}
+
+	public Dimension getFrameSize() {
+		return frame_size;
+	}
+
+	public void setFrameSize(Dimension frame_size) {
+		this.frame_size = frame_size;
+	}
+
+	public int getHorzDividerLocation() {
+		return horz_divider_location;
+	}
+
+	public void setHorzDividerLocation(int horz_divider_location) {
+		this.horz_divider_location = horz_divider_location;
+	}
+
+	public int getVertDividerLocation() {
+		return vert_divider_location;
+	}
+
+	public void setVertDividerLocation(int vert_divider_location) {
+		this.vert_divider_location = vert_divider_location;
 	}
 
 	public List<BatchStateListener> getListeners() {
@@ -245,7 +314,6 @@ public class BatchState extends JPanel {
 
 	public List<String> getSuggestions(int row, int column) {
 		// change to table coordinates
-		int table_column = column;
 		if (column == 0)
 			column = 1;
 		
@@ -255,7 +323,8 @@ public class BatchState extends JPanel {
 		return quality_checker.getSuggestions(known_field_values, cur_entry);		
 	}
 	
-	public void pushLogout() {		
+	public void pushLogout() {
+		pushSave();
 		for (BatchStateListener l : listeners) {
 			l.fireLogoutButton();
 		}
@@ -278,7 +347,6 @@ public class BatchState extends JPanel {
 		DownloadBatch_Result result = null;
 		DownloadFile_Result file_result = null;
 		
-		BufferedImage batch_image = null;
 		try {
 			result = cc.downloadBatch(batch_params);
 			this.batch_id = result.getBatch_id();
@@ -292,7 +360,8 @@ public class BatchState extends JPanel {
 			this.record_height = result.getRecord_height();
 			
 			file_result = cc.downloadFile(image_url);
-			batch_image = ImageIO.read(new ByteArrayInputStream(file_result.getFile_download()));
+			image = ImageIO.read(new ByteArrayInputStream(file_result.getFile_download()));
+			
 			
 			for(Field f : fields) {
 				String help_url = f.getHelp_url();
@@ -335,7 +404,7 @@ public class BatchState extends JPanel {
 		
 		
 		for (BatchStateListener l : listeners) {
-			l.fireDownloadBatch(batch_image);
+			l.fireDownloadBatch();
 		}
 	}
 	
@@ -368,6 +437,7 @@ public class BatchState extends JPanel {
 		for (BatchStateListener l : listeners) {
 			l.fireSubmitBatch();
 		}
+		pushSave();
 	}
 	
 	public void pushChangeSelectedEntry(int row, int column) {
@@ -396,11 +466,18 @@ public class BatchState extends JPanel {
 		}
 	}
 	
-	public void pushSave() {
-		File file = new File("save" + File.separator + user.getUsername());
+	public void pushSave() {		
+		for (BatchStateListener l : listeners) { 
+			l.fireSave();	
+		}
+		
+		File xml_file = new File("save" + File.separator + user.getUsername() + ".xml");
+		File img_file = new File("save" + File.separator + user.getUsername() + ".png");
 		try {
-			Files.deleteIfExists(file.toPath());
-			file.createNewFile();
+			Files.deleteIfExists(xml_file.toPath());
+			Files.deleteIfExists(img_file.toPath());
+			xml_file.createNewFile();
+			img_file.createNewFile();
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, "Error", 
 					  "Error Saving File", JOptionPane.ERROR_MESSAGE);
@@ -409,45 +486,92 @@ public class BatchState extends JPanel {
 		XStream xstream = new XStream(new DomDriver());
 		BufferedOutputStream out = null;
 		try {
-			out = new BufferedOutputStream(new FileOutputStream("save" + File.separator + user.getUsername()));
-			xstream.toXML(zoom_level, out);
-			xstream.toXML(image_pos_x, out);
-			xstream.toXML(image_pos_y, out);
-			xstream.toXML(highlights_visible, out);
-			xstream.toXML(image_inverted, out);
+			out = new BufferedOutputStream(new FileOutputStream("save" + File.separator + user.getUsername() + ".xml"));
+			xstream.toXML(this, out);
+			out.close();
+			out = new BufferedOutputStream(new FileOutputStream("save" + File.separator + user.getUsername() + ".png"));
+			if(image != null)
+				ImageIO.write(image, "png", out);
+			out.close();
 			
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(this, "Error", 
 					  "Error Saving File", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Error", 
+					  "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+		
 	}
 	
 	public void pushLoad() {
 		init();
 		
-		File file = new File("save" + File.separator + user.getUsername());
-		
+		File xml_file = new File("save" + File.separator + user.getUsername() + ".xml");
+		File img_file = new File("save" + File.separator + user.getUsername() + ".png");
+
+		BatchState batch_state = null;
 		XStream xstream = new XStream(new DomDriver());
 		BufferedInputStream in = null;
-		
-		try {
-			in = new BufferedInputStream(new FileInputStream("save" + File.separator + user.getUsername()));
-			xstream.fromXML(in);
-			//xstream.toXML(zoom_level, in);
-		//	xstream.toXML(image_pos_x, in);
-		//	xstream.toXML(image_pos_y, in);
-		//	xstream.toXML(highlights_visible, in);
-		//	xstream.toXML(image_inverted, in);
+		if (xml_file.exists() && img_file.exists()) {
+			try {
+				in = new BufferedInputStream(new FileInputStream("save" + File.separator + user.getUsername() + ".xml"));
+				batch_state = (BatchState) xstream.fromXML(in);
+				in.close();
+				
+				in = new BufferedInputStream(new FileInputStream("save" + File.separator + user.getUsername() + ".png"));
+				image = ImageIO.read(in);
+				in.close();
+				
+			} catch (FileNotFoundException e) {
+				JOptionPane.showMessageDialog(this, "Error", 
+						  "Error Saving File", JOptionPane.ERROR_MESSAGE);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(this, "Error", 
+						  "Error Saving File", JOptionPane.ERROR_MESSAGE);
+			}
 			
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Error", 
-					  "Error Saving File", JOptionPane.ERROR_MESSAGE);
-		}
-		
-		for (BatchStateListener l : listeners) {
-			l.fireLoad();
+			cc = batch_state.getClientCommunicator();
+			user = batch_state.getUser();
+			
+			cur_row = batch_state.getCurRow();
+			cur_column = batch_state.getCurColumn();
+			image_inverted = batch_state.getImageInverted();
+			highlights_visible = batch_state.getHighlightsVisible();
+			zoom_level = batch_state.getZoomLevel();
+			image_pos_x = batch_state.getImagePosX();
+			image_pos_y = batch_state.getImagePosY();
+			
+			batch_id = batch_state.getBatchID();
+			fields = batch_state.getFields();
+			first_y_coord = batch_state.getFirstYCoord();
+			first_x_coord = batch_state.getFirstXCoord();
+			image_url = batch_state.getImageUrl();
+			num_fields = batch_state.getNumFields();
+			num_records = batch_state.getNumRecords();
+			project_id = batch_state.getProjectId();
+			record_height = batch_state.getRecordHeight();
+			records = batch_state.getRecords();
+			field_helps = batch_state.getFieldHelps();
+			projects = batch_state.getProjects();
+			
+			quality_entries = batch_state.getQualityEntries();
+			known_values = batch_state.getKnownValues();
+			quality_checker = batch_state.getQualityChecker();
+			
+			frame_location = batch_state.getFrameLocation();
+			frame_size = batch_state.getFrameSize();
+			horz_divider_location = batch_state.getHorzDividerLocation();
+			vert_divider_location = batch_state.getVertDividerLocation();
+
+			for (BatchStateListener l : listeners) { 
+				l.fireLoad();	
+			}
+			
 		}
 	}
+	
+
 	
 }
 

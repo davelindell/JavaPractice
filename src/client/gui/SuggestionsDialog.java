@@ -9,17 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
 
 import shared.models.IndexedData;
 import client.synchronizer.BatchState;
 
+@SuppressWarnings("serial")
 public class SuggestionsDialog extends JDialog {
 	private BatchState batch_state;
 	private int row;
