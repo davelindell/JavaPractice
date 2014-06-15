@@ -25,9 +25,12 @@ import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
 import shared.communication.DownloadFile_Params;
 import shared.communication.DownloadFile_Result;
+import shared.communication.GetProjects_Params;
+import shared.communication.GetProjects_Result;
 import shared.communication.SubmitBatch_Params;
 import shared.models.Field;
 import shared.models.IndexedData;
+import shared.models.Project;
 import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
@@ -61,6 +64,7 @@ public class BatchState extends JPanel {
 	private int record_height;
 	private List<List<IndexedData>> records;
 	private List<String> field_helps;
+	private List<Project> projects;
 	
 	//qualitychecker
 	private List<List<Boolean>> quality_entries;
@@ -77,7 +81,7 @@ public class BatchState extends JPanel {
 	
 	public void init() {
 		batch_id = 0;
-		fields = null;
+		fields = new ArrayList<Field>();
 		first_y_coord = 0;
 		first_x_coord = 0;
 		image_url = null;
@@ -87,6 +91,7 @@ public class BatchState extends JPanel {
 		record_height = 0;
 		records = new ArrayList<List<IndexedData>>();
 		field_helps = new ArrayList<String>();
+		projects = new ArrayList<Project>();
 		cur_row = 0;
 		cur_column = 1;
 		quality_entries = new ArrayList<List<Boolean>>();
@@ -110,6 +115,14 @@ public class BatchState extends JPanel {
 	
 	public ClientCommunicator getClientCommunicator() {
 		return this.cc;
+	}
+	
+	public List<Project> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
 	}
 	
 	public int getProjectId() {

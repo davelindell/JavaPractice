@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import shared.communication.GetProjects_Params;
+import shared.communication.GetProjects_Result;
 import shared.communication.ValidateUser_Params;
 import shared.communication.ValidateUser_Result;
 import shared.models.User;
@@ -141,6 +143,21 @@ public class LoginWindow extends JFrame {
 		JOptionPane.showMessageDialog(this, message_str, "Welcome to Indexer", JOptionPane.PLAIN_MESSAGE);
 		login_listener.loginSuccessful();
 		batch_state.setUser(user);
+		
+		GetProjects_Params proj_params = 
+				new GetProjects_Params(user.getUsername(),user.getPassword());
+		
+		
+		GetProjects_Result proj_result;
+		try {
+			proj_result = cc.getProjects(proj_params);
+			batch_state.setProjects(proj_result.getProject_info());
+		} catch (ClientException e) {
+			JOptionPane.showMessageDialog(this, "Error loading data", 
+					  "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
 	}
 	
 	private void loginError() {

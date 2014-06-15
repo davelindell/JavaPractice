@@ -32,23 +32,17 @@ public class QualityChecker {
 		}
 	}
 		
-	public boolean checkWord(String dictionary, String word) {
-		
-		word = word.toUpperCase();
+	public boolean checkWord(String dictionary, String word) {	
 		if (word.equals(""))
 			return true;
 		
 		else if (dictionary == null) {
-			 try { 
-				 Integer.parseInt(word);
-				 return true;
-			 } 
-			 catch(NumberFormatException e) { 
-				 return false; 
-			 }
+			return true;
 		}
 		
 		else {
+			dictionary = dictionary.toUpperCase();
+			word = word.toUpperCase();
 			List<String> values = Arrays.asList(dictionary.split(","));
 			return values.contains(word);
 		}

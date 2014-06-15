@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ public class SuggestionsDialog extends JDialog {
 	private int row;
 	private int column;
 	private SuggestionsList suggestions_list;
+	private List<String> suggestions;
 	
 	private JButton cancel_button;
 	private JButton use_button;
@@ -32,14 +34,15 @@ public class SuggestionsDialog extends JDialog {
 		this.batch_state = batch_state;
 		this.row = row;
 		this.column = column;
-		suggestions_list = new SuggestionsList(batch_state, row, column);
+		suggestions = batch_state.getSuggestions(row, column);
+		suggestions_list = new SuggestionsList(batch_state, suggestions);
 		
 		createComponents();
 	}
 
 	private void createComponents() {
 		this.setTitle("Suggestions");
-		this.setPreferredSize(new Dimension(250,220));
+		this.setPreferredSize(new Dimension(280,225));
 		this.setResizable(false);
 		this.setModal(true);
 		this.setLocationRelativeTo(null);

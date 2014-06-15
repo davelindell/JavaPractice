@@ -12,10 +12,10 @@ public class SuggestionsList extends JList {
 	private SuggestionsListModel suggestions_model;
 	private BatchState batch_state;
 
-	public SuggestionsList(BatchState batch_state, int row, int column) {
+	public SuggestionsList(BatchState batch_state, List<String> suggestions) {
 		this.batch_state = batch_state;
 		
-		suggestions_model = new SuggestionsListModel(batch_state, row, column);
+		suggestions_model = new SuggestionsListModel(batch_state, suggestions);
 		this.setModel(suggestions_model);
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}

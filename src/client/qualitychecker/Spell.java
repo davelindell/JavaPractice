@@ -40,11 +40,6 @@ public class Spell implements SpellCorrector {
 	public List<String> suggestSimilarWord(String inputWord) {		
 		inputWord = inputWord.toLowerCase();
 		Node test_node = dict.find(inputWord);
-		if (test_node != null) {
-			if (test_node.getValue() > 0) {
-				return null;
-			}
-		}
 		
 		Set<String> dist_words = new TreeSet<String>();
 		dist_words.addAll(getDistOne(inputWord));

@@ -9,14 +9,10 @@ import client.synchronizer.BatchState;
 public class SuggestionsListModel extends AbstractListModel<String>{
 	private BatchState batch_state;
 	private List<String> suggestions;
-	private int row;
-	private int column;
 	
-	public SuggestionsListModel(BatchState batch_state, int row, int column) {
+	public SuggestionsListModel(BatchState batch_state, List<String> suggestions) {
 		this.batch_state = batch_state;
-		suggestions = batch_state.getSuggestions(row, column);
-		this.row = row;
-		this.column = column;
+		this.suggestions = suggestions;
 	}
 	
 	@Override

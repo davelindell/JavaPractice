@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -24,6 +27,7 @@ import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadFile_Result;
 import shared.communication.GetSampleImage_Params;
 import shared.communication.GetSampleImage_Result;
+import shared.models.Project;
 import shared.models.User;
 import client.ClientException;
 import client.communication.ClientCommunicator;
@@ -37,6 +41,8 @@ public class DownloadBatchWindow extends JDialog {
 	private JButton view_sample_button;
 	private JComboBox<String> project_combobox;
 	private JDialog dialog;
+	private JButton close_button;
+	JDialog sample_image_dialog;
 	
 	public DownloadBatchWindow(BatchState batch_state) {
 		this.batch_state = batch_state;
@@ -59,12 +65,24 @@ public class DownloadBatchWindow extends JDialog {
 		cancel_button = new JButton("Cancel");
 		cancel_button.addActionListener(cancel_button_listener);
 		
+		close_button = new JButton("Close");
+		close_button.addActionListener(close_button_listener);
+		
+		sample_image_dialog = new JDialog();
+		
 		view_sample_button = new JButton("View Sample");
 		view_sample_button.addActionListener(view_sample_button_listener);
 		
 		project_text_label = new JLabel("Project: ");
-		String[] project_strings = {"1890 Census", "1900 Census", "Draft Records" };
-		project_combobox = new JComboBox<String>(project_strings);
+		
+		List<String> proj_titles = new ArrayList<String>();
+		for (Project p : batch_state.getProjects()) {
+			proj_titles.add(p.getProject_title());
+		}
+		
+		String[] titles_array = proj_titles.toArray(new String[proj_titles.size()]);
+		project_combobox = 
+				new JComboBox<String>(titles_array);
 		
 		// Create top row of components
 		JPanel top_select_area = new JPanel();
@@ -144,17 +162,25 @@ public class DownloadBatchWindow extends JDialog {
 			}
 			
 			// Create Sample Image viewbox
-			JDialog sample_image_dialog = new JDialog();
 			Image resized_image = image.getScaledInstance(515, 430, Image.SCALE_FAST);
 			JLabel image_label = new JLabel(new ImageIcon(resized_image));
 			sample_image_dialog.setPreferredSize(new Dimension(515,430));
+			sample_image_dialog.setLayout(new BorderLayout());
 			sample_image_dialog.setModal(true);
 			sample_image_dialog.setResizable(false);
 			sample_image_dialog.setLocationRelativeTo(null);
 			sample_image_dialog.setTitle("Sample image from " + project_title);
-			sample_image_dialog.add(image_label);
+			sample_image_dialog.add(image_label, BorderLayout.CENTER);
+			sample_image_dialog.add(close_button, BorderLayout.SOUTH);
 			sample_image_dialog.pack();
 			sample_image_dialog.setVisible(true);
+		}
+	};
+	
+	private ActionListener close_button_listener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DownloadBatchWindow.this.sample_image_dialog.dispose();
 		}
 	};
 	
@@ -162,14 +188,13 @@ public class DownloadBatchWindow extends JDialog {
 		String selection = String.valueOf(project_combobox.getSelectedItem());
 		int project_id = 0;
 		
-		switch(selection) {
-			case "1890 Census": 	project_id = 1;
-									break;
-			case "1900 Census":		project_id = 2;
-									break;
-			case "Draft Records":	project_id = 3;
-									break;
+		List<Project> projects = batch_state.getProjects();
+		for (Project p : projects) {
+			if (p.getProject_title().equals(selection)) {
+				project_id = p.getProject_id();
+			}
 		}
+		
 		return project_id;
 	}
 
