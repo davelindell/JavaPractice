@@ -1,7 +1,6 @@
 package client.synchronizer;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -14,25 +13,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import server.database.DatabaseException;
 import shared.communication.DownloadBatch_Params;
 import shared.communication.DownloadBatch_Result;
-import shared.communication.DownloadFile_Params;
 import shared.communication.DownloadFile_Result;
-import shared.communication.GetProjects_Params;
-import shared.communication.GetProjects_Result;
 import shared.communication.SubmitBatch_Params;
 import shared.models.Field;
 import shared.models.IndexedData;
@@ -42,17 +34,12 @@ import client.ClientException;
 import client.communication.ClientCommunicator;
 import client.qualitychecker.QualityChecker;
 
-import org.apache.commons.io.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-
+@SuppressWarnings("serial")
 public class BatchState extends JPanel {
 	private ClientCommunicator cc;
 	private User user;
 	
-	// synch info
+	// batch synchronization information
 	private int cur_row;
 	private int cur_column;
 	private boolean image_inverted;
@@ -62,7 +49,7 @@ public class BatchState extends JPanel {
 	private int image_pos_y;
 	private transient BufferedImage image;
 	
-	// batch information
+	// batch field information
 	private int batch_id;
 	private List<Field> fields;
 	private int first_y_coord;
@@ -76,12 +63,12 @@ public class BatchState extends JPanel {
 	private List<String> field_helps;
 	private List<Project> projects;
 	
-	//qualitychecker
+	// quality checker data
 	private List<List<Boolean>> quality_entries;
 	private List<String> known_values;
 	private QualityChecker quality_checker;
 	
-	// positions
+	// frame positions
 	private Point frame_location;
 	private Dimension frame_size;
 	private int horz_divider_location;
@@ -126,6 +113,10 @@ public class BatchState extends JPanel {
 	public void addListener(BatchStateListener listener) {
 		listeners.add(listener);
 	}
+	
+	/*
+	 * Getters and Setters
+	 */
 	
 	public void setUser(User user) {
 		this.user = user;
@@ -183,7 +174,6 @@ public class BatchState extends JPanel {
 		return batch_id;
 	}
 	
-
 	public int getRecordHeight() {
 		return record_height;
 	}
@@ -256,7 +246,6 @@ public class BatchState extends JPanel {
 		return field_helps;
 	}
 
-	
 	public List<String> getKnownValues() {
 		return known_values;
 	}
@@ -305,6 +294,10 @@ public class BatchState extends JPanel {
 		return listeners;
 	}
 	
+	/*
+	 * Interface functions for spell checker
+	 */
+	
 	public boolean isQuality(int row, int column) {
 		// convert from table to img coordinates
 		if (column == 0) 
@@ -322,6 +315,10 @@ public class BatchState extends JPanel {
 		
 		return quality_checker.getSuggestions(known_field_values, cur_entry);		
 	}
+	
+	/*
+	 *  Batch State functions
+	 */
 	
 	public void pushLogout() {
 		pushSave();
@@ -567,12 +564,8 @@ public class BatchState extends JPanel {
 			for (BatchStateListener l : listeners) { 
 				l.fireLoad();	
 			}
-			
 		}
 	}
-	
-
-	
 }
 
 

@@ -199,7 +199,6 @@ public class FormEntry extends JPanel {
 				column = 1;
 			text_fields.get(column - 1).requestFocus();
 			
-			
 			repaint();
 		}
 		
@@ -221,8 +220,6 @@ public class FormEntry extends JPanel {
 				fireDownloadBatch();
 			}
 		}
-		
-		
 	};
 		
 	private FocusListener text_field_listener = new FocusListener() {

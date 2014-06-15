@@ -44,7 +44,6 @@ public class LoginWindow extends JFrame {
 	}
 	
 	private void createComponents() {				
-		
 		// Create JPanels
 		JPanel login_window_panel = new JPanel();
 		login_window_panel.setLayout(new BoxLayout(login_window_panel, BoxLayout.PAGE_AXIS));
@@ -57,7 +56,6 @@ public class LoginWindow extends JFrame {
 		
 		JPanel bottom_row = new JPanel();
 		bottom_row.setLayout(new BoxLayout(bottom_row, BoxLayout.LINE_AXIS));
-		
 		
 		username_label = new JLabel("Username:");
 		JPanel username_field_panel = new JPanel();
@@ -117,7 +115,6 @@ public class LoginWindow extends JFrame {
 					username_field.setText("");
 					password_field.setText("");
 				}
-
 			} 
 			catch (ClientException e1) {
 				loginError();
@@ -138,6 +135,7 @@ public class LoginWindow extends JFrame {
 		GetProjects_Params proj_params = 
 				new GetProjects_Params(user.getUsername(),user.getPassword());
 		
+		// load prior state if there is one
 		batch_state.pushLoad();
 		
 		GetProjects_Result proj_result;

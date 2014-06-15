@@ -161,8 +161,6 @@ public class ImagePanel extends JComponent {
 					batch_state.setImagePosY(700);
 				}
 
-
-
 				ImagePanel.this.repaint();
 			}
 		}
@@ -252,7 +250,6 @@ public class ImagePanel extends JComponent {
 			w_dragStartY = w_Y;		
 			w_dragStartOriginX = batch_state.getImagePosX();
 			w_dragStartOriginY = batch_state.getImagePosY();
-			
 		}
 
 		@Override
@@ -322,7 +319,6 @@ public class ImagePanel extends JComponent {
 		public void draw(Graphics2D g2) {
 			g2.setColor(color);
 			g2.fill(rect);
-			// OR g2.fillRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
 		}	
 	}
 	
@@ -415,7 +411,6 @@ public class ImagePanel extends JComponent {
 			int highlight_y = first_y_coord + row * highlight_height;
 			drawing_rect.setRectDim(highlight_x, highlight_y, highlight_width, highlight_height);
 			ImagePanel.this.repaint();
-
 		}
 		
 		@Override
@@ -468,7 +463,6 @@ public class ImagePanel extends JComponent {
 				
 				// repaint
 				ImagePanel.this.repaint();
-				
 			}
 		}
 	};
@@ -479,10 +473,7 @@ public class ImagePanel extends JComponent {
 		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		BufferedImageOp invert = new LookupOp(new ShortLookupTable(0, invert_lookup_table), null);
 		return invert.filter(in, out);
-		
 	}
-	
-	
 
 }
 

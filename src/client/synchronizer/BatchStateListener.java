@@ -1,7 +1,5 @@
 package client.synchronizer;
 
-import java.awt.image.BufferedImage;
-
 public interface BatchStateListener {	
 	
 	public void fireLogoutButton();

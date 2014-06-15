@@ -33,7 +33,7 @@ public class IndexerFrame extends JFrame {
 	}
 	
 	private void createComponents() {
-		this.setTitle("Indexer Beta");
+		this.setTitle("DL Indexer");
 		this.setLocationRelativeTo(null);
 
 		file_menu = new FileMenu(batch_state);

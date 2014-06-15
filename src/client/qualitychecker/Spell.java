@@ -1,14 +1,11 @@
 package client.qualitychecker;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,7 +36,6 @@ public class Spell implements SpellCorrector {
 	@Override
 	public List<String> suggestSimilarWord(String inputWord) {		
 		inputWord = inputWord.toLowerCase();
-		Node test_node = dict.find(inputWord);
 		
 		Set<String> dist_words = new TreeSet<String>();
 		dist_words.addAll(getDistOne(inputWord));

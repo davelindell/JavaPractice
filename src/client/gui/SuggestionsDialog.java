@@ -33,6 +33,7 @@ public class SuggestionsDialog extends JDialog {
 		this.batch_state = batch_state;
 		this.row = row;
 		this.column = column;
+		
 		suggestions = batch_state.getSuggestions(row, column);
 		suggestions_list = new SuggestionsList(batch_state, suggestions);
 		
@@ -68,6 +69,7 @@ public class SuggestionsDialog extends JDialog {
 		gbc.weightx = 10;
 		gbc.weighty = 10;
 		gbc.insets = new Insets(10,10,10,10);
+		
 		JScrollPane scroll_pane = new JScrollPane(suggestions_list);
 		Dimension d = scroll_pane.getPreferredSize();
 		d.width = 180;
@@ -80,6 +82,7 @@ public class SuggestionsDialog extends JDialog {
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		gbc.insets = new Insets(10,10,10,10);
+		
 		this.add(buttons, gbc);
 		this.pack();
 	}

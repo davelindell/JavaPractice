@@ -4,15 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import client.qualitychecker.SpellCorrector.NoSimilarWordFoundException;
-
-public class QualityChecker {
-	private Map<Integer, String> dictionaries;
-	
+public class QualityChecker {	
 	public QualityChecker() {
 		
 	}
@@ -46,9 +39,6 @@ public class QualityChecker {
 			List<String> values = Arrays.asList(dictionary.split(","));
 			return values.contains(word);
 		}
-			
-		
 	}
-
 }
 

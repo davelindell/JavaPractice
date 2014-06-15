@@ -1,7 +1,5 @@
 package client.synchronizer;
 
-import java.awt.image.BufferedImage;
-
 public class BatchStateListenerAdapter implements BatchStateListener {
 	
 	@Override

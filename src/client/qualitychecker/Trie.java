@@ -1,8 +1,5 @@
 package client.qualitychecker;
 
-/**
- * Your trie class should implement the Trie interface
- */
 public interface Trie {
 
 	/**
@@ -63,34 +60,4 @@ public interface Trie {
 		public int getValue();
 	}
 	
-	/*
-	 * EXAMPLE:
-	 * 
-	 * public class Words implements Trie {
-	 * 
-	 * 		public void add(String word) { ... }
-	 * 		
-	 * 		public Trie.Node find(String word) { ... }
-	 * 
-	 * 		public int getWordCount() { ... }
-	 * 
-	 * 		public int getNodeCount() { ... }
-	 *
-	 *		@Override
-	 *		public String toString() { ... }
-	 *
-	 *		@Override
-	 *		public int hashCode() { ... }
-	 *
-	 *		@Override
-	 *		public boolean equals(Object o) { ... }
-	 *
-	 * }
-	 * 
-	 * public class WordNode implements Trie.Node {
-	 * 
-	 * 		public int getValue() { ... }
-	 * }
-	 * 
-	 */
 }
