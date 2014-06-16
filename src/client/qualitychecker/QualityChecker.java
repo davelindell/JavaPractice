@@ -4,16 +4,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class QualityChecker {	
+import client.qualitychecker.SpellCorrector.NoSimilarWordFoundException;
+
+public class QualityChecker {
+	private Map<Integer, String> dictionaries;
+	
 	public QualityChecker() {
 		
 	}
 
 	public List<String> getSuggestions(String dictionary, String word) {
 		SpellCorrector corrector = new Spell();
-		
-		if(dictionary == null)
+
+		boolean valid_input = word.matches("([A-Za-z].*)");
+
+		if(dictionary == null || !valid_input)
 			return new ArrayList<String>();
 		else {
 			try {
@@ -39,6 +48,9 @@ public class QualityChecker {
 			List<String> values = Arrays.asList(dictionary.split(","));
 			return values.contains(word);
 		}
+			
+		
 	}
+
 }
 

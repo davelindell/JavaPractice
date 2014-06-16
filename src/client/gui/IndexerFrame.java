@@ -29,6 +29,7 @@ public class IndexerFrame extends JFrame {
 	public IndexerFrame(BatchState batch_state) {
 		this.batch_state = batch_state;
 		batch_state.addListener(batch_state_listener);
+		this.addWindowListener(windowAdapter);
 		createComponents();
 	}
 	
@@ -66,7 +67,8 @@ public class IndexerFrame extends JFrame {
 	private WindowAdapter windowAdapter = new WindowAdapter() {
     	
         public void windowClosing(WindowEvent e) {
-            System.exit(0);
+            batch_state.pushLogout();
+        	System.exit(0);
         }
     };
 	

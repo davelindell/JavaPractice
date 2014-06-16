@@ -129,7 +129,6 @@ public class LoginWindow extends JFrame {
 							 Integer.toString(user.getNum_records()) + " records.";
 
 		JOptionPane.showMessageDialog(this, message_str, "Welcome to Indexer", JOptionPane.PLAIN_MESSAGE);
-		login_listener.loginSuccessful();
 		batch_state.setUser(user);
 		
 		GetProjects_Params proj_params = 
@@ -138,6 +137,8 @@ public class LoginWindow extends JFrame {
 		// load prior state if there is one
 		batch_state.pushLoad();
 		
+		login_listener.loginSuccessful();
+
 		GetProjects_Result proj_result;
 		try {
 			proj_result = cc.getProjects(proj_params);

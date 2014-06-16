@@ -52,6 +52,7 @@ public class FileMenu extends JMenuBar {
 	private ActionListener exit_button_listener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			batch_state.pushLogout();
 			System.exit(0);
 		}
 	};

@@ -1,6 +1,8 @@
 package client.gui;
 
 import java.awt.EventQueue;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import client.synchronizer.BatchState;
 import client.synchronizer.BatchStateListenerAdapter;
@@ -53,6 +55,15 @@ public class RecordIndexer implements LoginWindowListener {
 
 	}
 
+	@SuppressWarnings("unused")
+	private WindowAdapter windowAdapter = new WindowAdapter() {
+    	
+        public void windowClosing(WindowEvent e) {
+            batch_state.pushLogout();
+        	System.exit(0);
+        }
+    };
+	
 	private BatchStateListenerAdapter batch_state_listener = new BatchStateListenerAdapter() {
 		@Override
 		public void fireLogoutButton() {
